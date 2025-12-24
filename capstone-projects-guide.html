@@ -1,0 +1,2971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capstone Projects | Apply Your Knowledge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0c10;
+            --bg-secondary: #0d1117;
+            --bg-tertiary: #161b22;
+            --bg-card: #1c2128;
+            --bg-code: #0d1117;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent-gold: #fbbf24;
+            --accent-orange: #f97316;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-pink: #ec4899;
+            --border-color: #21262d;
+            --border-hover: #30363d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-orange), var(--accent-gold));
+            background-size: 200% 100%;
+            animation: gradientMove 2s linear infinite;
+            z-index: 9999; transition: width 0.2s ease;
+        }
+
+        .particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .particle {
+            position: absolute; width: 4px; height: 4px; border-radius: 50%;
+            opacity: 0.3; animation: float 6s ease-in-out infinite;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 2rem; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 50%);
+            animation: float 8s ease-in-out infinite;
+        }
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; animation: fadeInUp 0.8s ease-out;
+        }
+        .header .subtitle {
+            font-size: 1.1rem; color: var(--text-secondary);
+            max-width: 700px; margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .badge-row {
+            display: flex; justify-content: center; gap: 0.75rem;
+            margin-top: 1.5rem; flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; background: var(--bg-tertiary);
+            border: 1px solid var(--border-color); border-radius: 100px;
+            font-size: 0.875rem; color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .badge:hover {
+            transform: translateY(-3px) scale(1.05);
+            border-color: var(--accent-gold);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.2);
+        }
+        .badge-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+
+        .container { display: flex; max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+
+        .sidebar {
+            width: 280px; background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 0; position: sticky; top: 0;
+            height: 100vh; overflow-y: auto; flex-shrink: 0;
+            animation: fadeInLeft 0.6s ease-out;
+        }
+        .nav-section { padding: 0 1rem; margin-bottom: 1.5rem; }
+        .nav-section-title {
+            font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--text-muted);
+            padding: 0 0.75rem; margin-bottom: 0.5rem;
+        }
+        .nav-link {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 0.75rem; color: var(--text-secondary);
+            text-decoration: none; border-radius: 6px; font-size: 0.85rem;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .nav-link::before {
+            content: ''; position: absolute; left: 0; top: 0;
+            height: 100%; width: 3px;
+            background: linear-gradient(180deg, var(--accent-gold), var(--accent-orange));
+            transform: scaleY(0); transition: transform 0.3s ease;
+        }
+        .nav-link:hover { background: var(--bg-tertiary); color: var(--text-primary); padding-left: 1rem; }
+        .nav-link:hover::before, .nav-link.active::before { transform: scaleY(1); }
+        .nav-link.active { background: rgba(251, 191, 36, 0.1); color: var(--accent-gold); }
+        .nav-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); min-width: 20px; }
+        .home-link { background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(249, 115, 22, 0.1)); border: 1px solid rgba(251, 191, 36, 0.3); margin-bottom: 0.5rem; }
+        .home-link:hover { background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(249, 115, 22, 0.2)); border-color: var(--accent-gold); }
+        .home-btn { position: fixed; top: 20px; left: 20px; z-index: 1000; padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease; display: none; }
+        .home-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--accent-gold); }
+        @media (max-width: 900px) { .home-btn { display: block; } }
+
+        .main-content { flex: 1; padding: 2.5rem; max-width: calc(100% - 280px); }
+
+        section { margin-bottom: 4rem; }
+        section h2 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem;
+            color: var(--text-primary); margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .section-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+            border-radius: 10px; font-size: 1rem; font-weight: 700; color: white;
+            transition: all 0.3s ease;
+        }
+        section:hover .section-number {
+            transform: rotate(-5deg) scale(1.1);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
+        }
+        section h3 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem;
+            color: var(--text-primary); margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);
+        }
+        section h4 { font-size: 1.1rem; color: var(--accent-cyan); margin: 1.5rem 0 0.75rem; }
+        section p { color: var(--text-secondary); margin-bottom: 1rem; max-width: 900px; }
+        section ul, section ol { color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem; }
+        section li { margin-bottom: 0.5rem; }
+
+        .code-block {
+            background: var(--bg-code); border: 1px solid var(--border-color);
+            border-radius: 10px; overflow: hidden; margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .code-block:hover {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.1);
+            transform: translateY(-2px);
+        }
+        .code-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.6rem 1rem; background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .code-lang::before {
+            content: ''; width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent-gold); animation: pulse 2s ease-in-out infinite;
+        }
+        .copy-btn {
+            background: transparent; border: 1px solid var(--border-color);
+            color: var(--text-muted); padding: 0.25rem 0.6rem; border-radius: 4px;
+            cursor: pointer; font-size: 0.75rem; transition: all 0.3s ease;
+        }
+        .copy-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--accent-gold); }
+        .copy-btn.copied { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+        .code-block pre {
+            padding: 1rem; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6;
+        }
+        .keyword { color: var(--accent-purple); }
+        .type { color: var(--accent-cyan); }
+        .function { color: var(--accent-blue); }
+        .string { color: var(--accent-green); }
+        .number { color: var(--accent-orange); }
+        .comment { color: var(--text-muted); font-style: italic; }
+        .decorator { color: var(--accent-gold); }
+
+        /* Project Cards */
+        .project-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 2rem; margin: 2rem 0;
+            transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+        .project-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-orange));
+            transform: scaleX(0); transition: transform 0.4s ease; transform-origin: left;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-gold);
+        }
+        .project-card:hover::before { transform: scaleX(1); }
+
+        .project-header {
+            display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 1.5rem;
+        }
+        .project-icon {
+            font-size: 3rem; transition: transform 0.3s ease;
+        }
+        .project-card:hover .project-icon { transform: scale(1.1) rotate(-5deg); }
+        .project-info { flex: 1; }
+        .project-title {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem;
+            color: var(--text-primary); margin-bottom: 0.5rem;
+        }
+        .project-subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+        .difficulty {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0.8rem; border-radius: 100px;
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+        }
+        .difficulty.beginner { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .difficulty.intermediate { background: rgba(251, 191, 36, 0.1); color: var(--accent-gold); border: 1px solid rgba(251, 191, 36, 0.3); }
+        .difficulty.advanced { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        .tech-stack {
+            display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0;
+        }
+        .tech-tag {
+            padding: 0.4rem 0.8rem; background: var(--bg-tertiary);
+            border: 1px solid var(--border-color); border-radius: 6px;
+            font-size: 0.8rem; color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+        .tech-tag:hover {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .learning-objectives {
+            background: var(--bg-tertiary); border-radius: 10px;
+            padding: 1.5rem; margin: 1.5rem 0;
+            border-left: 4px solid var(--accent-green);
+        }
+        .learning-objectives h4 {
+            color: var(--accent-green); margin-bottom: 1rem; margin-top: 0;
+        }
+        .learning-objectives ul { margin-left: 1rem; margin-bottom: 0; }
+
+        /* Architecture Diagram */
+        .architecture {
+            background: var(--bg-tertiary); border-radius: 12px;
+            padding: 2rem; margin: 1.5rem 0; text-align: center;
+        }
+        .architecture-title {
+            font-weight: 600; color: var(--text-primary); margin-bottom: 1.5rem;
+        }
+        .arch-flow {
+            display: flex; align-items: center; justify-content: center;
+            gap: 1rem; flex-wrap: wrap;
+        }
+        .arch-box {
+            background: var(--bg-card); border: 2px solid var(--border-color);
+            border-radius: 10px; padding: 1rem 1.5rem;
+            min-width: 120px; transition: all 0.3s ease;
+        }
+        .arch-box:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .arch-box.ui { border-color: var(--accent-blue); }
+        .arch-box.logic { border-color: var(--accent-purple); }
+        .arch-box.data { border-color: var(--accent-green); }
+        .arch-box.infra { border-color: var(--accent-orange); }
+        .arch-box-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .arch-box-sub { font-size: 0.75rem; color: var(--text-muted); }
+        .arch-arrow { color: var(--text-muted); font-size: 1.5rem; }
+
+        /* Step Cards */
+        .step-card {
+            background: var(--bg-tertiary); border-radius: 10px;
+            padding: 1.5rem; margin: 1rem 0;
+            border-left: 4px solid var(--accent-gold);
+            transition: all 0.3s ease;
+        }
+        .step-card:hover { transform: translateX(5px); }
+        .step-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; background: var(--accent-gold);
+            border-radius: 50%; font-size: 0.85rem; font-weight: 700;
+            color: var(--bg-primary); margin-right: 0.75rem;
+        }
+        .step-title { font-weight: 600; color: var(--text-primary); display: inline; }
+        .step-content { margin-top: 0.75rem; color: var(--text-secondary); }
+
+        /* Checklist */
+        .checklist {
+            background: var(--bg-tertiary); border-radius: 10px;
+            padding: 1.5rem; margin: 1.5rem 0;
+        }
+        .checklist-item {
+            display: flex; align-items: flex-start; gap: 0.75rem;
+            padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);
+        }
+        .checklist-item:last-child { border-bottom: none; }
+        .checklist-box {
+            width: 20px; height: 20px; border: 2px solid var(--border-hover);
+            border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .checklist-box:hover { border-color: var(--accent-gold); }
+        .checklist-box.checked {
+            background: var(--accent-green); border-color: var(--accent-green);
+        }
+        .checklist-box.checked::after {
+            content: '✓'; color: white; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
+        }
+        .checklist-text { color: var(--text-secondary); }
+
+        /* Info Boxes */
+        .info-box {
+            padding: 1rem 1.25rem; border-radius: 10px; margin: 1.5rem 0;
+            border: 1px solid; transition: all 0.4s ease;
+        }
+        .info-box:hover { transform: translateX(5px); }
+        .info-box.tip { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+        .info-box.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+        .info-box.note { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+        .info-box-title { font-weight: 600; margin-bottom: 0.5rem; }
+        .info-box.tip .info-box-title { color: var(--accent-green); }
+        .info-box.warning .info-box-title { color: var(--accent-gold); }
+        .info-box.note .info-box-title { color: var(--accent-blue); }
+
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+            border: none; border-radius: 50%; color: white; font-size: 1.5rem;
+            cursor: pointer; opacity: 0; visibility: hidden;
+            transition: all 0.3s ease; z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4);
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.6);
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { max-width: 100%; padding: 1.5rem; }
+            .project-header { flex-direction: column; gap: 1rem; }
+            .arch-flow { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="particles" id="particles"></div>
+
+    <header class="header">
+        <h1>Capstone Projects</h1>
+        <p class="subtitle">Apply everything you've learned with hands-on projects that combine algorithms, design patterns, modern UI frameworks, and DevOps practices</p>
+        <div class="badge-row">
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-gold);"></span>6 Projects</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-green);"></span>Full Stack</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-purple);"></span>Design Patterns</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-blue);"></span>Real World</span>
+        </div>
+    </header>
+
+    <a href="index.html" class="home-btn">← Back to Hub</a>
+
+    <div class="container">
+        <nav class="sidebar">
+            <div class="nav-section">
+                <a href="index.html" class="nav-link home-link"><span class="nav-number">🏠</span>Training Hub</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a href="#introduction" class="nav-link"><span class="nav-number">01</span>Introduction</a>
+                <a href="#skills-matrix" class="nav-link"><span class="nav-number">02</span>Skills Matrix</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Projects</div>
+                <a href="#project-1" class="nav-link"><span class="nav-number">03</span>Task Manager App</a>
+                <a href="#project-2" class="nav-link"><span class="nav-number">04</span>Algorithm Visualizer</a>
+                <a href="#project-3" class="nav-link"><span class="nav-number">05</span>Expense Tracker</a>
+                <a href="#project-4" class="nav-link"><span class="nav-number">06</span>Code Snippet Manager</a>
+                <a href="#project-5" class="nav-link"><span class="nav-number">07</span>Real-time Chat App</a>
+                <a href="#project-6" class="nav-link"><span class="nav-number">08</span>Workflow Automation</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Resources</div>
+                <a href="#git-workflow" class="nav-link"><span class="nav-number">09</span>Git Workflow</a>
+                <a href="#docker-setup" class="nav-link"><span class="nav-number">10</span>Docker Setup</a>
+                <a href="#next-steps" class="nav-link"><span class="nav-number">11</span>Next Steps</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Production</div>
+                <a href="#capstone-scope" class="nav-link"><span class="nav-number">12</span>Scope & Planning</a>
+                <a href="#capstone-quality" class="nav-link"><span class="nav-number">13</span>Quality Bar</a>
+                <a href="#capstone-release" class="nav-link"><span class="nav-number">14</span>Release Checklist</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Section 1: Introduction -->
+            <section id="introduction">
+                <h2><span class="section-number">01</span>Introduction</h2>
+                <p>These capstone projects are designed to help you apply and reinforce the concepts from all the training guides. Each project progressively builds on your skills, combining multiple technologies and patterns.</p>
+
+                <div class="info-box note">
+                    <div class="info-box-title">How to Use This Guide</div>
+                    <p>Start with Project 1 (easiest) and progress to Project 5 (most complex). Each project includes:</p>
+                    <ul>
+                        <li><strong>Learning Objectives</strong> - What you'll practice</li>
+                        <li><strong>Architecture</strong> - System design overview</li>
+                        <li><strong>Step-by-step Guide</strong> - Implementation walkthrough</li>
+                        <li><strong>Code Examples</strong> - Starter code and patterns</li>
+                        <li><strong>Challenges</strong> - Optional extensions</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 2: Skills Matrix -->
+            <section id="skills-matrix">
+                <h2><span class="section-number">02</span>Skills Matrix</h2>
+                <p>Each project emphasizes different skills from the training guides:</p>
+
+                <div class="architecture">
+                    <table style="width: 100%; text-align: left; font-size: 0.85rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color);">
+                                <th style="padding: 0.75rem;">Project</th>
+                                <th style="padding: 0.75rem;">Algorithms</th>
+                                <th style="padding: 0.75rem;">Patterns</th>
+                                <th style="padding: 0.75rem;">UI Framework</th>
+                                <th style="padding: 0.75rem;">Git/Docker</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; color: var(--accent-gold);">Task Manager</td>
+                                <td style="padding: 0.75rem;">Sorting, Search</td>
+                                <td style="padding: 0.75rem;">MVVM, Repository</td>
+                                <td style="padding: 0.75rem;">WPF</td>
+                                <td style="padding: 0.75rem;">Git basics</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; color: var(--accent-gold);">Algorithm Viz</td>
+                                <td style="padding: 0.75rem;">All sorting, BFS/DFS</td>
+                                <td style="padding: 0.75rem;">Strategy, Observer</td>
+                                <td style="padding: 0.75rem;">Blazor</td>
+                                <td style="padding: 0.75rem;">Branching</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; color: var(--accent-gold);">Expense Tracker</td>
+                                <td style="padding: 0.75rem;">Hash tables, Trees</td>
+                                <td style="padding: 0.75rem;">SOLID, Factory, DI</td>
+                                <td style="padding: 0.75rem;">WinUI 3</td>
+                                <td style="padding: 0.75rem;">Docker basics</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; color: var(--accent-gold);">Snippet Manager</td>
+                                <td style="padding: 0.75rem;">Trie, Search</td>
+                                <td style="padding: 0.75rem;">Command, Decorator</td>
+                                <td style="padding: 0.75rem;">WPF + Blazor</td>
+                                <td style="padding: 0.75rem;">Docker Compose</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; color: var(--accent-gold);">Chat App</td>
+                                <td style="padding: 0.75rem;">Queues, Graphs</td>
+                                <td style="padding: 0.75rem;">Observer, Singleton</td>
+                                <td style="padding: 0.75rem;">Blazor Server</td>
+                                <td style="padding: 0.75rem;">Full CI/CD</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; color: var(--accent-gold);">Workflow System</td>
+                                <td style="padding: 0.75rem;">State Machines, DAG</td>
+                                <td style="padding: 0.75rem;">Strategy, Chain of Resp.</td>
+                                <td style="padding: 0.75rem;">WinUI + Blazor</td>
+                                <td style="padding: 0.75rem;">Elsa + Docker</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Project 1: Task Manager -->
+            <section id="project-1">
+                <h2><span class="section-number">03</span>Project 1: Task Manager App</h2>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">📋</div>
+                        <div class="project-info">
+                            <h3 class="project-title">TaskFlow - Personal Task Manager</h3>
+                            <p class="project-subtitle">A WPF desktop application for managing daily tasks with categories, priorities, and due dates</p>
+                        </div>
+                        <span class="difficulty beginner">Beginner</span>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">WPF</span>
+                        <span class="tech-tag">MVVM</span>
+                        <span class="tech-tag">SQLite</span>
+                        <span class="tech-tag">Repository Pattern</span>
+                    </div>
+
+                    <div class="learning-objectives">
+                        <h4>What You'll Learn</h4>
+                        <ul>
+                            <li>WPF data binding and XAML layouts</li>
+                            <li>MVVM architecture with commands</li>
+                            <li>Repository pattern for data access</li>
+                            <li>Sorting algorithms (by date, priority)</li>
+                            <li>Binary search for task lookup</li>
+                            <li>Git version control basics</li>
+                        </ul>
+                    </div>
+
+                    <h4>Architecture</h4>
+                    <div class="architecture">
+                        <div class="arch-flow">
+                            <div class="arch-box ui">
+                                <div class="arch-box-title">View</div>
+                                <div class="arch-box-sub">XAML/WPF</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box logic">
+                                <div class="arch-box-title">ViewModel</div>
+                                <div class="arch-box-sub">Commands/Properties</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box logic">
+                                <div class="arch-box-title">Services</div>
+                                <div class="arch-box-sub">Business Logic</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box data">
+                                <div class="arch-box-title">Repository</div>
+                                <div class="arch-box-sub">Data Access</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box infra">
+                                <div class="arch-box-title">SQLite</div>
+                                <div class="arch-box-sub">Database</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Implementation Steps</h4>
+
+                    <div class="step-card">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Set Up Project Structure</span>
+                        <div class="step-content">
+                            Create a new WPF project and organize folders: Models, ViewModels, Views, Services, Repositories, Data.
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Create the Task Model</span>
+                        <div class="step-content">
+                            Define the Task entity with properties for Id, Title, Description, DueDate, Priority, Category, IsCompleted.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Models/TaskItem.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">public</span> <span class="keyword">class</span> <span class="type">TaskItem</span>
+{
+    <span class="keyword">public</span> <span class="type">int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="type">string</span> Title { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">""</span>;
+    <span class="keyword">public</span> <span class="type">string</span> Description { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">""</span>;
+    <span class="keyword">public</span> <span class="type">DateTime</span> DueDate { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="type">Priority</span> Priority { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="type">string</span> Category { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">"General"</span>;
+    <span class="keyword">public</span> <span class="type">bool</span> IsCompleted { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="type">DateTime</span> CreatedAt { <span class="keyword">get</span>; <span class="keyword">set</span>; } = DateTime.Now;
+}
+
+<span class="keyword">public</span> <span class="keyword">enum</span> <span class="type">Priority</span> { Low, Medium, High, Urgent }</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Implement Repository Pattern</span>
+                        <div class="step-content">
+                            Create an interface and implementation for task data access.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Repositories/ITaskRepository.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">public</span> <span class="keyword">interface</span> <span class="type">ITaskRepository</span>
+{
+    Task&lt;List&lt;TaskItem&gt;&gt; <span class="function">GetAllAsync</span>();
+    Task&lt;TaskItem?&gt; <span class="function">GetByIdAsync</span>(<span class="type">int</span> id);
+    Task <span class="function">AddAsync</span>(TaskItem task);
+    Task <span class="function">UpdateAsync</span>(TaskItem task);
+    Task <span class="function">DeleteAsync</span>(<span class="type">int</span> id);
+    Task&lt;List&lt;TaskItem&gt;&gt; <span class="function">SearchAsync</span>(<span class="type">string</span> query);
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">SqliteTaskRepository</span> : <span class="type">ITaskRepository</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">string</span> _connectionString;
+
+    <span class="keyword">public</span> <span class="function">SqliteTaskRepository</span>(<span class="type">string</span> dbPath)
+    {
+        _connectionString = $<span class="string">"Data Source={dbPath}"</span>;
+        <span class="function">InitializeDatabase</span>();
+    }
+
+    <span class="keyword">public</span> <span class="keyword">async</span> Task&lt;List&lt;TaskItem&gt;&gt; <span class="function">GetAllAsync</span>()
+    {
+        <span class="comment">// Implementation with Dapper or raw SQL</span>
+        <span class="keyword">using var</span> connection = <span class="keyword">new</span> SqliteConnection(_connectionString);
+        <span class="keyword">return</span> (<span class="keyword">await</span> connection.<span class="function">QueryAsync</span>&lt;TaskItem&gt;(
+            <span class="string">"SELECT * FROM Tasks ORDER BY DueDate"</span>
+        )).<span class="function">ToList</span>();
+    }
+
+    <span class="comment">// ... other methods</span>
+}</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Create ViewModel with Sorting</span>
+                        <div class="step-content">
+                            Implement the main ViewModel with sorting algorithms for task ordering.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">ViewModels/TaskListViewModel.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">public</span> <span class="keyword">class</span> <span class="type">TaskListViewModel</span> : <span class="type">ObservableObject</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">ITaskRepository</span> _repository;
+    <span class="keyword">private</span> ObservableCollection&lt;TaskItem&gt; _tasks = <span class="keyword">new</span>();
+    <span class="keyword">private</span> <span class="type">string</span> _sortBy = <span class="string">"DueDate"</span>;
+
+    <span class="keyword">public</span> ObservableCollection&lt;TaskItem&gt; Tasks
+    {
+        <span class="keyword">get</span> => _tasks;
+        <span class="keyword">set</span> => <span class="function">SetProperty</span>(<span class="keyword">ref</span> _tasks, value);
+    }
+
+    <span class="keyword">public</span> <span class="type">ICommand</span> SortByDateCommand { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="type">ICommand</span> SortByPriorityCommand { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="type">ICommand</span> AddTaskCommand { <span class="keyword">get</span>; }
+
+    <span class="keyword">public</span> <span class="function">TaskListViewModel</span>(<span class="type">ITaskRepository</span> repository)
+    {
+        _repository = repository;
+        SortByDateCommand = <span class="keyword">new</span> <span class="type">RelayCommand</span>(() => <span class="function">SortTasks</span>(<span class="string">"DueDate"</span>));
+        SortByPriorityCommand = <span class="keyword">new</span> <span class="type">RelayCommand</span>(() => <span class="function">SortTasks</span>(<span class="string">"Priority"</span>));
+    }
+
+    <span class="comment">// QuickSort implementation for sorting tasks</span>
+    <span class="keyword">private void</span> <span class="function">SortTasks</span>(<span class="type">string</span> sortBy)
+    {
+        <span class="keyword">var</span> taskList = Tasks.<span class="function">ToList</span>();
+        <span class="function">QuickSort</span>(taskList, <span class="number">0</span>, taskList.Count - <span class="number">1</span>, sortBy);
+        Tasks = <span class="keyword">new</span> ObservableCollection&lt;TaskItem&gt;(taskList);
+    }
+
+    <span class="keyword">private void</span> <span class="function">QuickSort</span>(List&lt;TaskItem&gt; tasks, <span class="type">int</span> low, <span class="type">int</span> high, <span class="type">string</span> sortBy)
+    {
+        <span class="keyword">if</span> (low < high)
+        {
+            <span class="type">int</span> pivotIndex = <span class="function">Partition</span>(tasks, low, high, sortBy);
+            <span class="function">QuickSort</span>(tasks, low, pivotIndex - <span class="number">1</span>, sortBy);
+            <span class="function">QuickSort</span>(tasks, pivotIndex + <span class="number">1</span>, high, sortBy);
+        }
+    }
+
+    <span class="keyword">private int</span> <span class="function">Partition</span>(List&lt;TaskItem&gt; tasks, <span class="type">int</span> low, <span class="type">int</span> high, <span class="type">string</span> sortBy)
+    {
+        <span class="keyword">var</span> pivot = tasks[high];
+        <span class="type">int</span> i = low - <span class="number">1</span>;
+
+        <span class="keyword">for</span> (<span class="type">int</span> j = low; j < high; j++)
+        {
+            <span class="type">bool</span> shouldSwap = sortBy <span class="keyword">switch</span>
+            {
+                <span class="string">"DueDate"</span> => tasks[j].DueDate < pivot.DueDate,
+                <span class="string">"Priority"</span> => tasks[j].Priority > pivot.Priority,
+                _ => <span class="keyword">false</span>
+            };
+
+            <span class="keyword">if</span> (shouldSwap)
+            {
+                i++;
+                (tasks[i], tasks[j]) = (tasks[j], tasks[i]);
+            }
+        }
+
+        (tasks[i + <span class="number">1</span>], tasks[high]) = (tasks[high], tasks[i + <span class="number">1</span>]);
+        <span class="keyword">return</span> i + <span class="number">1</span>;
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Build the UI</span>
+                        <div class="step-content">
+                            Create XAML views for task list, task details, and add/edit forms.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Views/MainWindow.xaml</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">&lt;Window</span> x:Class=<span class="string">"TaskFlow.MainWindow"</span>
+        xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
+        Title=<span class="string">"TaskFlow"</span> Height=<span class="string">"600"</span> Width=<span class="string">"900"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;Grid&gt;</span>
+        <span class="keyword">&lt;Grid.ColumnDefinitions&gt;</span>
+            <span class="keyword">&lt;ColumnDefinition</span> Width=<span class="string">"250"</span><span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;ColumnDefinition</span> Width=<span class="string">"*"</span><span class="keyword">/&gt;</span>
+        <span class="keyword">&lt;/Grid.ColumnDefinitions&gt;</span>
+
+        <span class="comment">&lt;!-- Sidebar with categories --&gt;</span>
+        <span class="keyword">&lt;Border</span> Grid.Column=<span class="string">"0"</span> Background=<span class="string">"#1a1a2e"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;StackPanel</span> Margin=<span class="string">"15"</span><span class="keyword">&gt;</span>
+                <span class="keyword">&lt;TextBlock</span> Text=<span class="string">"TaskFlow"</span> FontSize=<span class="string">"24"</span>
+                           Foreground=<span class="string">"#fbbf24"</span> FontWeight=<span class="string">"Bold"</span><span class="keyword">/&gt;</span>
+                <span class="keyword">&lt;Button</span> Content=<span class="string">"+ New Task"</span>
+                        Command=<span class="string">"{Binding AddTaskCommand}"</span> Margin=<span class="string">"0,20,0,0"</span><span class="keyword">/&gt;</span>
+                <span class="keyword">&lt;StackPanel</span> Orientation=<span class="string">"Horizontal"</span> Margin=<span class="string">"0,20,0,0"</span><span class="keyword">&gt;</span>
+                    <span class="keyword">&lt;Button</span> Content=<span class="string">"Date"</span> Command=<span class="string">"{Binding SortByDateCommand}"</span><span class="keyword">/&gt;</span>
+                    <span class="keyword">&lt;Button</span> Content=<span class="string">"Priority"</span> Command=<span class="string">"{Binding SortByPriorityCommand}"</span><span class="keyword">/&gt;</span>
+                <span class="keyword">&lt;/StackPanel&gt;</span>
+            <span class="keyword">&lt;/StackPanel&gt;</span>
+        <span class="keyword">&lt;/Border&gt;</span>
+
+        <span class="comment">&lt;!-- Task List --&gt;</span>
+        <span class="keyword">&lt;ListView</span> Grid.Column=<span class="string">"1"</span> ItemsSource=<span class="string">"{Binding Tasks}"</span>
+                  SelectedItem=<span class="string">"{Binding SelectedTask}"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;ListView.ItemTemplate&gt;</span>
+                <span class="keyword">&lt;DataTemplate&gt;</span>
+                    <span class="keyword">&lt;Border</span> Padding=<span class="string">"15"</span> Margin=<span class="string">"5"</span> CornerRadius=<span class="string">"8"</span><span class="keyword">&gt;</span>
+                        <span class="keyword">&lt;StackPanel&gt;</span>
+                            <span class="keyword">&lt;TextBlock</span> Text=<span class="string">"{Binding Title}"</span> FontSize=<span class="string">"16"</span><span class="keyword">/&gt;</span>
+                            <span class="keyword">&lt;TextBlock</span> Text=<span class="string">"{Binding DueDate, StringFormat=Due: {0:MMM dd}}"</span><span class="keyword">/&gt;</span>
+                        <span class="keyword">&lt;/StackPanel&gt;</span>
+                    <span class="keyword">&lt;/Border&gt;</span>
+                <span class="keyword">&lt;/DataTemplate&gt;</span>
+            <span class="keyword">&lt;/ListView.ItemTemplate&gt;</span>
+        <span class="keyword">&lt;/ListView&gt;</span>
+    <span class="keyword">&lt;/Grid&gt;</span>
+<span class="keyword">&lt;/Window&gt;</span></code></pre>
+                    </div>
+
+                    <h4>Challenges (Optional Extensions)</h4>
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Add task filtering by category and status</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Implement drag-and-drop task reordering</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Add notification reminders for due dates</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Export tasks to JSON/CSV</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Add dark/light theme toggle</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project 2: Algorithm Visualizer -->
+            <section id="project-2">
+                <h2><span class="section-number">04</span>Project 2: Algorithm Visualizer</h2>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">📊</div>
+                        <div class="project-info">
+                            <h3 class="project-title">AlgoViz - Interactive Algorithm Visualizer</h3>
+                            <p class="project-subtitle">A Blazor WebAssembly app that visualizes sorting and graph algorithms step-by-step</p>
+                        </div>
+                        <span class="difficulty intermediate">Intermediate</span>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">Blazor WASM</span>
+                        <span class="tech-tag">Strategy Pattern</span>
+                        <span class="tech-tag">Observer Pattern</span>
+                        <span class="tech-tag">CSS Animations</span>
+                    </div>
+
+                    <div class="learning-objectives">
+                        <h4>What You'll Learn</h4>
+                        <ul>
+                            <li>All major sorting algorithms (Bubble, Merge, Quick, Heap)</li>
+                            <li>Graph traversal (BFS, DFS)</li>
+                            <li>Strategy pattern for swappable algorithms</li>
+                            <li>Observer pattern for UI updates</li>
+                            <li>Async/await with visualization delays</li>
+                            <li>Blazor component architecture</li>
+                        </ul>
+                    </div>
+
+                    <h4>Architecture</h4>
+                    <div class="architecture">
+                        <div class="arch-flow">
+                            <div class="arch-box ui">
+                                <div class="arch-box-title">Blazor Components</div>
+                                <div class="arch-box-sub">UI/Visualization</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box logic">
+                                <div class="arch-box-title">Algorithm Service</div>
+                                <div class="arch-box-sub">Strategy Pattern</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box logic">
+                                <div class="arch-box-title">State Manager</div>
+                                <div class="arch-box-sub">Observer Pattern</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Algorithms/ISortingAlgorithm.cs (Strategy Pattern)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment">// Strategy interface</span>
+<span class="keyword">public</span> <span class="keyword">interface</span> <span class="type">ISortingAlgorithm</span>
+{
+    <span class="type">string</span> Name { <span class="keyword">get</span>; }
+    <span class="type">string</span> TimeComplexity { <span class="keyword">get</span>; }
+    <span class="type">string</span> SpaceComplexity { <span class="keyword">get</span>; }
+    IAsyncEnumerable&lt;SortStep&gt; <span class="function">Sort</span>(<span class="type">int</span>[] array);
+}
+
+<span class="comment">// Visualization step</span>
+<span class="keyword">public</span> <span class="keyword">record</span> <span class="type">SortStep</span>(
+    <span class="type">int</span>[] Array,
+    <span class="type">int</span> CompareIndex1,
+    <span class="type">int</span> CompareIndex2,
+    <span class="type">bool</span> IsSwap,
+    <span class="type">string</span> Description
+);
+
+<span class="comment">// Bubble Sort implementation</span>
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">BubbleSort</span> : <span class="type">ISortingAlgorithm</span>
+{
+    <span class="keyword">public</span> <span class="type">string</span> Name => <span class="string">"Bubble Sort"</span>;
+    <span class="keyword">public</span> <span class="type">string</span> TimeComplexity => <span class="string">"O(n²)"</span>;
+    <span class="keyword">public</span> <span class="type">string</span> SpaceComplexity => <span class="string">"O(1)"</span>;
+
+    <span class="keyword">public</span> <span class="keyword">async</span> IAsyncEnumerable&lt;SortStep&gt; <span class="function">Sort</span>(<span class="type">int</span>[] array)
+    {
+        <span class="type">int</span> n = array.Length;
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i < n - <span class="number">1</span>; i++)
+        {
+            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j < n - i - <span class="number">1</span>; j++)
+            {
+                <span class="comment">// Yield comparison step</span>
+                <span class="keyword">yield return new</span> <span class="type">SortStep</span>(
+                    array.<span class="function">ToArray</span>(), j, j + <span class="number">1</span>, <span class="keyword">false</span>,
+                    $<span class="string">"Comparing {array[j]} and {array[j + 1]}"</span>
+                );
+
+                <span class="keyword">if</span> (array[j] > array[j + <span class="number">1</span>])
+                {
+                    (array[j], array[j + <span class="number">1</span>]) = (array[j + <span class="number">1</span>], array[j]);
+
+                    <span class="comment">// Yield swap step</span>
+                    <span class="keyword">yield return new</span> <span class="type">SortStep</span>(
+                        array.<span class="function">ToArray</span>(), j, j + <span class="number">1</span>, <span class="keyword">true</span>,
+                        $<span class="string">"Swapped! {array[j + 1]} > {array[j]}"</span>
+                    );
+                }
+            }
+        }
+    }
+}
+
+<span class="comment">// Quick Sort implementation</span>
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">QuickSort</span> : <span class="type">ISortingAlgorithm</span>
+{
+    <span class="keyword">public</span> <span class="type">string</span> Name => <span class="string">"Quick Sort"</span>;
+    <span class="keyword">public</span> <span class="type">string</span> TimeComplexity => <span class="string">"O(n log n)"</span>;
+    <span class="keyword">public</span> <span class="type">string</span> SpaceComplexity => <span class="string">"O(log n)"</span>;
+
+    <span class="keyword">public</span> <span class="keyword">async</span> IAsyncEnumerable&lt;SortStep&gt; <span class="function">Sort</span>(<span class="type">int</span>[] array)
+    {
+        <span class="keyword">await foreach</span> (<span class="keyword">var</span> step <span class="keyword">in</span> <span class="function">QuickSortHelper</span>(array, <span class="number">0</span>, array.Length - <span class="number">1</span>))
+        {
+            <span class="keyword">yield return</span> step;
+        }
+    }
+
+    <span class="keyword">private</span> <span class="keyword">async</span> IAsyncEnumerable&lt;SortStep&gt; <span class="function">QuickSortHelper</span>(<span class="type">int</span>[] arr, <span class="type">int</span> low, <span class="type">int</span> high)
+    {
+        <span class="keyword">if</span> (low < high)
+        {
+            <span class="type">int</span> pivotIndex = low;
+            <span class="keyword">await foreach</span> (<span class="keyword">var</span> step <span class="keyword">in</span> <span class="function">Partition</span>(arr, low, high))
+            {
+                pivotIndex = step.CompareIndex1; <span class="comment">// Final pivot position</span>
+                <span class="keyword">yield return</span> step;
+            }
+
+            <span class="keyword">await foreach</span> (<span class="keyword">var</span> step <span class="keyword">in</span> <span class="function">QuickSortHelper</span>(arr, low, pivotIndex - <span class="number">1</span>))
+                <span class="keyword">yield return</span> step;
+            <span class="keyword">await foreach</span> (<span class="keyword">var</span> step <span class="keyword">in</span> <span class="function">QuickSortHelper</span>(arr, pivotIndex + <span class="number">1</span>, high))
+                <span class="keyword">yield return</span> step;
+        }
+    }
+    <span class="comment">// ... Partition implementation</span>
+}</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Components/SortVisualizer.razor</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">@page</span> <span class="string">"/sort"</span>
+
+<span class="keyword">&lt;div</span> class=<span class="string">"visualizer"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;div</span> class=<span class="string">"controls"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;select</span> @bind=<span class="string">"_selectedAlgorithm"</span><span class="keyword">&gt;</span>
+            <span class="keyword">@foreach</span> (var algo in _algorithms)
+            {
+                <span class="keyword">&lt;option</span> value=<span class="string">"@algo.Name"</span><span class="keyword">&gt;</span>@algo.Name<span class="keyword">&lt;/option&gt;</span>
+            }
+        <span class="keyword">&lt;/select&gt;</span>
+        <span class="keyword">&lt;button</span> @onclick=<span class="string">"StartSort"</span> disabled=<span class="string">"@_isRunning"</span><span class="keyword">&gt;</span>Start<span class="keyword">&lt;/button&gt;</span>
+        <span class="keyword">&lt;button</span> @onclick=<span class="string">"Reset"</span><span class="keyword">&gt;</span>Reset<span class="keyword">&lt;/button&gt;</span>
+        <span class="keyword">&lt;input</span> type=<span class="string">"range"</span> min=<span class="string">"10"</span> max=<span class="string">"500"</span> @bind=<span class="string">"_delay"</span><span class="keyword">/&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+
+    <span class="keyword">&lt;div</span> class=<span class="string">"bars-container"</span><span class="keyword">&gt;</span>
+        <span class="keyword">@for</span> (int i = 0; i < _array.Length; i++)
+        {
+            <span class="keyword">var</span> index = i;
+            <span class="keyword">&lt;div</span> class=<span class="string">"bar @GetBarClass(index)"</span>
+                 style=<span class="string">"height: @(_array[index] * 3)px"</span><span class="keyword">&gt;&lt;/div&gt;</span>
+        }
+    <span class="keyword">&lt;/div&gt;</span>
+
+    <span class="keyword">&lt;div</span> class=<span class="string">"info"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;p&gt;</span>@_currentStep<span class="keyword">&lt;/p&gt;</span>
+        <span class="keyword">&lt;p&gt;</span>Comparisons: @_comparisons | Swaps: @_swaps<span class="keyword">&lt;/p&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+<span class="keyword">&lt;/div&gt;</span>
+
+<span class="keyword">@code</span> {
+    <span class="keyword">private</span> <span class="type">int</span>[] _array = <span class="keyword">new</span> <span class="type">int</span>[<span class="number">50</span>];
+    <span class="keyword">private</span> <span class="type">int</span> _compareIndex1 = -<span class="number">1</span>;
+    <span class="keyword">private</span> <span class="type">int</span> _compareIndex2 = -<span class="number">1</span>;
+    <span class="keyword">private</span> <span class="type">bool</span> _isRunning = <span class="keyword">false</span>;
+    <span class="keyword">private</span> <span class="type">int</span> _delay = <span class="number">50</span>;
+    <span class="keyword">private</span> <span class="type">int</span> _comparisons = <span class="number">0</span>;
+    <span class="keyword">private</span> <span class="type">int</span> _swaps = <span class="number">0</span>;
+    <span class="keyword">private</span> <span class="type">string</span> _currentStep = <span class="string">""</span>;
+
+    <span class="keyword">private</span> List&lt;ISortingAlgorithm&gt; _algorithms = <span class="keyword">new</span>()
+    {
+        <span class="keyword">new</span> <span class="type">BubbleSort</span>(),
+        <span class="keyword">new</span> <span class="type">QuickSort</span>(),
+        <span class="keyword">new</span> <span class="type">MergeSort</span>(),
+        <span class="keyword">new</span> <span class="type">HeapSort</span>()
+    };
+
+    <span class="keyword">private async</span> Task <span class="function">StartSort</span>()
+    {
+        _isRunning = <span class="keyword">true</span>;
+        <span class="keyword">var</span> algorithm = _algorithms.<span class="function">First</span>(a => a.Name == _selectedAlgorithm);
+
+        <span class="keyword">await foreach</span> (<span class="keyword">var</span> step <span class="keyword">in</span> algorithm.<span class="function">Sort</span>(_array))
+        {
+            _array = step.Array;
+            _compareIndex1 = step.CompareIndex1;
+            _compareIndex2 = step.CompareIndex2;
+            _currentStep = step.Description;
+
+            <span class="keyword">if</span> (step.IsSwap) _swaps++;
+            <span class="keyword">else</span> _comparisons++;
+
+            <span class="function">StateHasChanged</span>();
+            <span class="keyword">await</span> Task.<span class="function">Delay</span>(_delay);
+        }
+        _isRunning = <span class="keyword">false</span>;
+    }
+
+    <span class="keyword">private string</span> <span class="function">GetBarClass</span>(<span class="type">int</span> index)
+    {
+        <span class="keyword">if</span> (index == _compareIndex1 || index == _compareIndex2)
+            <span class="keyword">return</span> <span class="string">"comparing"</span>;
+        <span class="keyword">return</span> <span class="string">""</span>;
+    }
+}</code></pre>
+                    </div>
+
+                    <h4>Challenges</h4>
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Add graph visualization with BFS/DFS</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Implement pathfinding algorithms (Dijkstra, A*)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Add algorithm comparison mode (side-by-side)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-box"></div>
+                            <span class="checklist-text">Create step-by-step explanation panel</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project 3: Expense Tracker -->
+            <section id="project-3">
+                <h2><span class="section-number">05</span>Project 3: Expense Tracker</h2>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">💰</div>
+                        <div class="project-info">
+                            <h3 class="project-title">MoneyWise - Personal Finance Tracker</h3>
+                            <p class="project-subtitle">A WinUI 3 app for tracking expenses, budgets, and financial goals with charts and reports</p>
+                        </div>
+                        <span class="difficulty intermediate">Intermediate</span>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">WinUI 3</span>
+                        <span class="tech-tag">MVVM</span>
+                        <span class="tech-tag">Entity Framework</span>
+                        <span class="tech-tag">Dependency Injection</span>
+                        <span class="tech-tag">Factory Pattern</span>
+                    </div>
+
+                    <div class="learning-objectives">
+                        <h4>What You'll Learn</h4>
+                        <ul>
+                            <li>WinUI 3 modern UI development</li>
+                            <li>SOLID principles in practice</li>
+                            <li>Dependency Injection with Microsoft.Extensions</li>
+                            <li>Factory pattern for report generation</li>
+                            <li>Hash tables for category lookups</li>
+                            <li>Binary search trees for date-range queries</li>
+                            <li>Docker for database containerization</li>
+                        </ul>
+                    </div>
+
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Add/edit/delete transactions</li>
+                        <li>Categorize expenses (Food, Transport, Entertainment, etc.)</li>
+                        <li>Monthly budget tracking with alerts</li>
+                        <li>Visual reports and charts</li>
+                        <li>Export to PDF/Excel</li>
+                    </ul>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Services/DependencyInjection.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">public static class</span> <span class="type">ServiceCollectionExtensions</span>
+{
+    <span class="keyword">public static</span> IServiceCollection <span class="function">AddMoneyWiseServices</span>(
+        <span class="keyword">this</span> IServiceCollection services)
+    {
+        <span class="comment">// Database</span>
+        services.<span class="function">AddDbContext</span>&lt;AppDbContext&gt;(options =>
+            options.<span class="function">UseSqlite</span>(<span class="string">"Data Source=moneywise.db"</span>));
+
+        <span class="comment">// Repositories (Interface Segregation)</span>
+        services.<span class="function">AddScoped</span>&lt;ITransactionRepository, TransactionRepository&gt;();
+        services.<span class="function">AddScoped</span>&lt;ICategoryRepository, CategoryRepository&gt;();
+        services.<span class="function">AddScoped</span>&lt;IBudgetRepository, BudgetRepository&gt;();
+
+        <span class="comment">// Services (Single Responsibility)</span>
+        services.<span class="function">AddScoped</span>&lt;ITransactionService, TransactionService&gt;();
+        services.<span class="function">AddScoped</span>&lt;IBudgetService, BudgetService&gt;();
+        services.<span class="function">AddScoped</span>&lt;IReportService, ReportService&gt;();
+
+        <span class="comment">// Factory for reports (Factory Pattern)</span>
+        services.<span class="function">AddSingleton</span>&lt;IReportFactory, ReportFactory&gt;();
+
+        <span class="comment">// ViewModels</span>
+        services.<span class="function">AddTransient</span>&lt;DashboardViewModel&gt;();
+        services.<span class="function">AddTransient</span>&lt;TransactionsViewModel&gt;();
+        services.<span class="function">AddTransient</span>&lt;ReportsViewModel&gt;();
+
+        <span class="keyword">return</span> services;
+    }
+}
+
+<span class="comment">// Factory Pattern for Report Generation</span>
+<span class="keyword">public</span> <span class="keyword">interface</span> <span class="type">IReportFactory</span>
+{
+    <span class="type">IReport</span> <span class="function">CreateReport</span>(<span class="type">ReportType</span> type);
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">ReportFactory</span> : <span class="type">IReportFactory</span>
+{
+    <span class="keyword">public</span> <span class="type">IReport</span> <span class="function">CreateReport</span>(<span class="type">ReportType</span> type) => type <span class="keyword">switch</span>
+    {
+        <span class="type">ReportType</span>.Monthly => <span class="keyword">new</span> <span class="type">MonthlyReport</span>(),
+        <span class="type">ReportType</span>.Category => <span class="keyword">new</span> <span class="type">CategoryReport</span>(),
+        <span class="type">ReportType</span>.Yearly => <span class="keyword">new</span> <span class="type">YearlyReport</span>(),
+        <span class="type">ReportType</span>.Budget => <span class="keyword">new</span> <span class="type">BudgetComparisonReport</span>(),
+        _ => <span class="keyword">throw new</span> <span class="type">ArgumentException</span>(<span class="string">"Unknown report type"</span>)
+    };
+}</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">DataStructures/CategoryLookup.cs (Hash Table)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment">// Using Dictionary as Hash Table for O(1) category lookups</span>
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">CategoryLookup</span>
+{
+    <span class="keyword">private readonly</span> Dictionary&lt;<span class="type">string</span>, Category&gt; _categories = <span class="keyword">new</span>();
+    <span class="keyword">private readonly</span> Dictionary&lt;<span class="type">string</span>, List&lt;Transaction&gt;&gt; _transactionsByCategory = <span class="keyword">new</span>();
+
+    <span class="keyword">public void</span> <span class="function">AddCategory</span>(Category category)
+    {
+        _categories[category.Name.<span class="function">ToLower</span>()] = category;
+        _transactionsByCategory[category.Name.<span class="function">ToLower</span>()] = <span class="keyword">new</span> List&lt;Transaction&gt;();
+    }
+
+    <span class="keyword">public</span> Category? <span class="function">GetCategory</span>(<span class="type">string</span> name)
+    {
+        <span class="comment">// O(1) average lookup</span>
+        <span class="keyword">return</span> _categories.<span class="function">TryGetValue</span>(name.<span class="function">ToLower</span>(), <span class="keyword">out var</span> category)
+            ? category : <span class="keyword">null</span>;
+    }
+
+    <span class="keyword">public</span> <span class="type">decimal</span> <span class="function">GetTotalByCategory</span>(<span class="type">string</span> categoryName)
+    {
+        <span class="keyword">if</span> (_transactionsByCategory.<span class="function">TryGetValue</span>(categoryName.<span class="function">ToLower</span>(), <span class="keyword">out var</span> transactions))
+        {
+            <span class="keyword">return</span> transactions.<span class="function">Sum</span>(t => t.Amount);
+        }
+        <span class="keyword">return</span> <span class="number">0</span>;
+    }
+}</code></pre>
+                    </div>
+
+                    <h4>Docker Setup for Database</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">docker-compose.yml</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">version</span>: <span class="string">'3.8'</span>
+<span class="keyword">services</span>:
+  <span class="function">postgres</span>:
+    <span class="keyword">image</span>: postgres:<span class="number">15</span>
+    <span class="keyword">environment</span>:
+      <span class="type">POSTGRES_DB</span>: moneywise
+      <span class="type">POSTGRES_USER</span>: admin
+      <span class="type">POSTGRES_PASSWORD</span>: secret123
+    <span class="keyword">ports</span>:
+      - <span class="string">"5432:5432"</span>
+    <span class="keyword">volumes</span>:
+      - postgres_data:/var/lib/postgresql/data
+
+  <span class="function">pgadmin</span>:
+    <span class="keyword">image</span>: dpage/pgadmin4
+    <span class="keyword">environment</span>:
+      <span class="type">PGADMIN_DEFAULT_EMAIL</span>: admin@local.com
+      <span class="type">PGADMIN_DEFAULT_PASSWORD</span>: admin
+    <span class="keyword">ports</span>:
+      - <span class="string">"5050:80"</span>
+    <span class="keyword">depends_on</span>:
+      - postgres
+
+<span class="keyword">volumes</span>:
+  <span class="function">postgres_data</span>:</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project 4: Code Snippet Manager -->
+            <section id="project-4">
+                <h2><span class="section-number">06</span>Project 4: Code Snippet Manager</h2>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">📝</div>
+                        <div class="project-info">
+                            <h3 class="project-title">SnippetVault - Code Snippet Manager</h3>
+                            <p class="project-subtitle">A full-stack app combining WPF desktop client with Blazor web interface for managing code snippets</p>
+                        </div>
+                        <span class="difficulty advanced">Advanced</span>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">WPF</span>
+                        <span class="tech-tag">Blazor Server</span>
+                        <span class="tech-tag">ASP.NET Core API</span>
+                        <span class="tech-tag">Command Pattern</span>
+                        <span class="tech-tag">Decorator Pattern</span>
+                        <span class="tech-tag">Docker Compose</span>
+                    </div>
+
+                    <div class="learning-objectives">
+                        <h4>What You'll Learn</h4>
+                        <ul>
+                            <li>Full-stack architecture with shared backend</li>
+                            <li>Command pattern for undo/redo functionality</li>
+                            <li>Decorator pattern for syntax highlighting</li>
+                            <li>Trie data structure for autocomplete</li>
+                            <li>REST API design</li>
+                            <li>Docker Compose for multi-container setup</li>
+                        </ul>
+                    </div>
+
+                    <h4>Architecture</h4>
+                    <div class="architecture">
+                        <div class="arch-flow">
+                            <div class="arch-box ui">
+                                <div class="arch-box-title">WPF Client</div>
+                                <div class="arch-box-sub">Desktop</div>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-box logic">
+                                <div class="arch-box-title">REST API</div>
+                                <div class="arch-box-sub">ASP.NET Core</div>
+                            </div>
+                            <span class="arch-arrow">←</span>
+                            <div class="arch-box ui">
+                                <div class="arch-box-title">Blazor Web</div>
+                                <div class="arch-box-sub">Browser</div>
+                            </div>
+                        </div>
+                        <div class="arch-flow" style="margin-top: 1rem;">
+                            <span class="arch-arrow">↓</span>
+                        </div>
+                        <div class="arch-flow">
+                            <div class="arch-box data">
+                                <div class="arch-box-title">PostgreSQL</div>
+                                <div class="arch-box-sub">Database</div>
+                            </div>
+                            <div class="arch-box infra">
+                                <div class="arch-box-title">Redis</div>
+                                <div class="arch-box-sub">Cache</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Patterns/CommandPattern.cs (Undo/Redo)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment">// Command interface</span>
+<span class="keyword">public</span> <span class="keyword">interface</span> <span class="type">ICommand</span>
+{
+    <span class="keyword">void</span> <span class="function">Execute</span>();
+    <span class="keyword">void</span> <span class="function">Undo</span>();
+    <span class="type">string</span> Description { <span class="keyword">get</span>; }
+}
+
+<span class="comment">// Add snippet command</span>
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">AddSnippetCommand</span> : <span class="type">ICommand</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">ISnippetRepository</span> _repository;
+    <span class="keyword">private readonly</span> <span class="type">Snippet</span> _snippet;
+
+    <span class="keyword">public</span> <span class="type">string</span> Description => $<span class="string">"Add snippet: {_snippet.Title}"</span>;
+
+    <span class="keyword">public</span> <span class="function">AddSnippetCommand</span>(<span class="type">ISnippetRepository</span> repository, <span class="type">Snippet</span> snippet)
+    {
+        _repository = repository;
+        _snippet = snippet;
+    }
+
+    <span class="keyword">public void</span> <span class="function">Execute</span>() => _repository.<span class="function">Add</span>(_snippet);
+    <span class="keyword">public void</span> <span class="function">Undo</span>() => _repository.<span class="function">Delete</span>(_snippet.Id);
+}
+
+<span class="comment">// Edit snippet command</span>
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">EditSnippetCommand</span> : <span class="type">ICommand</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">ISnippetRepository</span> _repository;
+    <span class="keyword">private readonly</span> <span class="type">Snippet</span> _newState;
+    <span class="keyword">private</span> <span class="type">Snippet</span> _previousState;
+
+    <span class="keyword">public</span> <span class="type">string</span> Description => $<span class="string">"Edit snippet: {_newState.Title}"</span>;
+
+    <span class="keyword">public void</span> <span class="function">Execute</span>()
+    {
+        _previousState = _repository.<span class="function">GetById</span>(_newState.Id).<span class="function">Clone</span>();
+        _repository.<span class="function">Update</span>(_newState);
+    }
+
+    <span class="keyword">public void</span> <span class="function">Undo</span>() => _repository.<span class="function">Update</span>(_previousState);
+}
+
+<span class="comment">// Command history manager</span>
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">CommandHistory</span>
+{
+    <span class="keyword">private readonly</span> Stack&lt;ICommand&gt; _undoStack = <span class="keyword">new</span>();
+    <span class="keyword">private readonly</span> Stack&lt;ICommand&gt; _redoStack = <span class="keyword">new</span>();
+
+    <span class="keyword">public</span> <span class="type">bool</span> CanUndo => _undoStack.Count > <span class="number">0</span>;
+    <span class="keyword">public</span> <span class="type">bool</span> CanRedo => _redoStack.Count > <span class="number">0</span>;
+
+    <span class="keyword">public void</span> <span class="function">Execute</span>(<span class="type">ICommand</span> command)
+    {
+        command.<span class="function">Execute</span>();
+        _undoStack.<span class="function">Push</span>(command);
+        _redoStack.<span class="function">Clear</span>(); <span class="comment">// Clear redo after new action</span>
+    }
+
+    <span class="keyword">public void</span> <span class="function">Undo</span>()
+    {
+        <span class="keyword">if</span> (!CanUndo) <span class="keyword">return</span>;
+        <span class="keyword">var</span> command = _undoStack.<span class="function">Pop</span>();
+        command.<span class="function">Undo</span>();
+        _redoStack.<span class="function">Push</span>(command);
+    }
+
+    <span class="keyword">public void</span> <span class="function">Redo</span>()
+    {
+        <span class="keyword">if</span> (!CanRedo) <span class="keyword">return</span>;
+        <span class="keyword">var</span> command = _redoStack.<span class="function">Pop</span>();
+        command.<span class="function">Execute</span>();
+        _undoStack.<span class="function">Push</span>(command);
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">DataStructures/Trie.cs (Autocomplete)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment">// Trie for fast prefix-based autocomplete</span>
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">TrieNode</span>
+{
+    <span class="keyword">public</span> Dictionary&lt;<span class="type">char</span>, TrieNode&gt; Children { <span class="keyword">get</span>; } = <span class="keyword">new</span>();
+    <span class="keyword">public</span> <span class="type">bool</span> IsEndOfWord { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="type">Snippet</span>? Snippet { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">SnippetTrie</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">TrieNode</span> _root = <span class="keyword">new</span>();
+
+    <span class="keyword">public void</span> <span class="function">Insert</span>(<span class="type">Snippet</span> snippet)
+    {
+        <span class="keyword">var</span> node = _root;
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> c <span class="keyword">in</span> snippet.Title.<span class="function">ToLower</span>())
+        {
+            <span class="keyword">if</span> (!node.Children.<span class="function">ContainsKey</span>(c))
+                node.Children[c] = <span class="keyword">new</span> <span class="type">TrieNode</span>();
+            node = node.Children[c];
+        }
+        node.IsEndOfWord = <span class="keyword">true</span>;
+        node.Snippet = snippet;
+    }
+
+    <span class="keyword">public</span> List&lt;Snippet&gt; <span class="function">Search</span>(<span class="type">string</span> prefix, <span class="type">int</span> maxResults = <span class="number">10</span>)
+    {
+        <span class="keyword">var</span> results = <span class="keyword">new</span> List&lt;Snippet&gt;();
+        <span class="keyword">var</span> node = _root;
+
+        <span class="comment">// Navigate to prefix node</span>
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> c <span class="keyword">in</span> prefix.<span class="function">ToLower</span>())
+        {
+            <span class="keyword">if</span> (!node.Children.<span class="function">ContainsKey</span>(c))
+                <span class="keyword">return</span> results; <span class="comment">// No matches</span>
+            node = node.Children[c];
+        }
+
+        <span class="comment">// DFS to find all words with this prefix</span>
+        <span class="function">CollectSnippets</span>(node, results, maxResults);
+        <span class="keyword">return</span> results;
+    }
+
+    <span class="keyword">private void</span> <span class="function">CollectSnippets</span>(<span class="type">TrieNode</span> node, List&lt;Snippet&gt; results, <span class="type">int</span> max)
+    {
+        <span class="keyword">if</span> (results.Count >= max) <span class="keyword">return</span>;
+
+        <span class="keyword">if</span> (node.IsEndOfWord && node.Snippet != <span class="keyword">null</span>)
+            results.<span class="function">Add</span>(node.Snippet);
+
+        <span class="keyword">foreach</span> (<span class="keyword">var</span> child <span class="keyword">in</span> node.Children.Values)
+            <span class="function">CollectSnippets</span>(child, results, max);
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">docker-compose.yml (Multi-container)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">version</span>: <span class="string">'3.8'</span>
+
+<span class="keyword">services</span>:
+  <span class="function">api</span>:
+    <span class="keyword">build</span>: ./SnippetVault.API
+    <span class="keyword">ports</span>:
+      - <span class="string">"5000:80"</span>
+    <span class="keyword">environment</span>:
+      - <span class="type">ConnectionStrings__Default</span>=Host=postgres;Database=snippets;Username=admin;Password=secret
+      - <span class="type">Redis__Connection</span>=redis:6379
+    <span class="keyword">depends_on</span>:
+      - postgres
+      - redis
+
+  <span class="function">web</span>:
+    <span class="keyword">build</span>: ./SnippetVault.Web
+    <span class="keyword">ports</span>:
+      - <span class="string">"5001:80"</span>
+    <span class="keyword">environment</span>:
+      - <span class="type">ApiBaseUrl</span>=http://api:80
+    <span class="keyword">depends_on</span>:
+      - api
+
+  <span class="function">postgres</span>:
+    <span class="keyword">image</span>: postgres:<span class="number">15</span>
+    <span class="keyword">environment</span>:
+      <span class="type">POSTGRES_DB</span>: snippets
+      <span class="type">POSTGRES_USER</span>: admin
+      <span class="type">POSTGRES_PASSWORD</span>: secret
+    <span class="keyword">volumes</span>:
+      - postgres_data:/var/lib/postgresql/data
+
+  <span class="function">redis</span>:
+    <span class="keyword">image</span>: redis:<span class="number">7</span>-alpine
+    <span class="keyword">ports</span>:
+      - <span class="string">"6379:6379"</span>
+
+<span class="keyword">volumes</span>:
+  <span class="function">postgres_data</span>:</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project 5: Chat App -->
+            <section id="project-5">
+                <h2><span class="section-number">07</span>Project 5: Real-time Chat Application</h2>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">💬</div>
+                        <div class="project-info">
+                            <h3 class="project-title">ChatHub - Real-time Messaging</h3>
+                            <p class="project-subtitle">A Blazor Server application with SignalR for real-time messaging, user presence, and chat rooms</p>
+                        </div>
+                        <span class="difficulty advanced">Advanced</span>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">Blazor Server</span>
+                        <span class="tech-tag">SignalR</span>
+                        <span class="tech-tag">Observer Pattern</span>
+                        <span class="tech-tag">Singleton Pattern</span>
+                        <span class="tech-tag">Message Queue</span>
+                        <span class="tech-tag">Docker</span>
+                        <span class="tech-tag">CI/CD</span>
+                    </div>
+
+                    <div class="learning-objectives">
+                        <h4>What You'll Learn</h4>
+                        <ul>
+                            <li>Real-time communication with SignalR</li>
+                            <li>Observer pattern for message broadcasting</li>
+                            <li>Singleton for connection management</li>
+                            <li>Queue data structure for message ordering</li>
+                            <li>Graph algorithms for friend connections</li>
+                            <li>Complete CI/CD pipeline with Docker</li>
+                        </ul>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Hubs/ChatHub.cs (SignalR + Observer)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">public</span> <span class="keyword">class</span> <span class="type">ChatHub</span> : <span class="type">Hub</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">IConnectionManager</span> _connections;
+    <span class="keyword">private readonly</span> <span class="type">IMessageService</span> _messageService;
+
+    <span class="keyword">public</span> <span class="function">ChatHub</span>(<span class="type">IConnectionManager</span> connections, <span class="type">IMessageService</span> messageService)
+    {
+        _connections = connections;
+        _messageService = messageService;
+    }
+
+    <span class="keyword">public override async</span> Task <span class="function">OnConnectedAsync</span>()
+    {
+        <span class="keyword">var</span> userId = Context.User?.Identity?.Name ?? <span class="string">"Anonymous"</span>;
+        _connections.<span class="function">AddConnection</span>(userId, Context.ConnectionId);
+
+        <span class="comment">// Notify all clients about new user (Observer pattern)</span>
+        <span class="keyword">await</span> Clients.All.<span class="function">SendAsync</span>(<span class="string">"UserConnected"</span>, userId);
+        <span class="keyword">await base</span>.<span class="function">OnConnectedAsync</span>();
+    }
+
+    <span class="keyword">public override async</span> Task <span class="function">OnDisconnectedAsync</span>(Exception? exception)
+    {
+        <span class="keyword">var</span> userId = Context.User?.Identity?.Name ?? <span class="string">"Anonymous"</span>;
+        _connections.<span class="function">RemoveConnection</span>(Context.ConnectionId);
+
+        <span class="keyword">await</span> Clients.All.<span class="function">SendAsync</span>(<span class="string">"UserDisconnected"</span>, userId);
+        <span class="keyword">await base</span>.<span class="function">OnDisconnectedAsync</span>(exception);
+    }
+
+    <span class="keyword">public async</span> Task <span class="function">SendMessage</span>(<span class="type">string</span> roomId, <span class="type">string</span> message)
+    {
+        <span class="keyword">var</span> userId = Context.User?.Identity?.Name ?? <span class="string">"Anonymous"</span>;
+
+        <span class="keyword">var</span> chatMessage = <span class="keyword">new</span> <span class="type">ChatMessage</span>
+        {
+            UserId = userId,
+            RoomId = roomId,
+            Content = message,
+            Timestamp = DateTime.UtcNow
+        };
+
+        <span class="comment">// Store message</span>
+        <span class="keyword">await</span> _messageService.<span class="function">SaveMessageAsync</span>(chatMessage);
+
+        <span class="comment">// Broadcast to room (Observer pattern)</span>
+        <span class="keyword">await</span> Clients.<span class="function">Group</span>(roomId).<span class="function">SendAsync</span>(<span class="string">"ReceiveMessage"</span>, chatMessage);
+    }
+
+    <span class="keyword">public async</span> Task <span class="function">JoinRoom</span>(<span class="type">string</span> roomId)
+    {
+        <span class="keyword">await</span> Groups.<span class="function">AddToGroupAsync</span>(Context.ConnectionId, roomId);
+
+        <span class="comment">// Load recent messages (Queue structure)</span>
+        <span class="keyword">var</span> recentMessages = <span class="keyword">await</span> _messageService.<span class="function">GetRecentMessagesAsync</span>(roomId, <span class="number">50</span>);
+        <span class="keyword">await</span> Clients.Caller.<span class="function">SendAsync</span>(<span class="string">"LoadMessages"</span>, recentMessages);
+    }
+}
+
+<span class="comment">// Singleton Connection Manager</span>
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">ConnectionManager</span> : <span class="type">IConnectionManager</span>
+{
+    <span class="keyword">private readonly</span> ConcurrentDictionary&lt;<span class="type">string</span>, HashSet&lt;<span class="type">string</span>&gt;&gt; _userConnections = <span class="keyword">new</span>();
+
+    <span class="keyword">public void</span> <span class="function">AddConnection</span>(<span class="type">string</span> userId, <span class="type">string</span> connectionId)
+    {
+        _userConnections.<span class="function">AddOrUpdate</span>(
+            userId,
+            _ => <span class="keyword">new</span> HashSet&lt;<span class="type">string</span>&gt; { connectionId },
+            (_, connections) => { connections.<span class="function">Add</span>(connectionId); <span class="keyword">return</span> connections; }
+        );
+    }
+
+    <span class="keyword">public</span> IEnumerable&lt;<span class="type">string</span>&gt; <span class="function">GetConnections</span>(<span class="type">string</span> userId)
+    {
+        <span class="keyword">return</span> _userConnections.<span class="function">TryGetValue</span>(userId, <span class="keyword">out var</span> connections)
+            ? connections : Enumerable.<span class="function">Empty</span>&lt;<span class="type">string</span>&gt;();
+    }
+
+    <span class="keyword">public</span> IEnumerable&lt;<span class="type">string</span>&gt; <span class="function">GetOnlineUsers</span>() => _userConnections.Keys;
+}</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">.github/workflows/ci-cd.yml (CI/CD Pipeline)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">name</span>: CI/CD Pipeline
+
+<span class="keyword">on</span>:
+  <span class="function">push</span>:
+    <span class="keyword">branches</span>: [ main, develop ]
+  <span class="function">pull_request</span>:
+    <span class="keyword">branches</span>: [ main ]
+
+<span class="keyword">jobs</span>:
+  <span class="function">build-and-test</span>:
+    <span class="keyword">runs-on</span>: ubuntu-latest
+    <span class="keyword">steps</span>:
+      - <span class="keyword">uses</span>: actions/checkout@v3
+
+      - <span class="keyword">name</span>: Setup .NET
+        <span class="keyword">uses</span>: actions/setup-dotnet@v3
+        <span class="keyword">with</span>:
+          <span class="type">dotnet-version</span>: <span class="string">'8.0.x'</span>
+
+      - <span class="keyword">name</span>: Restore dependencies
+        <span class="keyword">run</span>: dotnet restore
+
+      - <span class="keyword">name</span>: Build
+        <span class="keyword">run</span>: dotnet build --no-restore
+
+      - <span class="keyword">name</span>: Test
+        <span class="keyword">run</span>: dotnet test --no-build --verbosity normal
+
+  <span class="function">docker-build</span>:
+    <span class="keyword">needs</span>: build-and-test
+    <span class="keyword">runs-on</span>: ubuntu-latest
+    <span class="keyword">if</span>: github.ref == <span class="string">'refs/heads/main'</span>
+    <span class="keyword">steps</span>:
+      - <span class="keyword">uses</span>: actions/checkout@v3
+
+      - <span class="keyword">name</span>: Login to Docker Hub
+        <span class="keyword">uses</span>: docker/login-action@v2
+        <span class="keyword">with</span>:
+          <span class="type">username</span>: ${{ secrets.DOCKER_USERNAME }}
+          <span class="type">password</span>: ${{ secrets.DOCKER_TOKEN }}
+
+      - <span class="keyword">name</span>: Build and push
+        <span class="keyword">uses</span>: docker/build-push-action@v4
+        <span class="keyword">with</span>:
+          <span class="type">context</span>: .
+          <span class="type">push</span>: <span class="keyword">true</span>
+          <span class="type">tags</span>: username/chathub:latest</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project 6: Workflow Automation System -->
+            <section id="project-6">
+                <h2><span class="section-number">08</span>Project 6: Workflow Automation System</h2>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">🔄</div>
+                        <div class="project-info">
+                            <h3 class="project-title">FlowMaster - Business Process Automation</h3>
+                            <p class="project-subtitle">A comprehensive workflow automation platform combining Elsa Workflows, WinUI 3 desktop app, and Blazor web dashboard</p>
+                        </div>
+                        <span class="difficulty advanced">Advanced</span>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-tag">C#</span>
+                        <span class="tech-tag">.NET 8</span>
+                        <span class="tech-tag">Elsa Workflows</span>
+                        <span class="tech-tag">WinUI 3</span>
+                        <span class="tech-tag">Blazor Server</span>
+                        <span class="tech-tag">SignalR</span>
+                        <span class="tech-tag">SQLite/PostgreSQL</span>
+                        <span class="tech-tag">Docker</span>
+                    </div>
+
+                    <div class="learning-objectives">
+                        <h4>What You'll Learn</h4>
+                        <ul>
+                            <li>Elsa Workflows engine setup and custom activities</li>
+                            <li>Building workflow definitions programmatically in C#</li>
+                            <li>WinUI 3 modern Windows desktop application</li>
+                            <li>Blazor Server for real-time web dashboard</li>
+                            <li>Strategy pattern for different workflow execution modes</li>
+                            <li>Chain of Responsibility for workflow step processing</li>
+                            <li>State machine patterns for workflow status management</li>
+                            <li>SignalR for real-time workflow status updates</li>
+                            <li>Docker containerization for deployment</li>
+                        </ul>
+                    </div>
+
+                    <h4>Architecture</h4>
+                    <div class="architecture">
+                        <div class="arch-flow" style="flex-wrap: wrap; gap: 0.5rem;">
+                            <div class="arch-box ui">
+                                <div class="arch-box-title">WinUI 3 Desktop</div>
+                                <div class="arch-box-sub">Admin & Designer</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box ui">
+                                <div class="arch-box-title">Blazor Dashboard</div>
+                                <div class="arch-box-sub">Web Monitoring</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box logic">
+                                <div class="arch-box-title">API Gateway</div>
+                                <div class="arch-box-sub">ASP.NET Core</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box logic" style="border-color: var(--accent-purple); background: rgba(168, 85, 247, 0.1);">
+                                <div class="arch-box-title" style="color: var(--accent-purple);">Elsa Engine</div>
+                                <div class="arch-box-sub">Workflow Runtime</div>
+                            </div>
+                            <span class="arch-arrow">↔</span>
+                            <div class="arch-box data">
+                                <div class="arch-box-title">Persistence</div>
+                                <div class="arch-box-sub">PostgreSQL</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Project Structure</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Solution Structure</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code>FlowMaster/
+├── src/
+│   ├── FlowMaster.Core/                 <span class="comment"># Shared domain models & interfaces</span>
+│   │   ├── Models/
+│   │   │   ├── WorkflowDefinition.cs
+│   │   │   ├── WorkflowInstance.cs
+│   │   │   └── WorkflowStatus.cs
+│   │   ├── Interfaces/
+│   │   │   ├── IWorkflowService.cs
+│   │   │   └── INotificationService.cs
+│   │   └── Enums/
+│   │       └── WorkflowState.cs
+│   │
+│   ├── FlowMaster.Workflows/            <span class="comment"># Elsa workflow definitions</span>
+│   │   ├── Activities/
+│   │   │   ├── SendEmailActivity.cs
+│   │   │   ├── ApprovalActivity.cs
+│   │   │   └── DataTransformActivity.cs
+│   │   ├── Workflows/
+│   │   │   ├── OnboardingWorkflow.cs
+│   │   │   ├── ApprovalWorkflow.cs
+│   │   │   └── DataPipelineWorkflow.cs
+│   │   └── Extensions/
+│   │       └── ElsaExtensions.cs
+│   │
+│   ├── FlowMaster.Api/                  <span class="comment"># ASP.NET Core Web API</span>
+│   │   ├── Controllers/
+│   │   │   ├── WorkflowsController.cs
+│   │   │   └── InstancesController.cs
+│   │   ├── Hubs/
+│   │   │   └── WorkflowHub.cs
+│   │   └── Program.cs
+│   │
+│   ├── FlowMaster.Desktop/              <span class="comment"># WinUI 3 Application</span>
+│   │   ├── Views/
+│   │   │   ├── MainPage.xaml
+│   │   │   ├── WorkflowDesignerPage.xaml
+│   │   │   └── InstancesPage.xaml
+│   │   ├── ViewModels/
+│   │   │   ├── MainViewModel.cs
+│   │   │   └── WorkflowDesignerViewModel.cs
+│   │   └── Services/
+│   │       └── ApiService.cs
+│   │
+│   └── FlowMaster.Web/                  <span class="comment"># Blazor Server Dashboard</span>
+│       ├── Pages/
+│       │   ├── Index.razor
+│       │   ├── Workflows.razor
+│       │   └── Monitor.razor
+│       ├── Components/
+│       │   ├── WorkflowCard.razor
+│       │   └── StatusBadge.razor
+│       └── Services/
+│           └── WorkflowHubService.cs
+│
+├── tests/
+│   └── FlowMaster.Tests/
+│
+├── docker-compose.yml
+└── FlowMaster.sln</code></pre>
+                    </div>
+
+                    <h4>Implementation Steps</h4>
+
+                    <div class="step-card">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Create Solution and Core Project</span>
+                        <div class="step-content">
+                            Set up the solution structure with shared models and interfaces.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Core/Models/WorkflowDefinition.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">namespace</span> FlowMaster.Core.Models;
+
+<span class="keyword">public class</span> <span class="type">WorkflowDefinition</span>
+{
+    <span class="keyword">public</span> <span class="type">Guid</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="type">Guid</span>.NewGuid();
+    <span class="keyword">public</span> <span class="type">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">string</span>.Empty;
+    <span class="keyword">public</span> <span class="type">string</span> Description { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">string</span>.Empty;
+    <span class="keyword">public</span> <span class="type">string</span> Version { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">"1.0"</span>;
+    <span class="keyword">public</span> <span class="type">bool</span> IsPublished { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="type">DateTime</span> CreatedAt { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="type">DateTime</span>.UtcNow;
+    <span class="keyword">public</span> <span class="type">List</span>&lt;<span class="type">WorkflowStep</span>&gt; Steps { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">new</span>();
+}
+
+<span class="keyword">public class</span> <span class="type">WorkflowStep</span>
+{
+    <span class="keyword">public</span> <span class="type">Guid</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="type">Guid</span>.NewGuid();
+    <span class="keyword">public</span> <span class="type">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">string</span>.Empty;
+    <span class="keyword">public</span> <span class="type">string</span> ActivityType { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">string</span>.Empty;
+    <span class="keyword">public</span> <span class="type">int</span> Order { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="type">Dictionary</span>&lt;<span class="type">string</span>, <span class="type">object</span>&gt; Properties { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">new</span>();
+}
+
+<span class="keyword">public enum</span> <span class="type">WorkflowState</span>
+{
+    Idle,
+    Running,
+    Suspended,
+    Completed,
+    Faulted,
+    Cancelled
+}</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Set Up Elsa Workflows Engine</span>
+                        <div class="step-content">
+                            Configure Elsa in the API project and create custom activities.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Api/Program.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> Elsa;
+<span class="keyword">using</span> Elsa.EntityFrameworkCore.Modules.Management;
+<span class="keyword">using</span> Elsa.EntityFrameworkCore.Modules.Runtime;
+<span class="keyword">using</span> FlowMaster.Workflows.Activities;
+
+<span class="keyword">var</span> builder = <span class="type">WebApplication</span>.CreateBuilder(args);
+
+<span class="comment">// Add Elsa services</span>
+builder.Services.AddElsa(elsa =>
+{
+    <span class="comment">// Configure management persistence (workflow definitions)</span>
+    elsa.UseWorkflowManagement(management =>
+    {
+        management.UseEntityFrameworkCore(ef =>
+            ef.UsePostgreSql(builder.Configuration.GetConnectionString(<span class="string">"Default"</span>)));
+    });
+
+    <span class="comment">// Configure runtime persistence (workflow instances)</span>
+    elsa.UseWorkflowRuntime(runtime =>
+    {
+        runtime.UseEntityFrameworkCore(ef =>
+            ef.UsePostgreSql(builder.Configuration.GetConnectionString(<span class="string">"Default"</span>)));
+    });
+
+    <span class="comment">// Add HTTP activities</span>
+    elsa.UseHttp();
+
+    <span class="comment">// Add scheduling activities</span>
+    elsa.UseScheduling();
+
+    <span class="comment">// Add email activities</span>
+    elsa.UseEmail(email =>
+    {
+        email.ConfigureOptions = options =>
+        {
+            options.Host = builder.Configuration[<span class="string">"Smtp:Host"</span>]!;
+            options.Port = <span class="keyword">int</span>.Parse(builder.Configuration[<span class="string">"Smtp:Port"</span>]!);
+        };
+    });
+
+    <span class="comment">// Register custom activities</span>
+    elsa.AddActivity&lt;<span class="type">ApprovalActivity</span>&gt;();
+    elsa.AddActivity&lt;<span class="type">DataTransformActivity</span>&gt;();
+    elsa.AddActivity&lt;<span class="type">NotifyDashboardActivity</span>&gt;();
+
+    <span class="comment">// Use Elsa API endpoints</span>
+    elsa.UseWorkflowsApi();
+});
+
+<span class="comment">// Add SignalR for real-time updates</span>
+builder.Services.AddSignalR();
+
+<span class="comment">// Add CORS for desktop app</span>
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(<span class="string">"AllowAll"</span>, policy =>
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
+builder.Services.AddControllers();
+
+<span class="keyword">var</span> app = builder.Build();
+
+app.UseCors(<span class="string">"AllowAll"</span>);
+app.UseRouting();
+app.MapControllers();
+app.MapHub&lt;<span class="type">WorkflowHub</span>&gt;(<span class="string">"/hubs/workflow"</span>);
+
+<span class="comment">// Map Elsa API endpoints</span>
+app.UseWorkflowsApi();
+
+app.Run();</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Create Custom Elsa Activities</span>
+                        <div class="step-content">
+                            Build reusable custom activities for common business operations.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Workflows/Activities/ApprovalActivity.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> Elsa.Extensions;
+<span class="keyword">using</span> Elsa.Workflows;
+<span class="keyword">using</span> Elsa.Workflows.Attributes;
+<span class="keyword">using</span> Elsa.Workflows.Models;
+
+<span class="keyword">namespace</span> FlowMaster.Workflows.Activities;
+
+<span class="comment">/// &lt;summary&gt;
+/// Custom activity that waits for human approval before proceeding.
+/// Demonstrates bookmarks and long-running workflows.
+/// &lt;/summary&gt;</span>
+[<span class="decorator">Activity</span>(<span class="string">"FlowMaster"</span>, <span class="string">"Approval"</span>, <span class="string">"Waits for human approval"</span>)]
+<span class="keyword">public class</span> <span class="type">ApprovalActivity</span> : <span class="type">Activity</span>
+{
+    [<span class="decorator">Input</span>(Description = <span class="string">"The user or group to request approval from"</span>)]
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; Approver { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+
+    [<span class="decorator">Input</span>(Description = <span class="string">"Message to display in approval request"</span>)]
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; Message { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+
+    [<span class="decorator">Input</span>(Description = <span class="string">"Timeout in hours (0 = no timeout)"</span>)]
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">int</span>&gt; TimeoutHours { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">new</span>(<span class="number">24</span>);
+
+    [<span class="decorator">Output</span>(Description = <span class="string">"Whether the request was approved"</span>)]
+    <span class="keyword">public</span> <span class="type">Output</span>&lt;<span class="type">bool</span>&gt; IsApproved { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+
+    [<span class="decorator">Output</span>(Description = <span class="string">"Comments from approver"</span>)]
+    <span class="keyword">public</span> <span class="type">Output</span>&lt;<span class="type">string</span>&gt; Comments { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+
+    <span class="keyword">protected override async</span> <span class="type">ValueTask</span> ExecuteAsync(<span class="type">ActivityExecutionContext</span> context)
+    {
+        <span class="keyword">var</span> approver = Approver.Get(context);
+        <span class="keyword">var</span> message = Message.Get(context);
+
+        <span class="comment">// Create a bookmark to suspend workflow until approval</span>
+        <span class="keyword">var</span> bookmarkPayload = <span class="keyword">new</span> <span class="type">ApprovalBookmarkPayload</span>(
+            context.WorkflowExecutionContext.Id,
+            approver,
+            message
+        );
+
+        context.CreateBookmark(bookmarkPayload, ResumeAsync);
+    }
+
+    <span class="keyword">private</span> <span class="type">ValueTask</span> ResumeAsync(<span class="type">ActivityExecutionContext</span> context)
+    {
+        <span class="comment">// Get the approval response from the bookmark data</span>
+        <span class="keyword">var</span> response = context.GetWorkflowInput&lt;<span class="type">ApprovalResponse</span>&gt;();
+
+        IsApproved.Set(context, response?.Approved ?? <span class="keyword">false</span>);
+        Comments.Set(context, response?.Comments ?? <span class="keyword">string</span>.Empty);
+
+        <span class="keyword">return</span> <span class="type">ValueTask</span>.CompletedTask;
+    }
+}
+
+<span class="keyword">public record</span> <span class="type">ApprovalBookmarkPayload</span>(<span class="type">string</span> WorkflowId, <span class="type">string</span> Approver, <span class="type">string</span> Message);
+<span class="keyword">public record</span> <span class="type">ApprovalResponse</span>(<span class="type">bool</span> Approved, <span class="type">string</span> Comments);</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Workflows/Activities/NotifyDashboardActivity.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> Elsa.Extensions;
+<span class="keyword">using</span> Elsa.Workflows;
+<span class="keyword">using</span> Elsa.Workflows.Attributes;
+<span class="keyword">using</span> Microsoft.AspNetCore.SignalR;
+<span class="keyword">using</span> FlowMaster.Api.Hubs;
+
+<span class="keyword">namespace</span> FlowMaster.Workflows.Activities;
+
+<span class="comment">/// &lt;summary&gt;
+/// Sends real-time notifications to connected dashboards via SignalR.
+/// &lt;/summary&gt;</span>
+[<span class="decorator">Activity</span>(<span class="string">"FlowMaster"</span>, <span class="string">"Notify Dashboard"</span>, <span class="string">"Sends notification to web dashboard"</span>)]
+<span class="keyword">public class</span> <span class="type">NotifyDashboardActivity</span> : <span class="type">Activity</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">IHubContext</span>&lt;<span class="type">WorkflowHub</span>&gt; _hubContext;
+
+    <span class="keyword">public</span> NotifyDashboardActivity(<span class="type">IHubContext</span>&lt;<span class="type">WorkflowHub</span>&gt; hubContext)
+    {
+        _hubContext = hubContext;
+    }
+
+    [<span class="decorator">Input</span>(Description = <span class="string">"Notification title"</span>)]
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; Title { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+
+    [<span class="decorator">Input</span>(Description = <span class="string">"Notification message"</span>)]
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; Message { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+
+    [<span class="decorator">Input</span>(Description = <span class="string">"Notification type: info, success, warning, error"</span>)]
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; NotificationType { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">new</span>(<span class="string">"info"</span>);
+
+    <span class="keyword">protected override async</span> <span class="type">ValueTask</span> ExecuteAsync(<span class="type">ActivityExecutionContext</span> context)
+    {
+        <span class="keyword">var</span> notification = <span class="keyword">new</span>
+        {
+            Title = Title.Get(context),
+            Message = Message.Get(context),
+            Type = NotificationType.Get(context),
+            WorkflowId = context.WorkflowExecutionContext.Id,
+            Timestamp = <span class="type">DateTime</span>.UtcNow
+        };
+
+        <span class="keyword">await</span> _hubContext.Clients.All.SendAsync(<span class="string">"WorkflowNotification"</span>, notification);
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Build Code-Based Workflow Definition</span>
+                        <div class="step-content">
+                            Create workflow definitions programmatically using C# (Strategy Pattern for different workflows).
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Workflows/Workflows/OnboardingWorkflow.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> Elsa.Workflows;
+<span class="keyword">using</span> Elsa.Workflows.Activities;
+<span class="keyword">using</span> Elsa.Workflows.Contracts;
+<span class="keyword">using</span> Elsa.Email.Activities;
+<span class="keyword">using</span> FlowMaster.Workflows.Activities;
+
+<span class="keyword">namespace</span> FlowMaster.Workflows.Workflows;
+
+<span class="comment">/// &lt;summary&gt;
+/// Employee onboarding workflow using code-based definition.
+/// Demonstrates Strategy Pattern - different onboarding flows for different employee types.
+/// &lt;/summary&gt;</span>
+<span class="keyword">public class</span> <span class="type">OnboardingWorkflow</span> : <span class="type">WorkflowBase</span>
+{
+    <span class="keyword">protected override void</span> Build(<span class="type">IWorkflowBuilder</span> builder)
+    {
+        <span class="comment">// Define workflow variables</span>
+        <span class="keyword">var</span> employeeName = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+        <span class="keyword">var</span> employeeEmail = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+        <span class="keyword">var</span> department = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+        <span class="keyword">var</span> isApproved = builder.WithVariable&lt;<span class="type">bool</span>&gt;();
+
+        builder.Name = <span class="string">"Employee Onboarding"</span>;
+        builder.Description = <span class="string">"Automated employee onboarding process"</span>;
+
+        builder.Root = <span class="keyword">new</span> <span class="type">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="comment">// Step 1: Notify dashboard of new onboarding</span>
+                <span class="keyword">new</span> <span class="type">NotifyDashboardActivity</span>
+                {
+                    Title = <span class="keyword">new</span>(<span class="string">"New Onboarding Started"</span>),
+                    Message = <span class="keyword">new</span>(context => $<span class="string">"Onboarding started for {employeeName.Get(context)}"</span>),
+                    NotificationType = <span class="keyword">new</span>(<span class="string">"info"</span>)
+                },
+
+                <span class="comment">// Step 2: Send welcome email</span>
+                <span class="keyword">new</span> <span class="type">SendEmail</span>
+                {
+                    To = <span class="keyword">new</span>(context => employeeEmail.Get(context)),
+                    Subject = <span class="keyword">new</span>(<span class="string">"Welcome to the Team!"</span>),
+                    Body = <span class="keyword">new</span>(context => $<span class="string">@"
+                        &lt;h1&gt;Welcome, {employeeName.Get(context)}!&lt;/h1&gt;
+                        &lt;p&gt;We're excited to have you join the {department.Get(context)} team.&lt;/p&gt;
+                        &lt;p&gt;Your onboarding process has begun.&lt;/p&gt;
+                    "</span>)
+                },
+
+                <span class="comment">// Step 3: HR Approval (suspends workflow)</span>
+                <span class="keyword">new</span> <span class="type">ApprovalActivity</span>
+                {
+                    Approver = <span class="keyword">new</span>(<span class="string">"HR-Team"</span>),
+                    Message = <span class="keyword">new</span>(context => $<span class="string">"Please approve onboarding for {employeeName.Get(context)}"</span>),
+                    TimeoutHours = <span class="keyword">new</span>(<span class="number">48</span>),
+                    IsApproved = <span class="keyword">new</span>(isApproved)
+                },
+
+                <span class="comment">// Step 4: Branch based on approval</span>
+                <span class="keyword">new</span> <span class="type">If</span>
+                {
+                    Condition = <span class="keyword">new</span>(context => isApproved.Get(context)),
+                    Then = <span class="keyword">new</span> <span class="type">Sequence</span>
+                    {
+                        Activities =
+                        {
+                            <span class="comment">// Approved flow</span>
+                            <span class="keyword">new</span> <span class="type">Fork</span>
+                            {
+                                Branches =
+                                {
+                                    <span class="comment">// Parallel: Set up accounts</span>
+                                    <span class="keyword">new</span> <span class="type">SetVariable</span>&lt;<span class="type">string</span>&gt;
+                                    {
+                                        Variable = employeeName,
+                                        Value = <span class="keyword">new</span>(context => $<span class="string">"{employeeName.Get(context)} (IT Setup Complete)"</span>)
+                                    },
+                                    <span class="comment">// Parallel: Order equipment</span>
+                                    <span class="keyword">new</span> <span class="type">NotifyDashboardActivity</span>
+                                    {
+                                        Title = <span class="keyword">new</span>(<span class="string">"Equipment Order"</span>),
+                                        Message = <span class="keyword">new</span>(context => $<span class="string">"Order equipment for {employeeName.Get(context)}"</span>),
+                                        NotificationType = <span class="keyword">new</span>(<span class="string">"info"</span>)
+                                    }
+                                }
+                            },
+                            <span class="keyword">new</span> <span class="type">NotifyDashboardActivity</span>
+                            {
+                                Title = <span class="keyword">new</span>(<span class="string">"Onboarding Complete"</span>),
+                                Message = <span class="keyword">new</span>(context => $<span class="string">"{employeeName.Get(context)} onboarding completed!"</span>),
+                                NotificationType = <span class="keyword">new</span>(<span class="string">"success"</span>)
+                            }
+                        }
+                    },
+                    Else = <span class="keyword">new</span> <span class="type">Sequence</span>
+                    {
+                        Activities =
+                        {
+                            <span class="comment">// Rejected flow</span>
+                            <span class="keyword">new</span> <span class="type">SendEmail</span>
+                            {
+                                To = <span class="keyword">new</span>(context => employeeEmail.Get(context)),
+                                Subject = <span class="keyword">new</span>(<span class="string">"Onboarding Update"</span>),
+                                Body = <span class="keyword">new</span>(<span class="string">"There was an issue with your onboarding. HR will contact you."</span>)
+                            },
+                            <span class="keyword">new</span> <span class="type">NotifyDashboardActivity</span>
+                            {
+                                Title = <span class="keyword">new</span>(<span class="string">"Onboarding Issue"</span>),
+                                Message = <span class="keyword">new</span>(context => $<span class="string">"Onboarding rejected for {employeeName.Get(context)}"</span>),
+                                NotificationType = <span class="keyword">new</span>(<span class="string">"warning"</span>)
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Create SignalR Hub for Real-Time Updates</span>
+                        <div class="step-content">
+                            Implement SignalR hub for pushing workflow status updates to connected clients.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Api/Hubs/WorkflowHub.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> Microsoft.AspNetCore.SignalR;
+
+<span class="keyword">namespace</span> FlowMaster.Api.Hubs;
+
+<span class="keyword">public class</span> <span class="type">WorkflowHub</span> : <span class="type">Hub</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">ILogger</span>&lt;<span class="type">WorkflowHub</span>&gt; _logger;
+
+    <span class="keyword">public</span> WorkflowHub(<span class="type">ILogger</span>&lt;<span class="type">WorkflowHub</span>&gt; logger)
+    {
+        _logger = logger;
+    }
+
+    <span class="keyword">public override async</span> <span class="type">Task</span> OnConnectedAsync()
+    {
+        _logger.LogInformation(<span class="string">"Client connected: {ConnectionId}"</span>, Context.ConnectionId);
+        <span class="keyword">await</span> Clients.Caller.SendAsync(<span class="string">"Connected"</span>, <span class="keyword">new</span>
+        {
+            ConnectionId = Context.ConnectionId,
+            Message = <span class="string">"Connected to FlowMaster Hub"</span>
+        });
+        <span class="keyword">await base</span>.OnConnectedAsync();
+    }
+
+    <span class="keyword">public async</span> <span class="type">Task</span> SubscribeToWorkflow(<span class="type">string</span> workflowId)
+    {
+        <span class="keyword">await</span> Groups.AddToGroupAsync(Context.ConnectionId, $<span class="string">"workflow-{workflowId}"</span>);
+        _logger.LogInformation(<span class="string">"Client {ConnectionId} subscribed to workflow {WorkflowId}"</span>,
+            Context.ConnectionId, workflowId);
+    }
+
+    <span class="keyword">public async</span> <span class="type">Task</span> UnsubscribeFromWorkflow(<span class="type">string</span> workflowId)
+    {
+        <span class="keyword">await</span> Groups.RemoveFromGroupAsync(Context.ConnectionId, $<span class="string">"workflow-{workflowId}"</span>);
+    }
+
+    <span class="comment">// Method for broadcasting workflow status updates</span>
+    <span class="keyword">public async</span> <span class="type">Task</span> BroadcastWorkflowStatus(<span class="type">string</span> workflowId, <span class="type">object</span> status)
+    {
+        <span class="keyword">await</span> Clients.Group($<span class="string">"workflow-{workflowId}"</span>)
+            .SendAsync(<span class="string">"WorkflowStatusUpdate"</span>, status);
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">6</span>
+                        <span class="step-title">Build WinUI 3 Desktop Application</span>
+                        <div class="step-content">
+                            Create the Windows desktop app for workflow administration and design.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Desktop/ViewModels/MainViewModel.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> CommunityToolkit.Mvvm.ComponentModel;
+<span class="keyword">using</span> CommunityToolkit.Mvvm.Input;
+<span class="keyword">using</span> FlowMaster.Core.Models;
+<span class="keyword">using</span> FlowMaster.Desktop.Services;
+
+<span class="keyword">namespace</span> FlowMaster.Desktop.ViewModels;
+
+<span class="keyword">public partial</span> <span class="keyword">class</span> <span class="type">MainViewModel</span> : <span class="type">ObservableObject</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">IApiService</span> _apiService;
+    <span class="keyword">private readonly</span> <span class="type">INavigationService</span> _navigationService;
+
+    [<span class="decorator">ObservableProperty</span>]
+    <span class="keyword">private</span> <span class="type">ObservableCollection</span>&lt;<span class="type">WorkflowDefinition</span>&gt; _workflows = <span class="keyword">new</span>();
+
+    [<span class="decorator">ObservableProperty</span>]
+    <span class="keyword">private</span> <span class="type">WorkflowDefinition</span>? _selectedWorkflow;
+
+    [<span class="decorator">ObservableProperty</span>]
+    <span class="keyword">private</span> <span class="type">bool</span> _isLoading;
+
+    [<span class="decorator">ObservableProperty</span>]
+    <span class="keyword">private</span> <span class="type">string</span> _statusMessage = <span class="string">"Ready"</span>;
+
+    <span class="keyword">public</span> MainViewModel(<span class="type">IApiService</span> apiService, <span class="type">INavigationService</span> navigationService)
+    {
+        _apiService = apiService;
+        _navigationService = navigationService;
+    }
+
+    [<span class="decorator">RelayCommand</span>]
+    <span class="keyword">private async</span> <span class="type">Task</span> LoadWorkflowsAsync()
+    {
+        <span class="keyword">try</span>
+        {
+            IsLoading = <span class="keyword">true</span>;
+            StatusMessage = <span class="string">"Loading workflows..."</span>;
+
+            <span class="keyword">var</span> workflows = <span class="keyword">await</span> _apiService.GetWorkflowsAsync();
+            Workflows.Clear();
+            <span class="keyword">foreach</span> (<span class="keyword">var</span> wf <span class="keyword">in</span> workflows)
+            {
+                Workflows.Add(wf);
+            }
+
+            StatusMessage = $<span class="string">"Loaded {Workflows.Count} workflows"</span>;
+        }
+        <span class="keyword">catch</span> (<span class="type">Exception</span> ex)
+        {
+            StatusMessage = $<span class="string">"Error: {ex.Message}"</span>;
+        }
+        <span class="keyword">finally</span>
+        {
+            IsLoading = <span class="keyword">false</span>;
+        }
+    }
+
+    [<span class="decorator">RelayCommand</span>]
+    <span class="keyword">private async</span> <span class="type">Task</span> StartWorkflowAsync()
+    {
+        <span class="keyword">if</span> (SelectedWorkflow <span class="keyword">is null</span>) <span class="keyword">return</span>;
+
+        <span class="keyword">try</span>
+        {
+            IsLoading = <span class="keyword">true</span>;
+            StatusMessage = $<span class="string">"Starting {SelectedWorkflow.Name}..."</span>;
+
+            <span class="keyword">var</span> instanceId = <span class="keyword">await</span> _apiService.StartWorkflowAsync(SelectedWorkflow.Id);
+            StatusMessage = $<span class="string">"Workflow started: {instanceId}"</span>;
+        }
+        <span class="keyword">catch</span> (<span class="type">Exception</span> ex)
+        {
+            StatusMessage = $<span class="string">"Error: {ex.Message}"</span>;
+        }
+        <span class="keyword">finally</span>
+        {
+            IsLoading = <span class="keyword">false</span>;
+        }
+    }
+
+    [<span class="decorator">RelayCommand</span>]
+    <span class="keyword">private void</span> OpenDesigner()
+    {
+        _navigationService.NavigateTo&lt;<span class="type">WorkflowDesignerPage</span>&gt;(SelectedWorkflow);
+    }
+
+    [<span class="decorator">RelayCommand</span>]
+    <span class="keyword">private void</span> CreateNewWorkflow()
+    {
+        _navigationService.NavigateTo&lt;<span class="type">WorkflowDesignerPage</span>&gt;(<span class="keyword">null</span>);
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Desktop/Views/MainPage.xaml</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">&lt;Page</span>
+    <span class="type">x:Class</span>=<span class="string">"FlowMaster.Desktop.Views.MainPage"</span>
+    <span class="type">xmlns</span>=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
+    <span class="type">xmlns:x</span>=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
+    <span class="type">xmlns:vm</span>=<span class="string">"using:FlowMaster.Desktop.ViewModels"</span><span class="keyword">&gt;</span>
+
+    <span class="keyword">&lt;Grid</span> <span class="type">Padding</span>=<span class="string">"24"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;Grid.RowDefinitions&gt;</span>
+            <span class="keyword">&lt;RowDefinition</span> <span class="type">Height</span>=<span class="string">"Auto"</span><span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;RowDefinition</span> <span class="type">Height</span>=<span class="string">"*"</span><span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;RowDefinition</span> <span class="type">Height</span>=<span class="string">"Auto"</span><span class="keyword">/&gt;</span>
+        <span class="keyword">&lt;/Grid.RowDefinitions&gt;</span>
+
+        <span class="comment">&lt;!-- Header with actions --&gt;</span>
+        <span class="keyword">&lt;StackPanel</span> <span class="type">Orientation</span>=<span class="string">"Horizontal"</span> <span class="type">Spacing</span>=<span class="string">"12"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;Button</span> <span class="type">Content</span>=<span class="string">"Refresh"</span>
+                    <span class="type">Command</span>=<span class="string">"{x:Bind ViewModel.LoadWorkflowsCommand}"</span>
+                    <span class="type">Style</span>=<span class="string">"{StaticResource AccentButtonStyle}"</span><span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;Button</span> <span class="type">Content</span>=<span class="string">"New Workflow"</span>
+                    <span class="type">Command</span>=<span class="string">"{x:Bind ViewModel.CreateNewWorkflowCommand}"</span><span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;Button</span> <span class="type">Content</span>=<span class="string">"Start Selected"</span>
+                    <span class="type">Command</span>=<span class="string">"{x:Bind ViewModel.StartWorkflowCommand}"</span>
+                    <span class="type">IsEnabled</span>=<span class="string">"{x:Bind ViewModel.SelectedWorkflow, Mode=OneWay,
+                             Converter={StaticResource NullToBoolConverter}}"</span><span class="keyword">/&gt;</span>
+        <span class="keyword">&lt;/StackPanel&gt;</span>
+
+        <span class="comment">&lt;!-- Workflow list --&gt;</span>
+        <span class="keyword">&lt;ListView</span> <span class="type">Grid.Row</span>=<span class="string">"1"</span>
+                  <span class="type">ItemsSource</span>=<span class="string">"{x:Bind ViewModel.Workflows, Mode=OneWay}"</span>
+                  <span class="type">SelectedItem</span>=<span class="string">"{x:Bind ViewModel.SelectedWorkflow, Mode=TwoWay}"</span>
+                  <span class="type">Margin</span>=<span class="string">"0,16,0,0"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;ListView.ItemTemplate&gt;</span>
+                <span class="keyword">&lt;DataTemplate</span> <span class="type">x:DataType</span>=<span class="string">"models:WorkflowDefinition"</span><span class="keyword">&gt;</span>
+                    <span class="keyword">&lt;Grid</span> <span class="type">Padding</span>=<span class="string">"12"</span> <span class="type">ColumnSpacing</span>=<span class="string">"16"</span><span class="keyword">&gt;</span>
+                        <span class="keyword">&lt;Grid.ColumnDefinitions&gt;</span>
+                            <span class="keyword">&lt;ColumnDefinition</span> <span class="type">Width</span>=<span class="string">"*"</span><span class="keyword">/&gt;</span>
+                            <span class="keyword">&lt;ColumnDefinition</span> <span class="type">Width</span>=<span class="string">"Auto"</span><span class="keyword">/&gt;</span>
+                        <span class="keyword">&lt;/Grid.ColumnDefinitions&gt;</span>
+
+                        <span class="keyword">&lt;StackPanel&gt;</span>
+                            <span class="keyword">&lt;TextBlock</span> <span class="type">Text</span>=<span class="string">"{x:Bind Name}"</span>
+                                       <span class="type">Style</span>=<span class="string">"{StaticResource SubtitleTextBlockStyle}"</span><span class="keyword">/&gt;</span>
+                            <span class="keyword">&lt;TextBlock</span> <span class="type">Text</span>=<span class="string">"{x:Bind Description}"</span>
+                                       <span class="type">Style</span>=<span class="string">"{StaticResource CaptionTextBlockStyle}"</span>
+                                       <span class="type">Foreground</span>=<span class="string">"{ThemeResource TextFillColorSecondary}"</span><span class="keyword">/&gt;</span>
+                        <span class="keyword">&lt;/StackPanel&gt;</span>
+
+                        <span class="keyword">&lt;Border</span> <span class="type">Grid.Column</span>=<span class="string">"1"</span>
+                                <span class="type">Background</span>=<span class="string">"{x:Bind IsPublished, Converter={StaticResource StatusColorConverter}}"</span>
+                                <span class="type">CornerRadius</span>=<span class="string">"4"</span> <span class="type">Padding</span>=<span class="string">"8,4"</span><span class="keyword">&gt;</span>
+                            <span class="keyword">&lt;TextBlock</span> <span class="type">Text</span>=<span class="string">"{x:Bind IsPublished, Converter={StaticResource StatusTextConverter}}"</span>
+                                       <span class="type">FontSize</span>=<span class="string">"12"</span><span class="keyword">/&gt;</span>
+                        <span class="keyword">&lt;/Border&gt;</span>
+                    <span class="keyword">&lt;/Grid&gt;</span>
+                <span class="keyword">&lt;/DataTemplate&gt;</span>
+            <span class="keyword">&lt;/ListView.ItemTemplate&gt;</span>
+        <span class="keyword">&lt;/ListView&gt;</span>
+
+        <span class="comment">&lt;!-- Status bar --&gt;</span>
+        <span class="keyword">&lt;InfoBar</span> <span class="type">Grid.Row</span>=<span class="string">"2"</span>
+                 <span class="type">IsOpen</span>=<span class="string">"True"</span>
+                 <span class="type">IsClosable</span>=<span class="string">"False"</span>
+                 <span class="type">Message</span>=<span class="string">"{x:Bind ViewModel.StatusMessage, Mode=OneWay}"</span><span class="keyword">/&gt;</span>
+    <span class="keyword">&lt;/Grid&gt;</span>
+<span class="keyword">&lt;/Page&gt;</span></code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">7</span>
+                        <span class="step-title">Build Blazor Server Dashboard</span>
+                        <div class="step-content">
+                            Create the web dashboard for real-time monitoring and pending approvals.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">FlowMaster.Web/Pages/Monitor.razor</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="decorator">@page "/monitor"</span>
+<span class="decorator">@using Microsoft.AspNetCore.SignalR.Client</span>
+<span class="decorator">@implements IAsyncDisposable</span>
+<span class="decorator">@inject NavigationManager Navigation</span>
+
+<span class="keyword">&lt;PageTitle&gt;</span>Workflow Monitor<span class="keyword">&lt;/PageTitle&gt;</span>
+
+<span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"monitor-container"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;header</span> <span class="type">class</span>=<span class="string">"monitor-header"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;h1&gt;</span>🔄 Workflow Monitor<span class="keyword">&lt;/h1&gt;</span>
+        <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"connection-status @(isConnected ? "connected" : "disconnected")"</span><span class="keyword">&gt;</span>
+            <span class="decorator">@(isConnected ? "Connected" : "Disconnected")</span>
+        <span class="keyword">&lt;/div&gt;</span>
+    <span class="keyword">&lt;/header&gt;</span>
+
+    <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"dashboard-grid"</span><span class="keyword">&gt;</span>
+        <span class="comment">&lt;!-- Active Workflows --&gt;</span>
+        <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"card"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;h2&gt;</span>Active Instances<span class="keyword">&lt;/h2&gt;</span>
+            <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"stat-number"</span><span class="keyword">&gt;</span><span class="decorator">@activeInstances.Count</span><span class="keyword">&lt;/div&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+
+        <span class="comment">&lt;!-- Pending Approvals --&gt;</span>
+        <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"card warning"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;h2&gt;</span>Pending Approvals<span class="keyword">&lt;/h2&gt;</span>
+            <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"stat-number"</span><span class="keyword">&gt;</span><span class="decorator">@pendingApprovals.Count</span><span class="keyword">&lt;/div&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+
+        <span class="comment">&lt;!-- Completed Today --&gt;</span>
+        <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"card success"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;h2&gt;</span>Completed Today<span class="keyword">&lt;/h2&gt;</span>
+            <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"stat-number"</span><span class="keyword">&gt;</span><span class="decorator">@completedToday</span><span class="keyword">&lt;/div&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+
+    <span class="comment">&lt;!-- Real-time notifications --&gt;</span>
+    <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"notifications-panel"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;h2&gt;</span>Live Activity<span class="keyword">&lt;/h2&gt;</span>
+        <span class="decorator">@foreach (var notification in notifications.TakeLast(10).Reverse())</span>
+        {
+            <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"notification @notification.Type"</span><span class="keyword">&gt;</span>
+                <span class="keyword">&lt;span</span> <span class="type">class</span>=<span class="string">"time"</span><span class="keyword">&gt;</span><span class="decorator">@notification.Timestamp.ToString("HH:mm:ss")</span><span class="keyword">&lt;/span&gt;</span>
+                <span class="keyword">&lt;strong&gt;</span><span class="decorator">@notification.Title</span><span class="keyword">&lt;/strong&gt;</span>
+                <span class="keyword">&lt;span&gt;</span><span class="decorator">@notification.Message</span><span class="keyword">&lt;/span&gt;</span>
+            <span class="keyword">&lt;/div&gt;</span>
+        }
+    <span class="keyword">&lt;/div&gt;</span>
+
+    <span class="comment">&lt;!-- Pending Approvals List --&gt;</span>
+    <span class="decorator">@if (pendingApprovals.Any())</span>
+    {
+        <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"approvals-section"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;h2&gt;</span>⏳ Pending Approvals<span class="keyword">&lt;/h2&gt;</span>
+            <span class="decorator">@foreach (var approval in pendingApprovals)</span>
+            {
+                <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"approval-card"</span><span class="keyword">&gt;</span>
+                    <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"approval-info"</span><span class="keyword">&gt;</span>
+                        <span class="keyword">&lt;strong&gt;</span><span class="decorator">@approval.WorkflowName</span><span class="keyword">&lt;/strong&gt;</span>
+                        <span class="keyword">&lt;p&gt;</span><span class="decorator">@approval.Message</span><span class="keyword">&lt;/p&gt;</span>
+                        <span class="keyword">&lt;small&gt;</span>Requested by: <span class="decorator">@approval.RequestedBy</span><span class="keyword">&lt;/small&gt;</span>
+                    <span class="keyword">&lt;/div&gt;</span>
+                    <span class="keyword">&lt;div</span> <span class="type">class</span>=<span class="string">"approval-actions"</span><span class="keyword">&gt;</span>
+                        <span class="keyword">&lt;button</span> <span class="type">class</span>=<span class="string">"btn approve"</span>
+                                <span class="decorator">@onclick</span>=<span class="string">"() => ApproveAsync(approval.Id, true)"</span><span class="keyword">&gt;</span>
+                            ✓ Approve
+                        <span class="keyword">&lt;/button&gt;</span>
+                        <span class="keyword">&lt;button</span> <span class="type">class</span>=<span class="string">"btn reject"</span>
+                                <span class="decorator">@onclick</span>=<span class="string">"() => ApproveAsync(approval.Id, false)"</span><span class="keyword">&gt;</span>
+                            ✗ Reject
+                        <span class="keyword">&lt;/button&gt;</span>
+                    <span class="keyword">&lt;/div&gt;</span>
+                <span class="keyword">&lt;/div&gt;</span>
+            }
+        <span class="keyword">&lt;/div&gt;</span>
+    }
+<span class="keyword">&lt;/div&gt;</span>
+
+<span class="decorator">@code</span> {
+    <span class="keyword">private</span> <span class="type">HubConnection</span>? hubConnection;
+    <span class="keyword">private</span> <span class="type">bool</span> isConnected => hubConnection?.State == <span class="type">HubConnectionState</span>.Connected;
+    <span class="keyword">private</span> <span class="type">List</span>&lt;<span class="type">WorkflowInstance</span>&gt; activeInstances = <span class="keyword">new</span>();
+    <span class="keyword">private</span> <span class="type">List</span>&lt;<span class="type">PendingApproval</span>&gt; pendingApprovals = <span class="keyword">new</span>();
+    <span class="keyword">private</span> <span class="type">List</span>&lt;<span class="type">Notification</span>&gt; notifications = <span class="keyword">new</span>();
+    <span class="keyword">private int</span> completedToday = <span class="number">0</span>;
+
+    <span class="keyword">protected override async</span> <span class="type">Task</span> OnInitializedAsync()
+    {
+        hubConnection = <span class="keyword">new</span> <span class="type">HubConnectionBuilder</span>()
+            .WithUrl(Navigation.ToAbsoluteUri(<span class="string">"/hubs/workflow"</span>))
+            .WithAutomaticReconnect()
+            .Build();
+
+        <span class="comment">// Handle real-time notifications</span>
+        hubConnection.On&lt;<span class="type">Notification</span>&gt;(<span class="string">"WorkflowNotification"</span>, (notification) =>
+        {
+            notifications.Add(notification);
+            <span class="type">InvokeAsync</span>(<span class="type">StateHasChanged</span>);
+        });
+
+        <span class="comment">// Handle status updates</span>
+        hubConnection.On&lt;<span class="type">WorkflowStatusUpdate</span>&gt;(<span class="string">"WorkflowStatusUpdate"</span>, (update) =>
+        {
+            <span class="keyword">if</span> (update.Status == <span class="string">"Completed"</span>)
+                completedToday++;
+
+            <span class="type">InvokeAsync</span>(<span class="type">StateHasChanged</span>);
+        });
+
+        <span class="keyword">await</span> hubConnection.StartAsync();
+        <span class="keyword">await</span> LoadDataAsync();
+    }
+
+    <span class="keyword">private async</span> <span class="type">Task</span> ApproveAsync(<span class="type">string</span> approvalId, <span class="type">bool</span> approved)
+    {
+        <span class="keyword">await</span> hubConnection!.SendAsync(<span class="string">"SubmitApproval"</span>, approvalId, approved, <span class="string">""</span>);
+        pendingApprovals.RemoveAll(a => a.Id == approvalId);
+    }
+
+    <span class="keyword">public async</span> <span class="type">ValueTask</span> DisposeAsync()
+    {
+        <span class="keyword">if</span> (hubConnection <span class="keyword">is not null</span>)
+            <span class="keyword">await</span> hubConnection.DisposeAsync();
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="step-card">
+                        <span class="step-number">8</span>
+                        <span class="step-title">Docker Compose for Deployment</span>
+                        <div class="step-content">
+                            Set up Docker Compose to run all services together.
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">docker-compose.yml</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">version</span>: <span class="string">'3.8'</span>
+
+<span class="keyword">services</span>:
+  <span class="function">postgres</span>:
+    <span class="keyword">image</span>: postgres:16-alpine
+    <span class="keyword">environment</span>:
+      <span class="type">POSTGRES_USER</span>: flowmaster
+      <span class="type">POSTGRES_PASSWORD</span>: flowmaster_secret
+      <span class="type">POSTGRES_DB</span>: flowmaster_db
+    <span class="keyword">volumes</span>:
+      - postgres_data:/var/lib/postgresql/data
+    <span class="keyword">ports</span>:
+      - <span class="string">"5432:5432"</span>
+    <span class="keyword">healthcheck</span>:
+      <span class="type">test</span>: [<span class="string">"CMD-SHELL"</span>, <span class="string">"pg_isready -U flowmaster"</span>]
+      <span class="type">interval</span>: 10s
+      <span class="type">timeout</span>: 5s
+      <span class="type">retries</span>: 5
+
+  <span class="function">api</span>:
+    <span class="keyword">build</span>:
+      <span class="type">context</span>: .
+      <span class="type">dockerfile</span>: src/FlowMaster.Api/Dockerfile
+    <span class="keyword">environment</span>:
+      - <span class="type">ASPNETCORE_ENVIRONMENT</span>=Production
+      - <span class="type">ConnectionStrings__Default</span>=Host=postgres;Database=flowmaster_db;Username=flowmaster;Password=flowmaster_secret
+    <span class="keyword">ports</span>:
+      - <span class="string">"5000:8080"</span>
+    <span class="keyword">depends_on</span>:
+      <span class="function">postgres</span>:
+        <span class="type">condition</span>: service_healthy
+
+  <span class="function">web</span>:
+    <span class="keyword">build</span>:
+      <span class="type">context</span>: .
+      <span class="type">dockerfile</span>: src/FlowMaster.Web/Dockerfile
+    <span class="keyword">environment</span>:
+      - <span class="type">ASPNETCORE_ENVIRONMENT</span>=Production
+      - <span class="type">ApiUrl</span>=http://api:8080
+    <span class="keyword">ports</span>:
+      - <span class="string">"5001:8080"</span>
+    <span class="keyword">depends_on</span>:
+      - api
+
+<span class="keyword">volumes</span>:
+  <span class="function">postgres_data</span>:</code></pre>
+                    </div>
+
+                    <h4>Challenges</h4>
+                    <div class="info-box tip">
+                        <div class="info-box-title">💪 Extension Challenges</div>
+                        <ul>
+                            <li><strong>Visual Workflow Designer:</strong> Build a drag-and-drop workflow designer in WinUI 3</li>
+                            <li><strong>Workflow Templates:</strong> Create reusable workflow templates (Invoice Approval, Leave Request)</li>
+                            <li><strong>Email Integration:</strong> Connect to real SMTP server and send actual emails</li>
+                            <li><strong>Metrics Dashboard:</strong> Add charts showing workflow execution times and success rates</li>
+                            <li><strong>Role-Based Approvals:</strong> Implement multi-level approval chains based on user roles</li>
+                            <li><strong>Workflow Versioning:</strong> Support multiple versions of the same workflow definition</li>
+                            <li><strong>External Triggers:</strong> Add webhook endpoints to trigger workflows from external systems</li>
+                            <li><strong>Audit Trail:</strong> Implement comprehensive logging of all workflow events</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Git Workflow -->
+            <section id="git-workflow">
+                <h2><span class="section-number">09</span>Git Workflow for Projects</h2>
+                <p>Follow this Git workflow for all capstone projects:</p>
+
+                <div class="step-card">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Initialize Repository</span>
+                    <div class="step-content">
+                        <code>git init</code> and create <code>.gitignore</code> for C#/.NET projects
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Create Feature Branches</span>
+                    <div class="step-content">
+                        <code>git checkout -b feature/task-sorting</code> for each new feature
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Commit Often</span>
+                    <div class="step-content">
+                        Make small, focused commits with clear messages: <code>git commit -m "Add QuickSort implementation for tasks"</code>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <span class="step-number">4</span>
+                    <span class="step-title">Merge via Pull Requests</span>
+                    <div class="step-content">
+                        Push branch and create PR: <code>git push -u origin feature/task-sorting</code>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">.gitignore (C#/.NET)</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Build results</span>
+[Bb]in/
+[Oo]bj/
+
+<span class="comment"># Visual Studio</span>
+.vs/
+*.user
+*.suo
+
+<span class="comment"># Rider</span>
+.idea/
+
+<span class="comment"># User secrets</span>
+secrets.json
+
+<span class="comment"># Database</span>
+*.db
+*.db-journal
+
+<span class="comment"># Logs</span>
+logs/
+*.log</code></pre>
+                </div>
+            </section>
+
+            <!-- Docker Setup -->
+            <section id="docker-setup">
+                <h2><span class="section-number">10</span>Docker Setup Guide</h2>
+                <p>Common Docker commands for your projects:</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Common Docker Commands</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Build and start all services</span>
+docker-compose up -d --build
+
+<span class="comment"># View running containers</span>
+docker-compose ps
+
+<span class="comment"># View logs</span>
+docker-compose logs -f api
+
+<span class="comment"># Stop all services</span>
+docker-compose down
+
+<span class="comment"># Remove volumes (reset data)</span>
+docker-compose down -v
+
+<span class="comment"># Execute command in container</span>
+docker-compose exec postgres psql -U admin -d mydb
+
+<span class="comment"># Build single service</span>
+docker-compose build api</code></pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Dockerfile (.NET App)</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Build stage</span>
+<span class="keyword">FROM</span> mcr.microsoft.com/dotnet/sdk:<span class="number">8.0</span> <span class="keyword">AS</span> build
+<span class="keyword">WORKDIR</span> /src
+<span class="keyword">COPY</span> *.csproj .
+<span class="keyword">RUN</span> dotnet restore
+<span class="keyword">COPY</span> . .
+<span class="keyword">RUN</span> dotnet publish -c Release -o /app
+
+<span class="comment"># Runtime stage</span>
+<span class="keyword">FROM</span> mcr.microsoft.com/dotnet/aspnet:<span class="number">8.0</span>
+<span class="keyword">WORKDIR</span> /app
+<span class="keyword">COPY</span> --from=build /app .
+<span class="keyword">EXPOSE</span> <span class="number">80</span>
+<span class="keyword">ENTRYPOINT</span> [<span class="string">"dotnet"</span>, <span class="string">"MyApp.dll"</span>]</code></pre>
+                </div>
+            </section>
+
+            <!-- Next Steps -->
+            <section id="next-steps">
+                <h2><span class="section-number">11</span>Next Steps</h2>
+                <p>After completing these projects, consider these advanced topics:</p>
+
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <div class="checklist-box"></div>
+                        <span class="checklist-text"><strong>Microservices Architecture</strong> - Split your chat app into separate services</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-box"></div>
+                        <span class="checklist-text"><strong>Kubernetes</strong> - Deploy your Docker apps to K8s cluster</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-box"></div>
+                        <span class="checklist-text"><strong>Event Sourcing</strong> - Implement event-driven architecture</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-box"></div>
+                        <span class="checklist-text"><strong>GraphQL</strong> - Replace REST API with GraphQL</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-box"></div>
+                        <span class="checklist-text"><strong>gRPC</strong> - High-performance communication between services</span>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="checklist-box"></div>
+                        <span class="checklist-text"><strong>Testing</strong> - Add unit tests, integration tests, and E2E tests</span>
+                    </div>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">Pro Tip</div>
+                    <p>Build your portfolio! Host your completed projects on GitHub with good README files, and deploy them using free tiers of Azure, AWS, or Railway. This demonstrates real-world skills to potential employers.</p>
+                </div>
+            </section>
+
+            <!-- Section 12: Scope & Planning -->
+            <section id="capstone-scope">
+                <h2><span class="section-number">12</span>Scope & Planning</h2>
+                <div class="info-box note">
+                    <div class="info-box-title">🧭 Define the MVP</div>
+                    <p>Pick a narrow, testable scope, identify the core user journeys, and document assumptions before writing code.</p>
+                </div>
+            </section>
+
+            <!-- Section 13: Quality Bar -->
+            <section id="capstone-quality">
+                <h2><span class="section-number">13</span>Quality Bar</h2>
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ What Reviewers Look For</div>
+                    <ul>
+                        <li>Readable architecture and clear folders.</li>
+                        <li>Tests on critical flows.</li>
+                        <li>Error handling and logging.</li>
+                        <li>Docs and setup instructions.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 14: Release Checklist -->
+            <section id="capstone-release">
+                <h2><span class="section-number">14</span>Release Checklist</h2>
+                <div class="info-box tip">
+                    <div class="info-box-title">✅ Final Steps</div>
+                    <ul>
+                        <li>Tag a release and write a changelog.</li>
+                        <li>Validate deploy and rollback paths.</li>
+                        <li>Capture screenshots and demo video.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#fbbf24', '#f97316', '#a855f7', '#3b82f6', '#10b981', '#06b6d4'];
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    width: ${Math.random() * 6 + 2}px;
+                    height: ${Math.random() * 6 + 2}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    animation-delay: ${Math.random() * 5}s;
+                    animation-duration: ${Math.random() * 8 + 6}s;
+                `;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Progress bar
+        function updateProgressBar() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            document.getElementById('progressBar').style.width = (scrollTop / docHeight) * 100 + '%';
+        }
+
+        // Back to top
+        function toggleBackToTop() {
+            document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 500);
+        }
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Active nav
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link:not(.home-link)');
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        }
+
+        // Copy code
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
+
+        // Checklist toggle
+        document.querySelectorAll('.checklist-box').forEach(box => {
+            box.addEventListener('click', () => box.classList.toggle('checked'));
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        window.addEventListener('scroll', () => { updateProgressBar(); updateActiveNav(); toggleBackToTop(); });
+    </script>
+</body>
+</html>

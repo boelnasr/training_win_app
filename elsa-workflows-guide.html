@@ -1,0 +1,2298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elsa Workflows Guide | .NET Workflow Engine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0d12;
+            --bg-secondary: #0f1318;
+            --bg-tertiary: #161c24;
+            --bg-card: #1a2230;
+            --bg-code: #0d1117;
+            --text-primary: #f0f4f8;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --elsa-blue: #3b82f6;
+            --elsa-indigo: #6366f1;
+            --elsa-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-orange: #f97316;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --dotnet-purple: #512bd4;
+            --border-color: #1e293b;
+            --border-hover: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes flowPulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
+        @keyframes dash { to { stroke-dashoffset: -20; } }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--elsa-blue), var(--elsa-purple), var(--elsa-blue));
+            background-size: 200% 100%;
+            animation: gradientMove 2s linear infinite;
+            z-index: 9999;
+            transition: width 0.2s ease;
+        }
+
+        .particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .particle {
+            position: absolute; width: 4px; height: 4px; border-radius: 50%;
+            opacity: 0.3; animation: float 6s ease-in-out infinite;
+        }
+        .particle:nth-child(1) { left: 10%; top: 15%; background: var(--elsa-blue); }
+        .particle:nth-child(2) { left: 25%; top: 35%; background: var(--elsa-purple); animation-delay: 1s; }
+        .particle:nth-child(3) { left: 65%; top: 25%; background: var(--accent-cyan); animation-delay: 2s; }
+        .particle:nth-child(4) { left: 85%; top: 45%; background: var(--accent-green); animation-delay: 3s; }
+        .particle:nth-child(5) { left: 35%; top: 65%; background: var(--dotnet-purple); animation-delay: 4s; }
+        .particle:nth-child(6) { left: 75%; top: 75%; background: var(--elsa-indigo); animation-delay: 5s; }
+
+        .header {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            animation: float 8s ease-in-out infinite;
+        }
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--elsa-blue), var(--elsa-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .header .subtitle {
+            font-size: 1.1rem; color: var(--text-secondary);
+            max-width: 700px; margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .badge-row {
+            display: flex; justify-content: center; gap: 0.75rem;
+            margin-top: 1.5rem; flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; background: var(--bg-tertiary);
+            border: 1px solid var(--border-color); border-radius: 100px;
+            font-size: 0.875rem; color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .badge:hover {
+            transform: translateY(-3px) scale(1.05);
+            border-color: var(--elsa-blue);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+        .badge-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+
+        .container { display: flex; max-width: 1700px; margin: 0 auto; position: relative; z-index: 1; }
+
+        .sidebar {
+            width: 300px; background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 0; position: sticky; top: 0;
+            height: 100vh; overflow-y: auto; flex-shrink: 0;
+            animation: fadeInLeft 0.6s ease-out;
+        }
+        .nav-section { padding: 0 1rem; margin-bottom: 1.5rem; }
+        .nav-section-title {
+            font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--text-muted);
+            padding: 0 0.75rem; margin-bottom: 0.5rem;
+        }
+        .nav-link {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 0.75rem; color: var(--text-secondary);
+            text-decoration: none; border-radius: 6px; font-size: 0.85rem;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .nav-link::before {
+            content: ''; position: absolute; left: 0; top: 0;
+            height: 100%; width: 3px;
+            background: linear-gradient(180deg, var(--elsa-blue), var(--elsa-purple));
+            transform: scaleY(0); transition: transform 0.3s ease;
+        }
+        .nav-link:hover { background: var(--bg-tertiary); color: var(--text-primary); padding-left: 1rem; }
+        .nav-link:hover::before, .nav-link.active::before { transform: scaleY(1); }
+        .nav-link.active { background: rgba(59, 130, 246, 0.1); color: var(--elsa-blue); }
+        .nav-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); min-width: 24px; }
+
+        .main-content { flex: 1; padding: 2.5rem; max-width: calc(100% - 300px); }
+
+        section {
+            margin-bottom: 4rem; opacity: 0; transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+        section h2 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem;
+            color: var(--text-primary); margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .section-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--elsa-blue), var(--elsa-purple));
+            border-radius: 10px; font-size: 1rem; font-weight: 700; color: white;
+            transition: all 0.3s ease;
+        }
+        section:hover .section-number {
+            transform: rotate(-5deg) scale(1.1);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+        section h3 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem;
+            color: var(--text-primary); margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        section h3::after {
+            content: ''; position: absolute; bottom: -1px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--elsa-blue), var(--elsa-purple));
+            transition: width 0.5s ease;
+        }
+        section:hover h3::after { width: 100px; }
+        section h4 { font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin: 1.5rem 0 0.75rem; }
+        section p { color: var(--text-secondary); margin-bottom: 1rem; max-width: 900px; }
+
+        .code-block {
+            background: var(--bg-code); border: 1px solid var(--border-color);
+            border-radius: 10px; overflow: hidden; margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .code-block:hover {
+            border-color: var(--elsa-blue);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+        .code-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.6rem 1rem; background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .code-lang::before {
+            content: ''; width: 8px; height: 8px; border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .code-lang.csharp::before { background: var(--dotnet-purple); }
+        .code-lang.json::before { background: var(--accent-yellow); }
+        .code-lang.bash::before { background: var(--accent-green); }
+        .code-lang.xml::before { background: var(--accent-orange); }
+        .copy-btn {
+            background: transparent; border: 1px solid var(--border-color);
+            color: var(--text-muted); padding: 0.25rem 0.6rem; border-radius: 4px;
+            cursor: pointer; font-size: 0.75rem; transition: all 0.3s ease;
+        }
+        .copy-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--elsa-blue); }
+        .copy-btn.copied { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+        .code-block pre {
+            padding: 1rem; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6;
+        }
+        .keyword { color: var(--elsa-blue); }
+        .class-name { color: var(--accent-cyan); }
+        .interface { color: var(--accent-green); }
+        .method { color: var(--accent-yellow); }
+        .string { color: var(--accent-orange); }
+        .number { color: var(--accent-pink); }
+        .comment { color: var(--text-muted); font-style: italic; }
+        .attribute { color: var(--elsa-purple); }
+        .type { color: var(--elsa-indigo); }
+        .property { color: var(--accent-cyan); }
+        .operator { color: var(--text-secondary); }
+
+        .code-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1rem; margin: 1rem 0;
+        }
+
+        .visual-box {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 2rem; margin: 1.5rem 0;
+            transition: all 0.4s ease;
+        }
+        .visual-box:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+        .visual-title {
+            font-weight: 600; color: var(--text-primary);
+            margin-bottom: 1.5rem; font-size: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        /* Workflow Diagram */
+        .workflow-diagram {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 0.5rem; padding: 1.5rem;
+        }
+        .workflow-node {
+            background: var(--bg-tertiary); border: 2px solid;
+            border-radius: 10px; padding: 1rem 1.5rem;
+            min-width: 180px; text-align: center;
+            transition: all 0.3s ease; position: relative;
+        }
+        .workflow-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px currentColor;
+        }
+        .workflow-node.start { border-color: var(--accent-green); color: var(--accent-green); border-radius: 25px; }
+        .workflow-node.activity { border-color: var(--elsa-blue); color: var(--elsa-blue); }
+        .workflow-node.decision { border-color: var(--accent-yellow); color: var(--accent-yellow); transform: rotate(0deg); }
+        .workflow-node.end { border-color: var(--accent-red); color: var(--accent-red); border-radius: 25px; }
+        .workflow-node.http { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+        .workflow-node.timer { border-color: var(--accent-orange); color: var(--accent-orange); }
+        .workflow-node-label { font-weight: 600; font-size: 0.9rem; }
+        .workflow-node-type { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem; }
+        .workflow-arrow {
+            color: var(--text-muted); font-size: 1.2rem;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .workflow-arrow-label { font-size: 0.7rem; color: var(--text-muted); }
+        .workflow-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+
+        /* Activity Cards */
+        .activity-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem; margin: 1.5rem 0;
+        }
+        .activity-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 1.25rem; transition: all 0.4s ease;
+        }
+        .activity-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--elsa-blue);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        .activity-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+        .activity-name { font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+        .activity-desc { font-size: 0.85rem; color: var(--text-secondary); }
+        .activity-category {
+            font-size: 0.7rem; color: var(--elsa-blue);
+            text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Concept Box */
+        .concept-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem; margin: 1.5rem 0;
+        }
+        .concept-card {
+            background: var(--bg-tertiary); border-radius: 12px;
+            padding: 1.5rem; border-left: 4px solid var(--elsa-blue);
+            transition: all 0.3s ease;
+        }
+        .concept-card:hover { transform: translateX(5px); }
+        .concept-card.purple { border-left-color: var(--elsa-purple); }
+        .concept-card.green { border-left-color: var(--accent-green); }
+        .concept-card.orange { border-left-color: var(--accent-orange); }
+        .concept-card.cyan { border-left-color: var(--accent-cyan); }
+        .concept-title { font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .concept-desc { font-size: 0.9rem; color: var(--text-secondary); }
+
+        .table-wrapper {
+            overflow-x: auto; margin: 1.5rem 0; border-radius: 10px;
+            border: 1px solid var(--border-color); transition: all 0.3s ease;
+        }
+        .table-wrapper:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { color: var(--text-secondary); transition: background 0.3s ease; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(59, 130, 246, 0.05); }
+        td code {
+            background: var(--bg-tertiary); padding: 0.15rem 0.4rem; border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            color: var(--elsa-blue); transition: all 0.3s ease;
+        }
+        tr:hover td code { background: rgba(59, 130, 246, 0.2); }
+
+        .info-box {
+            padding: 1rem 1.25rem; border-radius: 10px; margin: 1.5rem 0;
+            border: 1px solid; transition: all 0.4s ease;
+        }
+        .info-box:hover { transform: translateX(5px); }
+        .info-box.tip { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+        .info-box.tip:hover { box-shadow: -5px 0 20px rgba(16, 185, 129, 0.2); }
+        .info-box.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+        .info-box.warning:hover { box-shadow: -5px 0 20px rgba(245, 158, 11, 0.2); }
+        .info-box.note { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+        .info-box.note:hover { box-shadow: -5px 0 20px rgba(59, 130, 246, 0.2); }
+        .info-box.danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
+        .info-box.danger:hover { box-shadow: -5px 0 20px rgba(239, 68, 68, 0.2); }
+        .info-box-title { font-weight: 600; margin-bottom: 0.5rem; }
+        .info-box.tip .info-box-title { color: var(--accent-green); }
+        .info-box.warning .info-box-title { color: var(--accent-yellow); }
+        .info-box.note .info-box-title { color: var(--elsa-blue); }
+        .info-box.danger .info-box-title { color: var(--accent-red); }
+        .info-box p, .info-box ul { margin: 0; color: var(--text-secondary); }
+        .info-box ul { padding-left: 1.25rem; }
+        .info-box li { margin: 0.25rem 0; }
+
+        /* Version Toggle */
+        .version-tabs {
+            display: flex; gap: 0.5rem; margin-bottom: 1rem;
+        }
+        .version-tab {
+            padding: 0.5rem 1rem; background: var(--bg-tertiary);
+            border: 1px solid var(--border-color); border-radius: 6px;
+            color: var(--text-secondary); cursor: pointer;
+            transition: all 0.3s ease; font-size: 0.85rem;
+        }
+        .version-tab:hover, .version-tab.active {
+            background: var(--elsa-blue); border-color: var(--elsa-blue);
+            color: white;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem; margin: 1.5rem 0;
+        }
+        .feature-item {
+            background: var(--bg-tertiary); border-radius: 8px;
+            padding: 1rem; text-align: center; transition: all 0.3s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .feature-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .feature-name { font-weight: 600; color: var(--text-primary); font-size: 0.9rem; }
+
+        /* Architecture Diagram */
+        .architecture-box {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; padding: 1.5rem; background: var(--bg-tertiary);
+            border-radius: 10px;
+        }
+        .arch-layer {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 1rem; text-align: center;
+            transition: all 0.3s ease;
+        }
+        .arch-layer:hover { transform: scale(1.02); border-color: var(--elsa-blue); }
+        .arch-layer-title {
+            font-weight: 600; color: var(--elsa-blue);
+            margin-bottom: 0.5rem; font-size: 0.9rem;
+        }
+        .arch-layer-items { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--elsa-blue), var(--elsa-purple));
+            border: none; border-radius: 50%; color: white; font-size: 1.5rem;
+            cursor: pointer; opacity: 0; visibility: hidden;
+            transition: all 0.3s ease; z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.6);
+        }
+
+        @media (max-width: 1100px) { .code-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { max-width: 100%; padding: 1.5rem; }
+            .architecture-box { grid-template-columns: 1fr; }
+        }
+
+        /* Home Navigation */
+        .home-link {
+            display: block;
+            padding: 0 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .home-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: var(--elsa-blue);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .home-btn:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.2));
+            border-color: var(--elsa-blue);
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.2);
+        }
+        .home-btn::before {
+            content: '←';
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="particles">
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    </div>
+
+    <header class="header">
+        <h1>🔄 Elsa Workflows Guide</h1>
+        <p class="subtitle">Build powerful workflow automation in .NET with Elsa — the open-source workflow engine</p>
+        <div class="badge-row">
+            <span class="badge"><span class="badge-dot" style="background: var(--elsa-blue);"></span>Elsa 3.x</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--dotnet-purple);"></span>.NET 8</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-green);"></span>C#</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-orange);"></span>Workflows</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar">
+            <div class="home-link">
+                <a href="index.html" class="home-btn">Back to Hub</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Getting Started</div>
+                <a href="#introduction" class="nav-link"><span class="nav-number">01</span>Introduction</a>
+                <a href="#installation" class="nav-link"><span class="nav-number">02</span>Installation</a>
+                <a href="#concepts" class="nav-link"><span class="nav-number">03</span>Core Concepts</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Building Workflows</div>
+                <a href="#code-workflows" class="nav-link"><span class="nav-number">04</span>Code Workflows</a>
+                <a href="#activities" class="nav-link"><span class="nav-number">05</span>Built-in Activities</a>
+                <a href="#custom-activities" class="nav-link"><span class="nav-number">06</span>Custom Activities</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Features</div>
+                <a href="#variables" class="nav-link"><span class="nav-number">07</span>Variables & Expressions</a>
+                <a href="#control-flow" class="nav-link"><span class="nav-number">08</span>Control Flow</a>
+                <a href="#http-activities" class="nav-link"><span class="nav-number">09</span>HTTP Activities</a>
+                <a href="#timers" class="nav-link"><span class="nav-number">10</span>Timers & Scheduling</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Advanced</div>
+                <a href="#persistence" class="nav-link"><span class="nav-number">11</span>Persistence</a>
+                <a href="#bookmarks" class="nav-link"><span class="nav-number">12</span>Bookmarks & Signals</a>
+                <a href="#designer" class="nav-link"><span class="nav-number">13</span>Workflow Designer</a>
+                <a href="#api" class="nav-link"><span class="nav-number">14</span>REST API</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Patterns</div>
+                <a href="#error-handling" class="nav-link"><span class="nav-number">15</span>Error Handling</a>
+                <a href="#long-running" class="nav-link"><span class="nav-number">16</span>Long-Running Workflows</a>
+                <a href="#testing" class="nav-link"><span class="nav-number">17</span>Testing Workflows</a>
+                <a href="#best-practices" class="nav-link"><span class="nav-number">18</span>Best Practices</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Production</div>
+                <a href="#security-auth" class="nav-link"><span class="nav-number">19</span>Security & Auth</a>
+                <a href="#ops-monitoring" class="nav-link"><span class="nav-number">20</span>Ops & Monitoring</a>
+                <a href="#deployment-persistence" class="nav-link"><span class="nav-number">21</span>Deployment & Persistence</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Section 1: Introduction -->
+            <section id="introduction">
+                <h2><span class="section-number">01</span>Introduction to Elsa</h2>
+                <p><strong>Elsa</strong> is an open-source workflow engine for .NET that enables you to build and execute workflows in your applications. It supports both code-first and designer-based workflow creation.</p>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🔧</div>
+                        <div class="feature-name">Code-First</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-name">Visual Designer</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⏱️</div>
+                        <div class="feature-name">Long-Running</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔌</div>
+                        <div class="feature-name">Extensible</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💾</div>
+                        <div class="feature-name">Persistence</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🌐</div>
+                        <div class="feature-name">HTTP Endpoints</div>
+                    </div>
+                </div>
+
+                <div class="visual-box">
+                    <div class="visual-title">🏗️ Elsa Architecture Overview</div>
+                    <div class="architecture-box">
+                        <div class="arch-layer">
+                            <div class="arch-layer-title">Presentation</div>
+                            <div class="arch-layer-items">Designer UI<br>REST API<br>Blazor Studio</div>
+                        </div>
+                        <div class="arch-layer">
+                            <div class="arch-layer-title">Core Engine</div>
+                            <div class="arch-layer-items">Workflow Runtime<br>Activity Execution<br>Expression Evaluation</div>
+                        </div>
+                        <div class="arch-layer">
+                            <div class="arch-layer-title">Infrastructure</div>
+                            <div class="arch-layer-items">Persistence<br>Messaging<br>Scheduling</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Elsa 3.x vs 2.x</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Feature</th><th>Elsa 2.x</th><th>Elsa 3.x</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>.NET Version</td><td>.NET 5/6</td><td>.NET 7/8+</td></tr>
+                            <tr><td>Designer</td><td>HTML/CSS</td><td>Blazor-based</td></tr>
+                            <tr><td>API</td><td>REST</td><td>REST + gRPC</td></tr>
+                            <tr><td>Expressions</td><td>JavaScript, Liquid</td><td>C#, JavaScript, Python</td></tr>
+                            <tr><td>Performance</td><td>Good</td><td>Significantly improved</td></tr>
+                            <tr><td>Multi-tenancy</td><td>Limited</td><td>Built-in support</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 2: Installation -->
+            <section id="installation">
+                <h2><span class="section-number">02</span>Installation & Setup</h2>
+
+                <h3>Install NuGet Packages</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang bash">Package Manager / CLI</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Core Elsa packages</span>
+dotnet add package Elsa
+dotnet add package Elsa.EntityFrameworkCore
+dotnet add package Elsa.EntityFrameworkCore.Sqlite
+
+<span class="comment"># HTTP Activities</span>
+dotnet add package Elsa.Http
+
+<span class="comment"># Workflow Designer (Blazor)</span>
+dotnet add package Elsa.Studio.Host.Wasm
+dotnet add package Elsa.Studio.Workflows
+
+<span class="comment"># Additional activities</span>
+dotnet add package Elsa.Scheduling
+dotnet add package Elsa.Email
+dotnet add package Elsa.Webhooks</code></pre>
+                </div>
+
+                <h3>Basic Configuration</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">Program.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">using</span> Elsa.EntityFrameworkCore.Extensions;
+<span class="keyword">using</span> Elsa.EntityFrameworkCore.Modules.Management;
+<span class="keyword">using</span> Elsa.EntityFrameworkCore.Modules.Runtime;
+<span class="keyword">using</span> Elsa.Extensions;
+
+<span class="keyword">var</span> builder = WebApplication.CreateBuilder(args);
+
+<span class="comment">// Add Elsa services</span>
+builder.Services.AddElsa(elsa =>
+{
+    <span class="comment">// Configure management persistence (workflow definitions)</span>
+    elsa.UseWorkflowManagement(management =>
+    {
+        management.UseEntityFrameworkCore(ef => 
+            ef.UseSqlite(<span class="string">"Data Source=elsa.db"</span>));
+    });
+    
+    <span class="comment">// Configure runtime persistence (workflow instances)</span>
+    elsa.UseWorkflowRuntime(runtime =>
+    {
+        runtime.UseEntityFrameworkCore(ef => 
+            ef.UseSqlite(<span class="string">"Data Source=elsa.db"</span>));
+    });
+    
+    <span class="comment">// Enable HTTP activities</span>
+    elsa.UseHttp();
+    
+    <span class="comment">// Enable scheduling activities</span>
+    elsa.UseScheduling();
+    
+    <span class="comment">// Register custom workflows</span>
+    elsa.AddWorkflow&lt;<span class="class-name">MyFirstWorkflow</span>&gt;();
+    
+    <span class="comment">// Enable C# expressions</span>
+    elsa.UseCSharp();
+    
+    <span class="comment">// Enable JavaScript expressions</span>
+    elsa.UseJavaScript();
+    
+    <span class="comment">// Expose REST API endpoints</span>
+    elsa.UseWorkflowsApi();
+    
+    <span class="comment">// Enable Elsa Studio (designer)</span>
+    elsa.UseElsaStudio();
+});
+
+<span class="keyword">var</span> app = builder.Build();
+
+<span class="comment">// Map Elsa API endpoints</span>
+app.UseWorkflowsApi();
+app.UseElsaStudio();
+
+app.Run();</code></pre>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Quick Start Template</div>
+                    <p>Use the Elsa project template for faster setup:</p>
+                    <code style="background: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px; display: block; margin-top: 0.5rem;">
+                        dotnet new install Elsa.Templates<br>
+                        dotnet new elsa
+                    </code>
+                </div>
+            </section>
+
+            <!-- Section 3: Core Concepts -->
+            <section id="concepts">
+                <h2><span class="section-number">03</span>Core Concepts</h2>
+
+                <div class="concept-grid">
+                    <div class="concept-card">
+                        <div class="concept-title">📋 Workflow</div>
+                        <div class="concept-desc">A workflow is a series of activities that execute in a defined order. It can be long-running and persist state between executions.</div>
+                    </div>
+                    <div class="concept-card purple">
+                        <div class="concept-title">⚡ Activity</div>
+                        <div class="concept-desc">The building block of workflows. Activities perform actions like sending emails, making HTTP requests, or custom business logic.</div>
+                    </div>
+                    <div class="concept-card green">
+                        <div class="concept-title">🔖 Bookmark</div>
+                        <div class="concept-desc">A marker that allows a workflow to pause and resume later. Used for long-running operations like waiting for external events.</div>
+                    </div>
+                    <div class="concept-card orange">
+                        <div class="concept-title">📡 Signal</div>
+                        <div class="concept-desc">A named event that can trigger workflow execution or resume a suspended workflow. Enables event-driven architectures.</div>
+                    </div>
+                    <div class="concept-card cyan">
+                        <div class="concept-title">🎯 Trigger</div>
+                        <div class="concept-desc">Defines how a workflow starts — HTTP request, timer, signal, or programmatic invocation.</div>
+                    </div>
+                    <div class="concept-card">
+                        <div class="concept-title">💾 Workflow Instance</div>
+                        <div class="concept-desc">A running (or completed) execution of a workflow definition. Contains state, variables, and execution history.</div>
+                    </div>
+                </div>
+
+                <div class="visual-box">
+                    <div class="visual-title">🔄 Workflow Lifecycle</div>
+                    <div class="workflow-diagram">
+                        <div class="workflow-row">
+                            <div class="workflow-node start">
+                                <div class="workflow-node-label">Idle</div>
+                                <div class="workflow-node-type">Not Started</div>
+                            </div>
+                            <div class="workflow-arrow">→<span class="workflow-arrow-label">Trigger</span></div>
+                            <div class="workflow-node activity">
+                                <div class="workflow-node-label">Running</div>
+                                <div class="workflow-node-type">Executing</div>
+                            </div>
+                            <div class="workflow-arrow">→<span class="workflow-arrow-label">Bookmark</span></div>
+                            <div class="workflow-node timer">
+                                <div class="workflow-node-label">Suspended</div>
+                                <div class="workflow-node-type">Waiting</div>
+                            </div>
+                        </div>
+                        <div class="workflow-arrow" style="transform: rotate(90deg); margin: 1rem 0;">→<span class="workflow-arrow-label">Resume</span></div>
+                        <div class="workflow-row">
+                            <div class="workflow-node end">
+                                <div class="workflow-node-label">Completed</div>
+                                <div class="workflow-node-type">Finished</div>
+                            </div>
+                            <div class="workflow-arrow" style="transform: rotate(180deg);">→<span class="workflow-arrow-label">Done</span></div>
+                            <div class="workflow-node activity">
+                                <div class="workflow-node-label">Running</div>
+                                <div class="workflow-node-type">Resumed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Code Workflows -->
+            <section id="code-workflows">
+                <h2><span class="section-number">04</span>Code-First Workflows</h2>
+                <p>Define workflows directly in C# code for full type-safety and IDE support.</p>
+
+                <h3>Simple Workflow</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">HelloWorldWorkflow.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">using</span> Elsa.Workflows;
+<span class="keyword">using</span> Elsa.Workflows.Activities;
+<span class="keyword">using</span> Elsa.Workflows.Contracts;
+
+<span class="keyword">public class</span> <span class="class-name">HelloWorldWorkflow</span> : <span class="interface">WorkflowBase</span>
+{
+    <span class="keyword">protected override void</span> <span class="method">Build</span>(<span class="interface">IWorkflowBuilder</span> builder)
+    {
+        builder.Root = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Hello, World!"</span>),
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Welcome to Elsa Workflows!"</span>),
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Workflow completed."</span>)
+            }
+        };
+    }
+}</code></pre>
+                </div>
+
+                <h3>Workflow with Variables</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">OrderWorkflow.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">public class</span> <span class="class-name">OrderWorkflow</span> : <span class="interface">WorkflowBase</span>
+{
+    <span class="keyword">protected override void</span> <span class="method">Build</span>(<span class="interface">IWorkflowBuilder</span> builder)
+    {
+        <span class="comment">// Define workflow variables</span>
+        <span class="keyword">var</span> orderId = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+        <span class="keyword">var</span> orderTotal = builder.WithVariable&lt;<span class="type">decimal</span>&gt;();
+        <span class="keyword">var</span> isApproved = builder.WithVariable&lt;<span class="type">bool</span>&gt;();
+
+        builder.Root = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="comment">// Set initial values</span>
+                <span class="keyword">new</span> <span class="class-name">SetVariable</span>&lt;<span class="type">string</span>&gt;
+                {
+                    Variable = orderId,
+                    Value = <span class="keyword">new</span>(<span class="string">"ORD-001"</span>)
+                },
+                
+                <span class="keyword">new</span> <span class="class-name">SetVariable</span>&lt;<span class="type">decimal</span>&gt;
+                {
+                    Variable = orderTotal,
+                    Value = <span class="keyword">new</span>(<span class="number">250.00m</span>)
+                },
+                
+                <span class="comment">// Conditional logic</span>
+                <span class="keyword">new</span> <span class="class-name">If</span>
+                {
+                    Condition = <span class="keyword">new</span>(ctx => orderTotal.Get(ctx) > <span class="number">100m</span>),
+                    Then = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+                    {
+                        Activities =
+                        {
+                            <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Order requires approval"</span>),
+                            <span class="keyword">new</span> <span class="class-name">SetVariable</span>&lt;<span class="type">bool</span>&gt;
+                            {
+                                Variable = isApproved,
+                                Value = <span class="keyword">new</span>(<span class="keyword">false</span>)
+                            }
+                        }
+                    },
+                    Else = <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Order auto-approved"</span>)
+                },
+                
+                <span class="comment">// Use variable in output</span>
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(ctx => 
+                    $<span class="string">"Order {orderId.Get(ctx)} processed. Total: ${orderTotal.Get(ctx)}"</span>)
+            }
+        };
+    }
+}</code></pre>
+                </div>
+
+                <h3>Register Workflows</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">Program.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code>builder.Services.AddElsa(elsa =>
+{
+    <span class="comment">// Register individual workflows</span>
+    elsa.AddWorkflow&lt;<span class="class-name">HelloWorldWorkflow</span>&gt;();
+    elsa.AddWorkflow&lt;<span class="class-name">OrderWorkflow</span>&gt;();
+    
+    <span class="comment">// Or register all workflows from assembly</span>
+    elsa.AddWorkflowsFrom&lt;<span class="class-name">Program</span>&gt;();
+});</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 5: Built-in Activities -->
+            <section id="activities">
+                <h2><span class="section-number">05</span>Built-in Activities</h2>
+
+                <h3>Control Flow Activities</h3>
+                <div class="activity-grid">
+                    <div class="activity-card">
+                        <div class="activity-category">Control Flow</div>
+                        <div class="activity-icon">📦</div>
+                        <div class="activity-name">Sequence</div>
+                        <div class="activity-desc">Execute activities in order, one after another.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Control Flow</div>
+                        <div class="activity-icon">🔀</div>
+                        <div class="activity-name">If</div>
+                        <div class="activity-desc">Conditional branching based on expression result.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Control Flow</div>
+                        <div class="activity-icon">🔄</div>
+                        <div class="activity-name">While</div>
+                        <div class="activity-desc">Loop while condition is true.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Control Flow</div>
+                        <div class="activity-icon">🔁</div>
+                        <div class="activity-name">ForEach</div>
+                        <div class="activity-desc">Iterate over a collection of items.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Control Flow</div>
+                        <div class="activity-icon">⚡</div>
+                        <div class="activity-name">Parallel</div>
+                        <div class="activity-desc">Execute multiple activities concurrently.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Control Flow</div>
+                        <div class="activity-icon">🎯</div>
+                        <div class="activity-name">Switch</div>
+                        <div class="activity-desc">Branch based on multiple conditions.</div>
+                    </div>
+                </div>
+
+                <h3>Primitive Activities</h3>
+                <div class="activity-grid">
+                    <div class="activity-card">
+                        <div class="activity-category">Primitives</div>
+                        <div class="activity-icon">📝</div>
+                        <div class="activity-name">WriteLine</div>
+                        <div class="activity-desc">Write text to the console or log.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Primitives</div>
+                        <div class="activity-icon">💾</div>
+                        <div class="activity-name">SetVariable</div>
+                        <div class="activity-desc">Set a workflow variable value.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Primitives</div>
+                        <div class="activity-icon">⏱️</div>
+                        <div class="activity-name">Delay</div>
+                        <div class="activity-desc">Pause workflow for specified duration.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Primitives</div>
+                        <div class="activity-icon">🏁</div>
+                        <div class="activity-name">Finish</div>
+                        <div class="activity-desc">End workflow execution with output.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Primitives</div>
+                        <div class="activity-icon">❌</div>
+                        <div class="activity-name">Fault</div>
+                        <div class="activity-desc">Throw an exception/fault the workflow.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Primitives</div>
+                        <div class="activity-icon">🔗</div>
+                        <div class="activity-name">Correlate</div>
+                        <div class="activity-desc">Set correlation ID for the workflow.</div>
+                    </div>
+                </div>
+
+                <h3>HTTP Activities</h3>
+                <div class="activity-grid">
+                    <div class="activity-card">
+                        <div class="activity-category">HTTP</div>
+                        <div class="activity-icon">🌐</div>
+                        <div class="activity-name">HttpEndpoint</div>
+                        <div class="activity-desc">Trigger workflow via HTTP request.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">HTTP</div>
+                        <div class="activity-icon">📤</div>
+                        <div class="activity-name">SendHttpRequest</div>
+                        <div class="activity-desc">Make outgoing HTTP requests.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">HTTP</div>
+                        <div class="activity-icon">📥</div>
+                        <div class="activity-name">WriteHttpResponse</div>
+                        <div class="activity-desc">Write HTTP response back to caller.</div>
+                    </div>
+                </div>
+
+                <h3>Timer Activities</h3>
+                <div class="activity-grid">
+                    <div class="activity-card">
+                        <div class="activity-category">Scheduling</div>
+                        <div class="activity-icon">⏰</div>
+                        <div class="activity-name">Timer</div>
+                        <div class="activity-desc">Trigger workflow on a schedule (cron).</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Scheduling</div>
+                        <div class="activity-icon">📅</div>
+                        <div class="activity-name">StartAt</div>
+                        <div class="activity-desc">Start workflow at specific date/time.</div>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-category">Scheduling</div>
+                        <div class="activity-icon">🔄</div>
+                        <div class="activity-name">Cron</div>
+                        <div class="activity-desc">Recurring trigger using cron expression.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Custom Activities -->
+            <section id="custom-activities">
+                <h2><span class="section-number">06</span>Custom Activities</h2>
+                <p>Create your own activities to encapsulate business logic.</p>
+
+                <h3>Simple Custom Activity</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">SendEmailActivity.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">using</span> Elsa.Extensions;
+<span class="keyword">using</span> Elsa.Workflows;
+<span class="keyword">using</span> Elsa.Workflows.Attributes;
+<span class="keyword">using</span> Elsa.Workflows.Models;
+
+<span class="attribute">[Activity("Custom", "Send Email", "Sends an email to the specified recipient")]</span>
+<span class="keyword">public class</span> <span class="class-name">SendEmailActivity</span> : <span class="interface">CodeActivity</span>
+{
+    <span class="comment">// Input properties</span>
+    <span class="attribute">[Input(Description = "The recipient email address")]</span>
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; To { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+    
+    <span class="attribute">[Input(Description = "The email subject")]</span>
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; Subject { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+    
+    <span class="attribute">[Input(Description = "The email body")]</span>
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; Body { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+    
+    <span class="comment">// Output property</span>
+    <span class="attribute">[Output(Description = "The message ID of the sent email")]</span>
+    <span class="keyword">public</span> <span class="type">Output</span>&lt;<span class="type">string</span>&gt; MessageId { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+    
+    <span class="keyword">protected override void</span> <span class="method">Execute</span>(<span class="class-name">ActivityExecutionContext</span> context)
+    {
+        <span class="comment">// Get input values</span>
+        <span class="keyword">var</span> to = To.Get(context);
+        <span class="keyword">var</span> subject = Subject.Get(context);
+        <span class="keyword">var</span> body = Body.Get(context);
+        
+        <span class="comment">// Send email (your implementation)</span>
+        <span class="keyword">var</span> messageId = EmailService.Send(to, subject, body);
+        
+        <span class="comment">// Set output</span>
+        MessageId.Set(context, messageId);
+    }
+}</code></pre>
+                </div>
+
+                <h3>Async Activity with Dependency Injection</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">ProcessOrderActivity.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="attribute">[Activity("Business", "Process Order", "Processes an order through the system")]</span>
+<span class="keyword">public class</span> <span class="class-name">ProcessOrderActivity</span> : <span class="interface">CodeActivity</span>
+{
+    <span class="keyword">private readonly</span> <span class="interface">IOrderService</span> _orderService;
+    <span class="keyword">private readonly</span> <span class="interface">ILogger</span>&lt;<span class="class-name">ProcessOrderActivity</span>&gt; _logger;
+    
+    <span class="comment">// Constructor injection</span>
+    <span class="keyword">public</span> <span class="method">ProcessOrderActivity</span>(
+        <span class="interface">IOrderService</span> orderService,
+        <span class="interface">ILogger</span>&lt;<span class="class-name">ProcessOrderActivity</span>&gt; logger)
+    {
+        _orderService = orderService;
+        _logger = logger;
+    }
+    
+    <span class="attribute">[Input]</span>
+    <span class="keyword">public</span> <span class="type">Input</span>&lt;<span class="type">string</span>&gt; OrderId { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+    
+    <span class="attribute">[Output]</span>
+    <span class="keyword">public</span> <span class="type">Output</span>&lt;<span class="class-name">OrderResult</span>&gt; Result { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+    
+    <span class="keyword">protected override async</span> <span class="type">ValueTask</span> <span class="method">ExecuteAsync</span>(<span class="class-name">ActivityExecutionContext</span> context)
+    {
+        <span class="keyword">var</span> orderId = OrderId.Get(context);
+        
+        _logger.LogInformation(<span class="string">"Processing order {OrderId}"</span>, orderId);
+        
+        <span class="keyword">try</span>
+        {
+            <span class="keyword">var</span> result = <span class="keyword">await</span> _orderService.ProcessAsync(orderId);
+            Result.Set(context, result);
+        }
+        <span class="keyword">catch</span> (<span class="class-name">Exception</span> ex)
+        {
+            _logger.LogError(ex, <span class="string">"Failed to process order {OrderId}"</span>, orderId);
+            <span class="keyword">throw</span>;
+        }
+    }
+}</code></pre>
+                </div>
+
+                <h3>Register Custom Activities</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">Program.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code>builder.Services.AddElsa(elsa =>
+{
+    <span class="comment">// Register individual activity</span>
+    elsa.AddActivity&lt;<span class="class-name">SendEmailActivity</span>&gt;();
+    elsa.AddActivity&lt;<span class="class-name">ProcessOrderActivity</span>&gt;();
+    
+    <span class="comment">// Or register all activities from assembly</span>
+    elsa.AddActivitiesFrom&lt;<span class="class-name">Program</span>&gt;();
+});</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 7: Variables & Expressions -->
+            <section id="variables">
+                <h2><span class="section-number">07</span>Variables & Expressions</h2>
+
+                <h3>Defining Variables</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">protected override void</span> <span class="method">Build</span>(<span class="interface">IWorkflowBuilder</span> builder)
+{
+    <span class="comment">// Strongly-typed variables</span>
+    <span class="keyword">var</span> counter = builder.WithVariable&lt;<span class="type">int</span>&gt;();
+    <span class="keyword">var</span> userName = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+    <span class="keyword">var</span> items = builder.WithVariable&lt;<span class="type">List</span>&lt;<span class="type">string</span>&gt;&gt;();
+    <span class="keyword">var</span> order = builder.WithVariable&lt;<span class="class-name">OrderDto</span>&gt;();
+    
+    <span class="comment">// With default value</span>
+    <span class="keyword">var</span> maxRetries = builder.WithVariable&lt;<span class="type">int</span>&gt;()
+        .WithDefault(<span class="number">3</span>);
+    
+    <span class="comment">// Named variable (for designer)</span>
+    <span class="keyword">var</span> status = builder.WithVariable&lt;<span class="type">string</span>&gt;(<span class="string">"OrderStatus"</span>);
+}</code></pre>
+                </div>
+
+                <h3>Expression Types</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Type</th><th>Example</th><th>Use Case</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>Literal</code></td><td><code>new("Hello")</code></td><td>Static values</td></tr>
+                            <tr><td><code>Delegate</code></td><td><code>new(ctx => counter.Get(ctx) + 1)</code></td><td>C# expressions</td></tr>
+                            <tr><td><code>JavaScript</code></td><td><code>new JavaScriptExpression<string>("'Hello ' + name")</code></td><td>Dynamic expressions</td></tr>
+                            <tr><td><code>Variable</code></td><td><code>new(counter)</code></td><td>Direct variable reference</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Using Expressions in Activities</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">var</span> name = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+<span class="keyword">var</span> count = builder.WithVariable&lt;<span class="type">int</span>&gt;();
+
+builder.Root = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+{
+    Activities =
+    {
+        <span class="comment">// Literal expression</span>
+        <span class="keyword">new</span> <span class="class-name">SetVariable</span>&lt;<span class="type">string</span>&gt;
+        {
+            Variable = name,
+            Value = <span class="keyword">new</span>(<span class="string">"Mohamed"</span>)
+        },
+        
+        <span class="comment">// C# delegate expression</span>
+        <span class="keyword">new</span> <span class="class-name">WriteLine</span>(ctx => $<span class="string">"Hello, {name.Get(ctx)}!"</span>),
+        
+        <span class="comment">// Computed expression</span>
+        <span class="keyword">new</span> <span class="class-name">SetVariable</span>&lt;<span class="type">int</span>&gt;
+        {
+            Variable = count,
+            Value = <span class="keyword">new</span>(ctx => count.Get(ctx) + <span class="number">1</span>)
+        },
+        
+        <span class="comment">// JavaScript expression (requires UseJavaScript())</span>
+        <span class="keyword">new</span> <span class="class-name">WriteLine</span>
+        {
+            Text = <span class="keyword">new</span> <span class="class-name">JavaScriptExpression</span>&lt;<span class="type">string</span>&gt;(
+                <span class="string">"'Counter is now: ' + getVariable('count')"</span>)
+        }
+    }
+};</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 8: Control Flow -->
+            <section id="control-flow">
+                <h2><span class="section-number">08</span>Control Flow</h2>
+
+                <h3>Conditional (If/Else)</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">var</span> amount = builder.WithVariable&lt;<span class="type">decimal</span>&gt;();
+
+<span class="keyword">new</span> <span class="class-name">If</span>
+{
+    Condition = <span class="keyword">new</span>(ctx => amount.Get(ctx) >= <span class="number">1000m</span>),
+    Then = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+    {
+        Activities =
+        {
+            <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"High-value order - Requires approval"</span>),
+            <span class="keyword">new</span> <span class="class-name">SendEmailActivity</span>
+            {
+                To = <span class="keyword">new</span>(<span class="string">"manager@company.com"</span>),
+                Subject = <span class="keyword">new</span>(<span class="string">"Approval Required"</span>)
+            }
+        }
+    },
+    Else = <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Order auto-approved"</span>)
+}</code></pre>
+                </div>
+
+                <h3>Switch Statement</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">var</span> status = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+
+<span class="keyword">new</span> <span class="class-name">Switch</span>&lt;<span class="type">string</span>&gt;
+{
+    Expression = <span class="keyword">new</span>(ctx => status.Get(ctx)),
+    Cases =
+    {
+        <span class="keyword">new</span> <span class="class-name">SwitchCase</span>(<span class="string">"pending"</span>, <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Order is pending"</span>)),
+        <span class="keyword">new</span> <span class="class-name">SwitchCase</span>(<span class="string">"processing"</span>, <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Order is being processed"</span>)),
+        <span class="keyword">new</span> <span class="class-name">SwitchCase</span>(<span class="string">"shipped"</span>, <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Order has shipped"</span>)),
+        <span class="keyword">new</span> <span class="class-name">SwitchCase</span>(<span class="string">"delivered"</span>, <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Order delivered"</span>))
+    },
+    Default = <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Unknown status"</span>)
+}</code></pre>
+                </div>
+
+                <h3>Loops</h3>
+                <div class="code-grid">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang csharp">While Loop</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">var</span> i = builder.WithVariable&lt;<span class="type">int</span>&gt;().WithDefault(<span class="number">0</span>);
+
+<span class="keyword">new</span> <span class="class-name">While</span>
+{
+    Condition = <span class="keyword">new</span>(ctx => i.Get(ctx) < <span class="number">5</span>),
+    Body = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+    {
+        Activities =
+        {
+            <span class="keyword">new</span> <span class="class-name">WriteLine</span>(ctx => 
+                $<span class="string">"Iteration: {i.Get(ctx)}"</span>),
+            <span class="keyword">new</span> <span class="class-name">SetVariable</span>&lt;<span class="type">int</span>&gt;
+            {
+                Variable = i,
+                Value = <span class="keyword">new</span>(ctx => i.Get(ctx) + <span class="number">1</span>)
+            }
+        }
+    }
+}</code></pre>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang csharp">ForEach Loop</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">var</span> items = builder.WithVariable&lt;<span class="type">List</span>&lt;<span class="type">string</span>&gt;&gt;()
+    .WithDefault(<span class="keyword">new</span> List&lt;<span class="type">string</span>&gt; 
+        { <span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span> });
+
+<span class="keyword">new</span> <span class="class-name">ForEach</span>&lt;<span class="type">string</span>&gt;
+{
+    Items = <span class="keyword">new</span>(items),
+    Body = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+    {
+        Activities =
+        {
+            <span class="keyword">new</span> <span class="class-name">WriteLine</span>(ctx =>
+            {
+                <span class="keyword">var</span> item = ctx.GetInput&lt;<span class="type">string</span>&gt;();
+                <span class="keyword">return</span> $<span class="string">"Processing: {item}"</span>;
+            })
+        }
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Parallel Execution</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">new</span> <span class="class-name">Parallel</span>
+{
+    Activities =
+    {
+        <span class="keyword">new</span> <span class="class-name">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Branch 1 - Start"</span>),
+                <span class="keyword">new</span> <span class="class-name">Delay</span> { TimeSpan = <span class="keyword">new</span>(TimeSpan.FromSeconds(<span class="number">2</span>)) },
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Branch 1 - End"</span>)
+            }
+        },
+        <span class="keyword">new</span> <span class="class-name">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Branch 2 - Start"</span>),
+                <span class="keyword">new</span> <span class="class-name">Delay</span> { TimeSpan = <span class="keyword">new</span>(TimeSpan.FromSeconds(<span class="number">1</span>)) },
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Branch 2 - End"</span>)
+            }
+        }
+    }
+}
+<span class="comment">// Both branches execute simultaneously</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 9: HTTP Activities -->
+            <section id="http-activities">
+                <h2><span class="section-number">09</span>HTTP Activities</h2>
+                <p>Build HTTP-triggered workflows and make outgoing HTTP requests.</p>
+
+                <h3>HTTP Endpoint Trigger</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">HttpWorkflow.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">using</span> Elsa.Http;
+
+<span class="keyword">public class</span> <span class="class-name">HttpTriggerWorkflow</span> : <span class="interface">WorkflowBase</span>
+{
+    <span class="keyword">protected override void</span> <span class="method">Build</span>(<span class="interface">IWorkflowBuilder</span> builder)
+    {
+        <span class="keyword">var</span> requestBody = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+        
+        builder.Root = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="comment">// HTTP trigger - workflow starts on POST /api/orders</span>
+                <span class="keyword">new</span> <span class="class-name">HttpEndpoint</span>
+                {
+                    Path = <span class="keyword">new</span>(<span class="string">"/api/orders"</span>),
+                    SupportedMethods = <span class="keyword">new</span>(<span class="keyword">new</span>[] { HttpMethods.Post }),
+                    CanStartWorkflow = <span class="keyword">true</span>,
+                    ParsedContent = <span class="keyword">new</span>(requestBody)
+                },
+                
+                <span class="comment">// Process the request</span>
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(ctx => 
+                    $<span class="string">"Received order: {requestBody.Get(ctx)}"</span>),
+                
+                <span class="comment">// Send response</span>
+                <span class="keyword">new</span> <span class="class-name">WriteHttpResponse</span>
+                {
+                    StatusCode = <span class="keyword">new</span>(HttpStatusCode.OK),
+                    ContentType = <span class="keyword">new</span>(<span class="string">"application/json"</span>),
+                    Content = <span class="keyword">new</span>(<span class="string">"{\"status\": \"received\"}"</span>)
+                }
+            }
+        };
+    }
+}</code></pre>
+                </div>
+
+                <h3>Send HTTP Request</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">var</span> response = builder.WithVariable&lt;<span class="class-name">HttpResponseMessage</span>&gt;();
+<span class="keyword">var</span> responseBody = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+
+<span class="keyword">new</span> <span class="class-name">Sequence</span>
+{
+    Activities =
+    {
+        <span class="comment">// Make GET request</span>
+        <span class="keyword">new</span> <span class="class-name">SendHttpRequest</span>
+        {
+            Url = <span class="keyword">new</span>(<span class="string">"https://api.example.com/users/1"</span>),
+            Method = <span class="keyword">new</span>(HttpMethods.Get),
+            ParsedContent = <span class="keyword">new</span>(responseBody)
+        },
+        
+        <span class="comment">// Make POST request with body</span>
+        <span class="keyword">new</span> <span class="class-name">SendHttpRequest</span>
+        {
+            Url = <span class="keyword">new</span>(<span class="string">"https://api.example.com/orders"</span>),
+            Method = <span class="keyword">new</span>(HttpMethods.Post),
+            ContentType = <span class="keyword">new</span>(<span class="string">"application/json"</span>),
+            Content = <span class="keyword">new</span>(<span class="string">"{\"product\": \"Widget\", \"qty\": 5}"</span>),
+            Headers = <span class="keyword">new</span>(<span class="keyword">new</span> <span class="class-name">Dictionary</span>&lt;<span class="type">string</span>, <span class="type">string</span>&gt;
+            {
+                [<span class="string">"Authorization"</span>] = <span class="string">"Bearer token123"</span>,
+                [<span class="string">"X-Custom-Header"</span>] = <span class="string">"value"</span>
+            })
+        },
+        
+        <span class="keyword">new</span> <span class="class-name">WriteLine</span>(ctx => $<span class="string">"Response: {responseBody.Get(ctx)}"</span>)
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 10: Timers & Scheduling -->
+            <section id="timers">
+                <h2><span class="section-number">10</span>Timers & Scheduling</h2>
+
+                <h3>Delay Activity</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment">// Fixed delay</span>
+<span class="keyword">new</span> <span class="class-name">Delay</span>
+{
+    TimeSpan = <span class="keyword">new</span>(TimeSpan.FromMinutes(<span class="number">5</span>))
+}
+
+<span class="comment">// Dynamic delay</span>
+<span class="keyword">var</span> waitMinutes = builder.WithVariable&lt;<span class="type">int</span>&gt;();
+
+<span class="keyword">new</span> <span class="class-name">Delay</span>
+{
+    TimeSpan = <span class="keyword">new</span>(ctx => TimeSpan.FromMinutes(waitMinutes.Get(ctx)))
+}</code></pre>
+                </div>
+
+                <h3>Timer Trigger (Cron)</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">ScheduledWorkflow.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">using</span> Elsa.Scheduling.Activities;
+
+<span class="keyword">public class</span> <span class="class-name">DailyReportWorkflow</span> : <span class="interface">WorkflowBase</span>
+{
+    <span class="keyword">protected override void</span> <span class="method">Build</span>(<span class="interface">IWorkflowBuilder</span> builder)
+    {
+        builder.Root = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="comment">// Run every day at 9 AM</span>
+                <span class="keyword">new</span> <span class="class-name">Cron</span>
+                {
+                    CronExpression = <span class="keyword">new</span>(<span class="string">"0 9 * * *"</span>),
+                    CanStartWorkflow = <span class="keyword">true</span>
+                },
+                
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Generating daily report..."</span>),
+                
+                <span class="comment">// Your report generation logic</span>
+                <span class="keyword">new</span> <span class="class-name">GenerateReportActivity</span>(),
+                
+                <span class="keyword">new</span> <span class="class-name">SendEmailActivity</span>
+                {
+                    To = <span class="keyword">new</span>(<span class="string">"team@company.com"</span>),
+                    Subject = <span class="keyword">new</span>(<span class="string">"Daily Report"</span>),
+                    Body = <span class="keyword">new</span>(<span class="string">"Please find attached the daily report."</span>)
+                }
+            }
+        };
+    }
+}</code></pre>
+                </div>
+
+                <h3>Common Cron Expressions</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Expression</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>0 * * * *</code></td><td>Every hour at minute 0</td></tr>
+                            <tr><td><code>0 9 * * *</code></td><td>Every day at 9:00 AM</td></tr>
+                            <tr><td><code>0 9 * * 1-5</code></td><td>Weekdays at 9:00 AM</td></tr>
+                            <tr><td><code>0 0 1 * *</code></td><td>First day of month at midnight</td></tr>
+                            <tr><td><code>*/15 * * * *</code></td><td>Every 15 minutes</td></tr>
+                            <tr><td><code>0 9,17 * * *</code></td><td>At 9 AM and 5 PM daily</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 11: Persistence -->
+            <section id="persistence">
+                <h2><span class="section-number">11</span>Persistence</h2>
+                <p>Elsa supports various persistence providers to store workflow definitions and instances.</p>
+
+                <h3>Entity Framework Core</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">Program.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code>builder.Services.AddElsa(elsa =>
+{
+    <span class="comment">// SQL Server</span>
+    elsa.UseWorkflowManagement(m =>
+    {
+        m.UseEntityFrameworkCore(ef => ef.UseSqlServer(connectionString));
+    });
+    
+    elsa.UseWorkflowRuntime(r =>
+    {
+        r.UseEntityFrameworkCore(ef => ef.UseSqlServer(connectionString));
+    });
+    
+    <span class="comment">// PostgreSQL</span>
+    elsa.UseWorkflowManagement(m =>
+    {
+        m.UseEntityFrameworkCore(ef => ef.UsePostgreSql(connectionString));
+    });
+    
+    <span class="comment">// SQLite (for development)</span>
+    elsa.UseWorkflowManagement(m =>
+    {
+        m.UseEntityFrameworkCore(ef => ef.UseSqlite(<span class="string">"Data Source=elsa.db"</span>));
+    });
+});</code></pre>
+                </div>
+
+                <h3>MongoDB</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">Program.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment">// Install: dotnet add package Elsa.MongoDb</span>
+
+builder.Services.AddElsa(elsa =>
+{
+    elsa.UseWorkflowManagement(m =>
+    {
+        m.UseMongoDb(<span class="string">"mongodb://localhost:27017/elsa"</span>);
+    });
+    
+    elsa.UseWorkflowRuntime(r =>
+    {
+        r.UseMongoDb(<span class="string">"mongodb://localhost:27017/elsa"</span>);
+    });
+});</code></pre>
+                </div>
+
+                <h3>Run Migrations</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">Program.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">var</span> app = builder.Build();
+
+<span class="comment">// Run EF Core migrations on startup</span>
+<span class="keyword">using</span> (<span class="keyword">var</span> scope = app.Services.CreateScope())
+{
+    <span class="keyword">var</span> dbContext = scope.ServiceProvider
+        .GetRequiredService&lt;<span class="class-name">ElsaDbContext</span>&gt;();
+    <span class="keyword">await</span> dbContext.Database.MigrateAsync();
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 12: Bookmarks & Signals -->
+            <section id="bookmarks">
+                <h2><span class="section-number">12</span>Bookmarks & Signals</h2>
+                <p>Bookmarks allow workflows to pause and wait for external events. Signals provide a way to trigger or resume workflows.</p>
+
+                <h3>Event-Driven Workflow</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">ApprovalWorkflow.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">public class</span> <span class="class-name">ApprovalWorkflow</span> : <span class="interface">WorkflowBase</span>
+{
+    <span class="keyword">protected override void</span> <span class="method">Build</span>(<span class="interface">IWorkflowBuilder</span> builder)
+    {
+        <span class="keyword">var</span> approved = builder.WithVariable&lt;<span class="type">bool</span>&gt;();
+        
+        builder.Root = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Waiting for approval..."</span>),
+                
+                <span class="comment">// Wait for external signal</span>
+                <span class="keyword">new</span> <span class="class-name">Event</span>
+                {
+                    EventName = <span class="keyword">new</span>(<span class="string">"ApprovalReceived"</span>)
+                },
+                
+                <span class="comment">// Process approval result</span>
+                <span class="keyword">new</span> <span class="class-name">If</span>
+                {
+                    Condition = <span class="keyword">new</span>(ctx => approved.Get(ctx)),
+                    Then = <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Approved!"</span>),
+                    Else = <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Rejected."</span>)
+                }
+            }
+        };
+    }
+}</code></pre>
+                </div>
+
+                <h3>Trigger Signal from Code</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">ApprovalController.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="attribute">[ApiController]</span>
+<span class="attribute">[Route("api/[controller]")]</span>
+<span class="keyword">public class</span> <span class="class-name">ApprovalController</span> : <span class="class-name">ControllerBase</span>
+{
+    <span class="keyword">private readonly</span> <span class="interface">IWorkflowRuntime</span> _workflowRuntime;
+    
+    <span class="keyword">public</span> <span class="method">ApprovalController</span>(<span class="interface">IWorkflowRuntime</span> workflowRuntime)
+    {
+        _workflowRuntime = workflowRuntime;
+    }
+    
+    <span class="attribute">[HttpPost("{workflowInstanceId}/approve")]</span>
+    <span class="keyword">public async</span> <span class="type">Task</span>&lt;<span class="class-name">IActionResult</span>&gt; <span class="method">Approve</span>(<span class="type">string</span> workflowInstanceId)
+    {
+        <span class="comment">// Trigger the event to resume the workflow</span>
+        <span class="keyword">await</span> _workflowRuntime.TriggerEventAsync(
+            eventName: <span class="string">"ApprovalReceived"</span>,
+            workflowInstanceId: workflowInstanceId,
+            input: <span class="keyword">new</span> <span class="class-name">Dictionary</span>&lt;<span class="type">string</span>, <span class="type">object</span>&gt;
+            {
+                [<span class="string">"approved"</span>] = <span class="keyword">true</span>
+            });
+        
+        <span class="keyword">return</span> Ok(<span class="string">"Workflow resumed"</span>);
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 13: Workflow Designer -->
+            <section id="designer">
+                <h2><span class="section-number">13</span>Workflow Designer</h2>
+                <p>Elsa Studio provides a visual workflow designer built with Blazor.</p>
+
+                <h3>Enable Elsa Studio</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">Program.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment">// Install packages</span>
+<span class="comment">// dotnet add package Elsa.Studio.Host.Server</span>
+
+builder.Services.AddElsa(elsa =>
+{
+    <span class="comment">// Enable the designer API</span>
+    elsa.UseWorkflowsApi();
+    
+    <span class="comment">// Enable identity for authentication</span>
+    elsa.UseIdentity(identity =>
+    {
+        identity.UseAdminUserProvider();
+        identity.TokenOptions = options =>
+        {
+            options.SigningKey = <span class="string">"your-256-bit-secret-key-here!!"</span>;
+            options.AccessTokenLifetime = TimeSpan.FromDays(<span class="number">1</span>);
+        };
+    });
+    
+    <span class="comment">// Enable default authentication</span>
+    elsa.UseDefaultAuthentication();
+});
+
+<span class="comment">// Add CORS for Blazor Studio</span>
+builder.Services.AddCors(cors => cors.AddDefaultPolicy(policy =>
+    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
+<span class="keyword">var</span> app = builder.Build();
+
+app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseWorkflowsApi();
+
+app.Run();</code></pre>
+                </div>
+
+                <div class="info-box note">
+                    <div class="info-box-title">🎨 Elsa Studio</div>
+                    <p>Access the designer at <code>http://localhost:5000/elsa/studio</code> after setup. Default credentials are typically <code>admin/password</code> (configurable).</p>
+                </div>
+
+                <div class="visual-box">
+                    <div class="visual-title">🖥️ Designer Features</div>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">🎨</div>
+                            <div class="feature-name">Drag & Drop</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-name">Visual Canvas</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">⚙️</div>
+                            <div class="feature-name">Property Editor</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📝</div>
+                            <div class="feature-name">Expression Editor</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔍</div>
+                            <div class="feature-name">Instance Viewer</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📜</div>
+                            <div class="feature-name">Execution Log</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 14: REST API -->
+            <section id="api">
+                <h2><span class="section-number">14</span>REST API</h2>
+                <p>Elsa exposes a comprehensive REST API for managing workflows programmatically.</p>
+
+                <h3>Common API Endpoints</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>/elsa/api/workflow-definitions</code></td><td>GET</td><td>List workflow definitions</td></tr>
+                            <tr><td><code>/elsa/api/workflow-definitions/{id}</code></td><td>GET</td><td>Get workflow definition</td></tr>
+                            <tr><td><code>/elsa/api/workflow-definitions</code></td><td>POST</td><td>Create workflow definition</td></tr>
+                            <tr><td><code>/elsa/api/workflow-instances</code></td><td>GET</td><td>List workflow instances</td></tr>
+                            <tr><td><code>/elsa/api/workflow-instances/{id}</code></td><td>GET</td><td>Get workflow instance</td></tr>
+                            <tr><td><code>/elsa/api/workflow-instances/{id}/cancel</code></td><td>POST</td><td>Cancel workflow instance</td></tr>
+                            <tr><td><code>/elsa/api/workflow-definitions/{id}/execute</code></td><td>POST</td><td>Execute workflow</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Execute Workflow via API</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang bash">cURL</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Execute a workflow by definition ID</span>
+curl -X POST "http://localhost:5000/elsa/api/workflow-definitions/{definitionId}/execute" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "input": {
+      "orderId": "ORD-123",
+      "amount": 500
+    }
+  }'
+
+<span class="comment"># Get workflow instance status</span>
+curl "http://localhost:5000/elsa/api/workflow-instances/{instanceId}" \
+  -H "Authorization: Bearer {token}"</code></pre>
+                </div>
+
+                <h3>Execute Workflow from C# Code</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">public class</span> <span class="class-name">WorkflowService</span>
+{
+    <span class="keyword">private readonly</span> <span class="interface">IWorkflowRuntime</span> _runtime;
+    
+    <span class="keyword">public</span> <span class="method">WorkflowService</span>(<span class="interface">IWorkflowRuntime</span> runtime)
+    {
+        _runtime = runtime;
+    }
+    
+    <span class="keyword">public async</span> <span class="type">Task</span>&lt;<span class="type">string</span>&gt; <span class="method">StartOrderWorkflow</span>(<span class="class-name">OrderDto</span> order)
+    {
+        <span class="comment">// Start workflow by type</span>
+        <span class="keyword">var</span> result = <span class="keyword">await</span> _runtime.StartWorkflowAsync&lt;<span class="class-name">OrderWorkflow</span>&gt;(
+            <span class="keyword">new</span> <span class="class-name">StartWorkflowRuntimeParams</span>
+            {
+                Input = <span class="keyword">new</span> <span class="class-name">Dictionary</span>&lt;<span class="type">string</span>, <span class="type">object</span>&gt;
+                {
+                    [<span class="string">"order"</span>] = order
+                }
+            });
+        
+        <span class="keyword">return</span> result.WorkflowInstanceId;
+    }
+    
+    <span class="keyword">public async</span> <span class="type">Task</span> <span class="method">CancelWorkflow</span>(<span class="type">string</span> instanceId)
+    {
+        <span class="keyword">await</span> _runtime.CancelWorkflowAsync(instanceId);
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 15: Error Handling -->
+            <section id="error-handling">
+                <h2><span class="section-number">15</span>Error Handling</h2>
+
+                <h3>Try-Catch in Workflows</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">new</span> <span class="class-name">TryCatch</span>
+{
+    Try = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+    {
+        Activities =
+        {
+            <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Attempting risky operation..."</span>),
+            <span class="keyword">new</span> <span class="class-name">SendHttpRequest</span>
+            {
+                Url = <span class="keyword">new</span>(<span class="string">"https://api.example.com/process"</span>),
+                Method = <span class="keyword">new</span>(HttpMethods.Post)
+            },
+            <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Operation succeeded!"</span>)
+        }
+    },
+    Catch = <span class="keyword">new</span>[]
+    {
+        <span class="keyword">new</span> <span class="class-name">Catch</span>&lt;<span class="class-name">HttpRequestException</span>&gt;
+        {
+            Body = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+            {
+                Activities =
+                {
+                    <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"HTTP request failed!"</span>),
+                    <span class="keyword">new</span> <span class="class-name">SendEmailActivity</span>
+                    {
+                        To = <span class="keyword">new</span>(<span class="string">"admin@company.com"</span>),
+                        Subject = <span class="keyword">new</span>(<span class="string">"Workflow Error"</span>),
+                        Body = <span class="keyword">new</span>(ctx => 
+                            $<span class="string">"Error: {ctx.GetException()?.Message}"</span>)
+                    }
+                }
+            }
+        }
+    },
+    Finally = <span class="keyword">new</span> <span class="class-name">WriteLine</span>(<span class="string">"Cleanup complete."</span>)
+}</code></pre>
+                </div>
+
+                <h3>Fault Activity</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">C#</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">var</span> isValid = builder.WithVariable&lt;<span class="type">bool</span>&gt;();
+
+<span class="keyword">new</span> <span class="class-name">If</span>
+{
+    Condition = <span class="keyword">new</span>(ctx => !isValid.Get(ctx)),
+    Then = <span class="keyword">new</span> <span class="class-name">Fault</span>
+    {
+        Message = <span class="keyword">new</span>(<span class="string">"Validation failed: Invalid input data"</span>)
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 16: Long-Running Workflows -->
+            <section id="long-running">
+                <h2><span class="section-number">16</span>Long-Running Workflows</h2>
+                <p>Elsa excels at long-running workflows that span hours, days, or even months.</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">📋 Order Fulfillment Workflow</div>
+                    <div class="workflow-diagram">
+                        <div class="workflow-node start">
+                            <div class="workflow-node-label">Order Received</div>
+                            <div class="workflow-node-type">HTTP Trigger</div>
+                        </div>
+                        <div class="workflow-arrow">↓</div>
+                        <div class="workflow-node activity">
+                            <div class="workflow-node-label">Validate Order</div>
+                            <div class="workflow-node-type">Activity</div>
+                        </div>
+                        <div class="workflow-arrow">↓</div>
+                        <div class="workflow-node timer">
+                            <div class="workflow-node-label">Wait for Payment</div>
+                            <div class="workflow-node-type">Event (suspend)</div>
+                        </div>
+                        <div class="workflow-arrow">↓</div>
+                        <div class="workflow-node activity">
+                            <div class="workflow-node-label">Process Order</div>
+                            <div class="workflow-node-type">Activity</div>
+                        </div>
+                        <div class="workflow-arrow">↓</div>
+                        <div class="workflow-node timer">
+                            <div class="workflow-node-label">Wait for Shipment</div>
+                            <div class="workflow-node-type">Event (suspend)</div>
+                        </div>
+                        <div class="workflow-arrow">↓</div>
+                        <div class="workflow-node end">
+                            <div class="workflow-node-label">Complete</div>
+                            <div class="workflow-node-type">Finish</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">OrderFulfillmentWorkflow.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">public class</span> <span class="class-name">OrderFulfillmentWorkflow</span> : <span class="interface">WorkflowBase</span>
+{
+    <span class="keyword">protected override void</span> <span class="method">Build</span>(<span class="interface">IWorkflowBuilder</span> builder)
+    {
+        <span class="keyword">var</span> orderId = builder.WithVariable&lt;<span class="type">string</span>&gt;();
+        <span class="keyword">var</span> paymentReceived = builder.WithVariable&lt;<span class="type">bool</span>&gt;();
+        
+        builder.Root = <span class="keyword">new</span> <span class="class-name">Sequence</span>
+        {
+            Activities =
+            {
+                <span class="comment">// Trigger: HTTP endpoint</span>
+                <span class="keyword">new</span> <span class="class-name">HttpEndpoint</span>
+                {
+                    Path = <span class="keyword">new</span>(<span class="string">"/api/orders/create"</span>),
+                    SupportedMethods = <span class="keyword">new</span>(<span class="keyword">new</span>[] { HttpMethods.Post }),
+                    CanStartWorkflow = <span class="keyword">true</span>
+                },
+                
+                <span class="comment">// Send confirmation</span>
+                <span class="keyword">new</span> <span class="class-name">WriteHttpResponse</span>
+                {
+                    StatusCode = <span class="keyword">new</span>(HttpStatusCode.Accepted),
+                    Content = <span class="keyword">new</span>(ctx => 
+                        $<span class="string">"{{\"orderId\": \"{orderId.Get(ctx)}\", \"status\": \"pending\"}}"</span>)
+                },
+                
+                <span class="comment">// Wait for payment (workflow suspends here)</span>
+                <span class="keyword">new</span> <span class="class-name">Event</span>
+                {
+                    EventName = <span class="keyword">new</span>(<span class="string">"PaymentReceived"</span>)
+                },
+                
+                <span class="comment">// Process the order</span>
+                <span class="keyword">new</span> <span class="class-name">ProcessOrderActivity</span>
+                {
+                    OrderId = <span class="keyword">new</span>(orderId)
+                },
+                
+                <span class="comment">// Wait for shipment confirmation</span>
+                <span class="keyword">new</span> <span class="class-name">Event</span>
+                {
+                    EventName = <span class="keyword">new</span>(<span class="string">"ShipmentConfirmed"</span>)
+                },
+                
+                <span class="comment">// Send completion email</span>
+                <span class="keyword">new</span> <span class="class-name">SendEmailActivity</span>
+                {
+                    To = <span class="keyword">new</span>(<span class="string">"customer@email.com"</span>),
+                    Subject = <span class="keyword">new</span>(<span class="string">"Order Shipped!"</span>),
+                    Body = <span class="keyword">new</span>(ctx => 
+                        $<span class="string">"Your order {orderId.Get(ctx)} has been shipped!"</span>)
+                },
+                
+                <span class="keyword">new</span> <span class="class-name">Finish</span>()
+            }
+        };
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 17: Testing -->
+            <section id="testing">
+                <h2><span class="section-number">17</span>Testing Workflows</h2>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">WorkflowTests.cs</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">using</span> Elsa.Testing.Shared;
+<span class="keyword">using</span> Xunit;
+
+<span class="keyword">public class</span> <span class="class-name">OrderWorkflowTests</span>
+{
+    <span class="attribute">[Fact]</span>
+    <span class="keyword">public async</span> <span class="type">Task</span> <span class="method">OrderWorkflow_WithValidOrder_ShouldComplete</span>()
+    {
+        <span class="comment">// Arrange</span>
+        <span class="keyword">await using</span> <span class="keyword">var</span> services = <span class="keyword">new</span> <span class="class-name">TestApplicationBuilder</span>()
+            .AddWorkflow&lt;<span class="class-name">OrderWorkflow</span>&gt;()
+            .Build();
+        
+        <span class="keyword">var</span> workflowRunner = services.GetRequiredService&lt;<span class="interface">IWorkflowRunner</span>&gt;();
+        
+        <span class="comment">// Act</span>
+        <span class="keyword">var</span> result = <span class="keyword">await</span> workflowRunner.RunAsync&lt;<span class="class-name">OrderWorkflow</span>&gt;(
+            <span class="keyword">new</span> <span class="class-name">RunWorkflowParams</span>
+            {
+                Input = <span class="keyword">new</span> <span class="class-name">Dictionary</span>&lt;<span class="type">string</span>, <span class="type">object</span>&gt;
+                {
+                    [<span class="string">"orderId"</span>] = <span class="string">"TEST-001"</span>,
+                    [<span class="string">"amount"</span>] = <span class="number">100m</span>
+                }
+            });
+        
+        <span class="comment">// Assert</span>
+        Assert.Equal(WorkflowStatus.Completed, result.Status);
+    }
+    
+    <span class="attribute">[Fact]</span>
+    <span class="keyword">public async</span> <span class="type">Task</span> <span class="method">OrderWorkflow_WaitingForApproval_ShouldSuspend</span>()
+    {
+        <span class="comment">// Arrange</span>
+        <span class="keyword">await using</span> <span class="keyword">var</span> services = <span class="keyword">new</span> <span class="class-name">TestApplicationBuilder</span>()
+            .AddWorkflow&lt;<span class="class-name">ApprovalWorkflow</span>&gt;()
+            .Build();
+        
+        <span class="keyword">var</span> workflowRunner = services.GetRequiredService&lt;<span class="interface">IWorkflowRunner</span>&gt;();
+        
+        <span class="comment">// Act</span>
+        <span class="keyword">var</span> result = <span class="keyword">await</span> workflowRunner.RunAsync&lt;<span class="class-name">ApprovalWorkflow</span>&gt;();
+        
+        <span class="comment">// Assert - workflow should be suspended waiting for event</span>
+        Assert.Equal(WorkflowStatus.Suspended, result.Status);
+        Assert.NotEmpty(result.Bookmarks);
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 18: Best Practices -->
+            <section id="best-practices">
+                <h2><span class="section-number">18</span>Best Practices</h2>
+
+                <div class="concept-grid">
+                    <div class="concept-card">
+                        <div class="concept-title">🎯 Single Responsibility</div>
+                        <div class="concept-desc">Keep workflows focused on one business process. Create separate workflows for distinct operations.</div>
+                    </div>
+                    <div class="concept-card purple">
+                        <div class="concept-title">🔄 Idempotency</div>
+                        <div class="concept-desc">Design activities to be idempotent — safe to retry without side effects.</div>
+                    </div>
+                    <div class="concept-card green">
+                        <div class="concept-title">💾 Correlation</div>
+                        <div class="concept-desc">Use correlation IDs to link workflow instances to business entities (orders, users, etc.).</div>
+                    </div>
+                    <div class="concept-card orange">
+                        <div class="concept-title">⚡ Keep Activities Small</div>
+                        <div class="concept-desc">Activities should do one thing. Complex logic belongs in services, not activities.</div>
+                    </div>
+                    <div class="concept-card cyan">
+                        <div class="concept-title">🔒 Error Handling</div>
+                        <div class="concept-desc">Always wrap external calls in try-catch. Consider retry policies for transient failures.</div>
+                    </div>
+                    <div class="concept-card">
+                        <div class="concept-title">📊 Monitoring</div>
+                        <div class="concept-desc">Log workflow events. Use the built-in journal for debugging and auditing.</div>
+                    </div>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Performance Tips</div>
+                    <ul>
+                        <li>Use <code>Parallel</code> for independent activities that can run concurrently</li>
+                        <li>Avoid storing large objects in workflow variables</li>
+                        <li>Use appropriate persistence provider for your scale</li>
+                        <li>Consider using distributed locking for high-concurrency scenarios</li>
+                        <li>Clean up completed workflow instances periodically</li>
+                    </ul>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ Common Pitfalls</div>
+                    <ul>
+                        <li>Don't use non-serializable types in workflow variables</li>
+                        <li>Avoid infinite loops in While activities</li>
+                        <li>Don't call async methods synchronously in activities</li>
+                        <li>Remember that workflow instances can span days — don't rely on in-memory state</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 19: Security & Auth -->
+            <section id="security-auth">
+                <h2><span class="section-number">19</span>Security & Auth</h2>
+
+                <div class="concept-grid">
+                    <div class="concept-card">
+                        <div class="concept-title">🔐 Protect Workflow APIs</div>
+                        <div class="concept-desc">Secure all REST and management endpoints. Apply authentication and role-based access to workflow definition changes.</div>
+                    </div>
+                    <div class="concept-card purple">
+                        <div class="concept-title">🧭 Separate Management & Runtime</div>
+                        <div class="concept-desc">Keep workflow definition management behind admin access. Runtime execution can be exposed more narrowly.</div>
+                    </div>
+                    <div class="concept-card green">
+                        <div class="concept-title">🧩 Tenancy & Data Isolation</div>
+                        <div class="concept-desc">If multi-tenant, scope workflows and instances per tenant and validate tenant IDs everywhere.</div>
+                    </div>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ Client Apps Should Not Call Elsa Directly</div>
+                    <p>Expose workflows through your application API. Elsa endpoints should be internal or admin-only to avoid leaking workflow definitions.</p>
+                </div>
+            </section>
+
+            <!-- Section 20: Ops & Monitoring -->
+            <section id="ops-monitoring">
+                <h2><span class="section-number">20</span>Ops & Monitoring</h2>
+
+                <div class="concept-grid">
+                    <div class="concept-card">
+                        <div class="concept-title">📈 Structured Logging</div>
+                        <div class="concept-desc">Include workflow ID, correlation ID, and activity name in all logs.</div>
+                    </div>
+                    <div class="concept-card cyan">
+                        <div class="concept-title">🧪 Health Checks</div>
+                        <div class="concept-desc">Monitor DB connectivity, queue/trigger health, and workflow runtime status.</div>
+                    </div>
+                    <div class="concept-card orange">
+                        <div class="concept-title">📊 Workflow Journal</div>
+                        <div class="concept-desc">Use the built-in journal to diagnose failures and replay activity history.</div>
+                    </div>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Alerting Signals</div>
+                    <ul>
+                        <li>High count of suspended or faulted workflows</li>
+                        <li>Retries exceeding thresholds</li>
+                        <li>Long-running instances older than expected</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 21: Deployment & Persistence -->
+            <section id="deployment-persistence">
+                <h2><span class="section-number">21</span>Deployment & Persistence</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Topic</th><th>What to Decide</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Database</td><td>SQL provider, backups, migration strategy</td></tr>
+                            <tr><td>Concurrency</td><td>Distributed locking for parallel workers</td></tr>
+                            <tr><td>Scaling</td><td>Multiple runtime instances + shared persistence</td></tr>
+                            <tr><td>Cleanup</td><td>Retention policy for completed workflows</td></tr>
+                            <tr><td>Versioning</td><td>How to migrate workflow definitions safely</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ Long-Running Workflows Need Durable Storage</div>
+                    <p>Never rely on in-memory state. Choose a persistence provider and apply migrations before running production workflows.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        function updateProgressBar() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            document.getElementById('progressBar').style.width = (scrollTop / docHeight) * 100 + '%';
+        }
+
+        function revealOnScroll() {
+            document.querySelectorAll('section').forEach((section, index) => {
+                if (section.getBoundingClientRect().top < window.innerHeight - 150) {
+                    section.classList.add('visible');
+                    section.style.transitionDelay = `${index * 0.03}s`;
+                }
+            });
+        }
+
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        }
+
+        function toggleBackToTop() {
+            document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 500);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function moveParticles(e) {
+            document.querySelectorAll('.particle').forEach((p, i) => {
+                const speed = (i + 1) * 0.3;
+                const x = (e.clientX / window.innerWidth - 0.5) * speed * 30;
+                const y = (e.clientY / window.innerHeight - 0.5) * speed * 30;
+                p.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        }
+
+        window.addEventListener('scroll', () => { updateProgressBar(); revealOnScroll(); updateActiveNav(); toggleBackToTop(); });
+        document.addEventListener('mousemove', moveParticles);
+        document.addEventListener('DOMContentLoaded', () => { revealOnScroll(); updateActiveNav(); });
+    </script>
+</body>
+</html>

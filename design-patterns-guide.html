@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Patterns Guide | Clean Code Architecture</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0c10;
+            --bg-secondary: #0d1117;
+            --bg-tertiary: #161b22;
+            --bg-card: #1c2128;
+            --bg-code: #0d1117;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-orange: #f97316;
+            --accent-red: #ef4444;
+            --accent-pink: #ec4899;
+            --border-color: #21262d;
+            --border-hover: #30363d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink), var(--accent-purple));
+            background-size: 200% 100%;
+            animation: gradientMove 2s linear infinite;
+            z-index: 9999;
+            transition: width 0.2s ease;
+        }
+
+        .particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .particle {
+            position: absolute; width: 4px; height: 4px; border-radius: 50%;
+            opacity: 0.3; animation: float 6s ease-in-out infinite;
+        }
+        .particle:nth-child(1) { left: 10%; top: 15%; background: var(--accent-purple); }
+        .particle:nth-child(2) { left: 25%; top: 35%; background: var(--accent-blue); animation-delay: 1s; }
+        .particle:nth-child(3) { left: 65%; top: 25%; background: var(--accent-cyan); animation-delay: 2s; }
+        .particle:nth-child(4) { left: 85%; top: 45%; background: var(--accent-green); animation-delay: 3s; }
+        .particle:nth-child(5) { left: 35%; top: 65%; background: var(--accent-pink); animation-delay: 4s; }
+        .particle:nth-child(6) { left: 75%; top: 75%; background: var(--accent-yellow); animation-delay: 5s; }
+
+        .header {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            animation: float 8s ease-in-out infinite;
+        }
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .header .subtitle {
+            font-size: 1.1rem; color: var(--text-secondary);
+            max-width: 600px; margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .badge-row {
+            display: flex; justify-content: center; gap: 0.75rem;
+            margin-top: 1.5rem; flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; background: var(--bg-tertiary);
+            border: 1px solid var(--border-color); border-radius: 100px;
+            font-size: 0.875rem; color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .badge:hover {
+            transform: translateY(-3px) scale(1.05);
+            border-color: var(--accent-purple);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+        }
+        .badge-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+
+        .container { display: flex; max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+
+        .sidebar {
+            width: 280px; background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 0; position: sticky; top: 0;
+            height: 100vh; overflow-y: auto; flex-shrink: 0;
+            animation: fadeInLeft 0.6s ease-out;
+        }
+        .nav-section { padding: 0 1rem; margin-bottom: 1.5rem; }
+        .nav-section-title {
+            font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--text-muted);
+            padding: 0 0.75rem; margin-bottom: 0.5rem;
+        }
+        .nav-link {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 0.75rem; color: var(--text-secondary);
+            text-decoration: none; border-radius: 6px; font-size: 0.85rem;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .nav-link::before {
+            content: ''; position: absolute; left: 0; top: 0;
+            height: 100%; width: 3px;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink));
+            transform: scaleY(0); transition: transform 0.3s ease;
+        }
+        .nav-link:hover { background: var(--bg-tertiary); color: var(--text-primary); padding-left: 1rem; }
+        .nav-link:hover::before, .nav-link.active::before { transform: scaleY(1); }
+        .nav-link.active { background: rgba(168, 85, 247, 0.1); color: var(--accent-purple); }
+        .nav-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); min-width: 20px; }
+        .home-link { background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1)); border: 1px solid rgba(168, 85, 247, 0.3); margin-bottom: 0.5rem; }
+        .home-link:hover { background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2)); border-color: var(--accent-purple); }
+        .home-btn { position: fixed; top: 20px; left: 20px; z-index: 1000; padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease; display: none; }
+        .home-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--accent-purple); }
+        @media (max-width: 900px) { .home-btn { display: block; } }
+
+        .main-content { flex: 1; padding: 2.5rem; max-width: calc(100% - 280px); }
+
+        section {
+            margin-bottom: 4rem; opacity: 0; transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+        section h2 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem;
+            color: var(--text-primary); margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .section-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 10px; font-size: 1rem; font-weight: 700; color: white;
+            transition: all 0.3s ease;
+        }
+        section:hover .section-number {
+            transform: rotate(-5deg) scale(1.1);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+        }
+        section h3 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem;
+            color: var(--text-primary); margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        section h3::after {
+            content: ''; position: absolute; bottom: -1px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            transition: width 0.5s ease;
+        }
+        section:hover h3::after { width: 100px; }
+        section h4 { font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin: 1.5rem 0 0.75rem; }
+        section p { color: var(--text-secondary); margin-bottom: 1rem; max-width: 800px; }
+
+        .code-block {
+            background: var(--bg-code); border: 1px solid var(--border-color);
+            border-radius: 10px; overflow: hidden; margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .code-block:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+            transform: translateY(-2px);
+        }
+        .code-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.6rem 1rem; background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .code-lang::before {
+            content: ''; width: 8px; height: 8px; border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .code-lang.python::before { background: var(--accent-yellow); }
+        .code-lang.typescript::before { background: var(--accent-blue); }
+        .code-lang.csharp::before { background: var(--accent-purple); }
+        .code-lang.java::before { background: var(--accent-orange); }
+        .copy-btn {
+            background: transparent; border: 1px solid var(--border-color);
+            color: var(--text-muted); padding: 0.25rem 0.6rem; border-radius: 4px;
+            cursor: pointer; font-size: 0.75rem; transition: all 0.3s ease;
+        }
+        .copy-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--accent-purple); }
+        .copy-btn.copied { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+        .code-block pre {
+            padding: 1rem; overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.6;
+        }
+        .keyword { color: var(--accent-purple); }
+        .class-name { color: var(--accent-cyan); }
+        .function { color: var(--accent-blue); }
+        .string { color: var(--accent-green); }
+        .number { color: var(--accent-orange); }
+        .comment { color: var(--text-muted); font-style: italic; }
+        .decorator { color: var(--accent-yellow); }
+        .type { color: var(--accent-pink); }
+
+        .code-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1rem; margin: 1rem 0;
+        }
+
+        .visual-box {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 2rem; margin: 1.5rem 0;
+            transition: all 0.4s ease;
+        }
+        .visual-box:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+        .visual-title {
+            font-weight: 600; color: var(--text-primary);
+            margin-bottom: 1.5rem; font-size: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        /* Pattern Cards */
+        .pattern-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem; margin: 1.5rem 0;
+        }
+        .pattern-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 1.5rem; transition: all 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+        .pattern-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            transform: scaleX(0); transition: transform 0.3s ease; transform-origin: left;
+        }
+        .pattern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent-purple);
+        }
+        .pattern-card:hover::before { transform: scaleX(1); }
+        .pattern-icon {
+            font-size: 2rem; margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .pattern-card:hover .pattern-icon { transform: scale(1.1); }
+        .pattern-name { font-weight: 700; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .pattern-category { font-size: 0.75rem; color: var(--accent-purple); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .pattern-desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .pattern-use { font-size: 0.8rem; color: var(--text-muted); }
+        .pattern-use strong { color: var(--accent-cyan); }
+
+        /* UML Diagram Style */
+        .uml-diagram {
+            display: flex; flex-direction: column; align-items: center; gap: 1rem;
+            padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px;
+        }
+        .uml-class {
+            background: var(--bg-card); border: 2px solid var(--accent-purple);
+            border-radius: 8px; min-width: 200px; transition: all 0.3s ease;
+        }
+        .uml-class:hover {
+            transform: scale(1.02); box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .uml-class-name {
+            background: var(--accent-purple); color: white;
+            padding: 0.5rem 1rem; font-weight: 600; text-align: center;
+            border-radius: 6px 6px 0 0; font-size: 0.9rem;
+        }
+        .uml-class-name.interface { background: var(--accent-cyan); font-style: italic; }
+        .uml-class-name.abstract { background: var(--accent-blue); }
+        .uml-class-body { padding: 0.75rem; }
+        .uml-method {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+            color: var(--text-secondary); padding: 0.25rem 0;
+        }
+        .uml-arrow {
+            color: var(--accent-purple); font-size: 1.5rem;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .uml-arrow-label { font-size: 0.7rem; color: var(--text-muted); }
+        .uml-row { display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+
+        /* SOLID Cards */
+        .solid-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem; margin: 1.5rem 0;
+        }
+        .solid-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 1.25rem; transition: all 0.4s ease;
+        }
+        .solid-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        .solid-letter {
+            font-size: 2rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .solid-name { font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .solid-desc { font-size: 0.85rem; color: var(--text-secondary); }
+
+        /* Principle Box */
+        .principle-box {
+            display: flex; gap: 1rem; padding: 1.25rem;
+            background: var(--bg-tertiary); border-radius: 10px;
+            border-left: 4px solid var(--accent-purple);
+            margin: 1rem 0; transition: all 0.3s ease;
+        }
+        .principle-box:hover { transform: translateX(5px); }
+        .principle-icon { font-size: 1.5rem; }
+        .principle-content { flex: 1; }
+        .principle-title { font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+        .principle-desc { font-size: 0.9rem; color: var(--text-secondary); }
+
+        .table-wrapper {
+            overflow-x: auto; margin: 1.5rem 0; border-radius: 10px;
+            border: 1px solid var(--border-color); transition: all 0.3s ease;
+        }
+        .table-wrapper:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { color: var(--text-secondary); transition: background 0.3s ease; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(168, 85, 247, 0.05); }
+        td code {
+            background: var(--bg-tertiary); padding: 0.15rem 0.4rem; border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            color: var(--accent-purple); transition: all 0.3s ease;
+        }
+        tr:hover td code { background: rgba(168, 85, 247, 0.2); }
+
+        .info-box {
+            padding: 1rem 1.25rem; border-radius: 10px; margin: 1.5rem 0;
+            border: 1px solid; transition: all 0.4s ease;
+        }
+        .info-box:hover { transform: translateX(5px); }
+        .info-box.tip { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+        .info-box.tip:hover { box-shadow: -5px 0 20px rgba(16, 185, 129, 0.2); }
+        .info-box.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+        .info-box.warning:hover { box-shadow: -5px 0 20px rgba(245, 158, 11, 0.2); }
+        .info-box.note { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+        .info-box.note:hover { box-shadow: -5px 0 20px rgba(59, 130, 246, 0.2); }
+        .info-box-title { font-weight: 600; margin-bottom: 0.5rem; }
+        .info-box.tip .info-box-title { color: var(--accent-green); }
+        .info-box.warning .info-box-title { color: var(--accent-yellow); }
+        .info-box.note .info-box-title { color: var(--accent-blue); }
+        .info-box p, .info-box ul { margin: 0; color: var(--text-secondary); }
+        .info-box ul { padding-left: 1.25rem; }
+        .info-box li { margin: 0.25rem 0; }
+
+        .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .compare-card {
+            background: var(--bg-tertiary); border-radius: 12px; padding: 1.5rem;
+            border: 1px solid var(--border-color); transition: all 0.4s ease;
+        }
+        .compare-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); }
+        .compare-card.good { border-top: 3px solid var(--accent-green); }
+        .compare-card.bad { border-top: 3px solid var(--accent-red); }
+        .compare-card-title { font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .compare-card.good .compare-card-title { color: var(--accent-green); }
+        .compare-card.bad .compare-card-title { color: var(--accent-red); }
+
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            border: none; border-radius: 50%; color: white; font-size: 1.5rem;
+            cursor: pointer; opacity: 0; visibility: hidden;
+            transition: all 0.3s ease; z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 20px rgba(168, 85, 247, 0.4);
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.6);
+        }
+
+        @media (max-width: 1000px) { .code-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { max-width: 100%; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="particles">
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    </div>
+
+    <header class="header">
+        <h1>🏗️ Design Patterns Guide</h1>
+        <p class="subtitle">Master software design patterns for clean, maintainable, and scalable code</p>
+        <div class="badge-row">
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-purple);"></span>Creational</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-blue);"></span>Structural</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-green);"></span>Behavioral</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-pink);"></span>SOLID</span>
+        </div>
+    </header>
+
+    <a href="index.html" class="home-btn">← Back to Hub</a>
+
+    <div class="container">
+        <nav class="sidebar">
+            <div class="nav-section">
+                <a href="index.html" class="nav-link home-link"><span class="nav-number">🏠</span>Training Hub</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Principles</div>
+                <a href="#solid" class="nav-link"><span class="nav-number">01</span>SOLID Principles</a>
+                <a href="#clean-code" class="nav-link"><span class="nav-number">02</span>Clean Code</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Creational</div>
+                <a href="#singleton" class="nav-link"><span class="nav-number">03</span>Singleton</a>
+                <a href="#factory" class="nav-link"><span class="nav-number">04</span>Factory</a>
+                <a href="#builder" class="nav-link"><span class="nav-number">05</span>Builder</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Structural</div>
+                <a href="#adapter" class="nav-link"><span class="nav-number">06</span>Adapter</a>
+                <a href="#decorator" class="nav-link"><span class="nav-number">07</span>Decorator</a>
+                <a href="#facade" class="nav-link"><span class="nav-number">08</span>Facade</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Behavioral</div>
+                <a href="#observer" class="nav-link"><span class="nav-number">09</span>Observer</a>
+                <a href="#strategy" class="nav-link"><span class="nav-number">10</span>Strategy</a>
+                <a href="#command" class="nav-link"><span class="nav-number">11</span>Command</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Architecture</div>
+                <a href="#mvc" class="nav-link"><span class="nav-number">12</span>MVC / MVVM</a>
+                <a href="#dependency-injection" class="nav-link"><span class="nav-number">13</span>Dependency Injection</a>
+                <a href="#repository" class="nav-link"><span class="nav-number">14</span>Repository Pattern</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Production</div>
+                <a href="#prod-usage" class="nav-link"><span class="nav-number">15</span>Pattern Selection</a>
+                <a href="#prod-testing" class="nav-link"><span class="nav-number">16</span>Testing & Review</a>
+                <a href="#prod-maintenance" class="nav-link"><span class="nav-number">17</span>Maintenance</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Section 1: SOLID Principles -->
+            <section id="solid">
+                <h2><span class="section-number">01</span>SOLID Principles</h2>
+                <p>Five design principles for writing maintainable, flexible, and understandable object-oriented code.</p>
+
+                <div class="solid-grid">
+                    <div class="solid-card">
+                        <div class="solid-letter">S</div>
+                        <div class="solid-name">Single Responsibility</div>
+                        <div class="solid-desc">A class should have only one reason to change.</div>
+                    </div>
+                    <div class="solid-card">
+                        <div class="solid-letter">O</div>
+                        <div class="solid-name">Open/Closed</div>
+                        <div class="solid-desc">Open for extension, closed for modification.</div>
+                    </div>
+                    <div class="solid-card">
+                        <div class="solid-letter">L</div>
+                        <div class="solid-name">Liskov Substitution</div>
+                        <div class="solid-desc">Subtypes must be substitutable for their base types.</div>
+                    </div>
+                    <div class="solid-card">
+                        <div class="solid-letter">I</div>
+                        <div class="solid-name">Interface Segregation</div>
+                        <div class="solid-desc">Many specific interfaces are better than one general.</div>
+                    </div>
+                    <div class="solid-card">
+                        <div class="solid-letter">D</div>
+                        <div class="solid-name">Dependency Inversion</div>
+                        <div class="solid-desc">Depend on abstractions, not concretions.</div>
+                    </div>
+                </div>
+
+                <h3>Single Responsibility Example</h3>
+                <div class="compare-grid">
+                    <div class="compare-card bad">
+                        <div class="compare-card-title">❌ Bad: Multiple Responsibilities</div>
+                        <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);"><code>class User:
+    def save_to_database(self): ...
+    def send_email(self): ...
+    def generate_report(self): ...</code></pre>
+                    </div>
+                    <div class="compare-card good">
+                        <div class="compare-card-title">✅ Good: Single Responsibility</div>
+                        <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);"><code>class User: ...
+class UserRepository: ...
+class EmailService: ...
+class ReportGenerator: ...</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Clean Code -->
+            <section id="clean-code">
+                <h2><span class="section-number">02</span>Clean Code Principles</h2>
+
+                <div class="principle-box">
+                    <div class="principle-icon">📛</div>
+                    <div class="principle-content">
+                        <div class="principle-title">Meaningful Names</div>
+                        <div class="principle-desc">Use intention-revealing names. <code>getUserById()</code> not <code>get()</code></div>
+                    </div>
+                </div>
+                <div class="principle-box">
+                    <div class="principle-icon">📏</div>
+                    <div class="principle-content">
+                        <div class="principle-title">Small Functions</div>
+                        <div class="principle-desc">Functions should do one thing and be ~20 lines or less.</div>
+                    </div>
+                </div>
+                <div class="principle-box">
+                    <div class="principle-icon">🚫</div>
+                    <div class="principle-content">
+                        <div class="principle-title">DRY - Don't Repeat Yourself</div>
+                        <div class="principle-desc">Every piece of knowledge must have a single representation.</div>
+                    </div>
+                </div>
+                <div class="principle-box">
+                    <div class="principle-icon">💋</div>
+                    <div class="principle-content">
+                        <div class="principle-title">KISS - Keep It Simple</div>
+                        <div class="principle-desc">The simplest solution is usually the best solution.</div>
+                    </div>
+                </div>
+                <div class="principle-box">
+                    <div class="principle-icon">🎯</div>
+                    <div class="principle-content">
+                        <div class="principle-title">YAGNI - You Aren't Gonna Need It</div>
+                        <div class="principle-desc">Don't add functionality until you actually need it.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Singleton -->
+            <section id="singleton">
+                <h2><span class="section-number">03</span>Singleton Pattern</h2>
+                <p>Ensures a class has only <strong>one instance</strong> and provides a global point of access to it.</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">🎯 Singleton Structure</div>
+                    <div class="uml-diagram">
+                        <div class="uml-class">
+                            <div class="uml-class-name">Singleton</div>
+                            <div class="uml-class-body">
+                                <div class="uml-method">- instance: Singleton</div>
+                                <div class="uml-method" style="border-top: 1px solid var(--border-color); padding-top: 0.5rem; margin-top: 0.5rem;">- __init__()</div>
+                                <div class="uml-method">+ get_instance(): Singleton</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">class</span> <span class="class-name">Singleton</span>:
+    _instance = <span class="keyword">None</span>
+    
+    <span class="keyword">def</span> <span class="function">__new__</span>(cls):
+        <span class="keyword">if</span> cls._instance <span class="keyword">is None</span>:
+            cls._instance = <span class="keyword">super</span>().__new__(cls)
+        <span class="keyword">return</span> cls._instance
+
+<span class="comment"># Usage</span>
+s1 = Singleton()
+s2 = Singleton()
+<span class="keyword">print</span>(s1 <span class="keyword">is</span> s2)  <span class="comment"># True - same instance</span>
+
+<span class="comment"># Thread-safe with decorator</span>
+<span class="keyword">from</span> functools <span class="keyword">import</span> wraps
+<span class="keyword">from</span> threading <span class="keyword">import</span> Lock
+
+<span class="keyword">def</span> <span class="function">singleton</span>(cls):
+    instances = {}
+    lock = Lock()
+    
+    <span class="decorator">@wraps</span>(cls)
+    <span class="keyword">def</span> <span class="function">get_instance</span>(*args, **kwargs):
+        <span class="keyword">with</span> lock:
+            <span class="keyword">if</span> cls <span class="keyword">not in</span> instances:
+                instances[cls] = cls(*args, **kwargs)
+        <span class="keyword">return</span> instances[cls]
+    <span class="keyword">return</span> get_instance
+
+<span class="decorator">@singleton</span>
+<span class="keyword">class</span> <span class="class-name">Database</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.connection = <span class="string">"Connected"</span></code></pre>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ Use Sparingly</div>
+                    <p>Singletons can make testing difficult and hide dependencies. Consider dependency injection as an alternative.</p>
+                </div>
+            </section>
+
+            <!-- Section 4: Factory -->
+            <section id="factory">
+                <h2><span class="section-number">04</span>Factory Pattern</h2>
+                <p>Creates objects without specifying the exact class to create. Delegates instantiation to subclasses or methods.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Factory Method</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod
+
+<span class="comment"># Product Interface</span>
+<span class="keyword">class</span> <span class="class-name">Button</span>(ABC):
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">render</span>(self): <span class="keyword">pass</span>
+
+<span class="comment"># Concrete Products</span>
+<span class="keyword">class</span> <span class="class-name">WindowsButton</span>(Button):
+    <span class="keyword">def</span> <span class="function">render</span>(self):
+        <span class="keyword">return</span> <span class="string">"Windows Button"</span>
+
+<span class="keyword">class</span> <span class="class-name">MacButton</span>(Button):
+    <span class="keyword">def</span> <span class="function">render</span>(self):
+        <span class="keyword">return</span> <span class="string">"Mac Button"</span>
+
+<span class="comment"># Factory</span>
+<span class="keyword">class</span> <span class="class-name">ButtonFactory</span>:
+    <span class="decorator">@staticmethod</span>
+    <span class="keyword">def</span> <span class="function">create_button</span>(os_type: <span class="type">str</span>) -> Button:
+        factories = {
+            <span class="string">"windows"</span>: WindowsButton,
+            <span class="string">"mac"</span>: MacButton
+        }
+        <span class="keyword">return</span> factories.get(os_type, WindowsButton)()
+
+<span class="comment"># Usage</span>
+button = ButtonFactory.create_button(<span class="string">"mac"</span>)
+<span class="keyword">print</span>(button.render())  <span class="comment"># "Mac Button"</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 5: Builder -->
+            <section id="builder">
+                <h2><span class="section-number">05</span>Builder Pattern</h2>
+                <p>Constructs complex objects step by step. Separates construction from representation.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">class</span> <span class="class-name">Pizza</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.size = <span class="keyword">None</span>
+        self.cheese = <span class="keyword">False</span>
+        self.pepperoni = <span class="keyword">False</span>
+        self.mushrooms = <span class="keyword">False</span>
+
+<span class="keyword">class</span> <span class="class-name">PizzaBuilder</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self._pizza = Pizza()
+    
+    <span class="keyword">def</span> <span class="function">set_size</span>(self, size: <span class="type">str</span>):
+        self._pizza.size = size
+        <span class="keyword">return</span> self  <span class="comment"># Return self for chaining</span>
+    
+    <span class="keyword">def</span> <span class="function">add_cheese</span>(self):
+        self._pizza.cheese = <span class="keyword">True</span>
+        <span class="keyword">return</span> self
+    
+    <span class="keyword">def</span> <span class="function">add_pepperoni</span>(self):
+        self._pizza.pepperoni = <span class="keyword">True</span>
+        <span class="keyword">return</span> self
+    
+    <span class="keyword">def</span> <span class="function">add_mushrooms</span>(self):
+        self._pizza.mushrooms = <span class="keyword">True</span>
+        <span class="keyword">return</span> self
+    
+    <span class="keyword">def</span> <span class="function">build</span>(self) -> Pizza:
+        <span class="keyword">return</span> self._pizza
+
+<span class="comment"># Fluent interface - readable!</span>
+pizza = (PizzaBuilder()
+    .set_size(<span class="string">"large"</span>)
+    .add_cheese()
+    .add_pepperoni()
+    .build())</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 6: Adapter -->
+            <section id="adapter">
+                <h2><span class="section-number">06</span>Adapter Pattern</h2>
+                <p>Converts one interface to another that clients expect. Acts as a <strong>bridge</strong> between incompatible interfaces.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Existing class with incompatible interface</span>
+<span class="keyword">class</span> <span class="class-name">OldPaymentSystem</span>:
+    <span class="keyword">def</span> <span class="function">make_payment</span>(self, amount):
+        <span class="keyword">return</span> f<span class="string">"Old system: paid ${amount}"</span>
+
+<span class="comment"># New interface we want</span>
+<span class="keyword">class</span> <span class="class-name">PaymentProcessor</span>(ABC):
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">process</span>(self, amount): <span class="keyword">pass</span>
+
+<span class="comment"># Adapter makes old system work with new interface</span>
+<span class="keyword">class</span> <span class="class-name">PaymentAdapter</span>(PaymentProcessor):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, old_system: OldPaymentSystem):
+        self._old_system = old_system
+    
+    <span class="keyword">def</span> <span class="function">process</span>(self, amount):
+        <span class="comment"># Translate new method to old method</span>
+        <span class="keyword">return</span> self._old_system.make_payment(amount)
+
+<span class="comment"># Client code works with new interface</span>
+old_system = OldPaymentSystem()
+processor = PaymentAdapter(old_system)
+processor.process(<span class="number">100</span>)  <span class="comment"># Works!</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 7: Decorator -->
+            <section id="decorator">
+                <h2><span class="section-number">07</span>Decorator Pattern</h2>
+                <p>Adds new functionality to objects <strong>dynamically</strong> without altering their structure.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Base Component</span>
+<span class="keyword">class</span> <span class="class-name">Coffee</span>:
+    <span class="keyword">def</span> <span class="function">cost</span>(self) -> <span class="type">float</span>:
+        <span class="keyword">return</span> <span class="number">2.00</span>
+    
+    <span class="keyword">def</span> <span class="function">description</span>(self) -> <span class="type">str</span>:
+        <span class="keyword">return</span> <span class="string">"Coffee"</span>
+
+<span class="comment"># Decorator Base</span>
+<span class="keyword">class</span> <span class="class-name">CoffeeDecorator</span>(Coffee):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, coffee: Coffee):
+        self._coffee = coffee
+
+<span class="comment"># Concrete Decorators</span>
+<span class="keyword">class</span> <span class="class-name">MilkDecorator</span>(CoffeeDecorator):
+    <span class="keyword">def</span> <span class="function">cost</span>(self) -> <span class="type">float</span>:
+        <span class="keyword">return</span> self._coffee.cost() + <span class="number">0.50</span>
+    
+    <span class="keyword">def</span> <span class="function">description</span>(self) -> <span class="type">str</span>:
+        <span class="keyword">return</span> self._coffee.description() + <span class="string">", Milk"</span>
+
+<span class="keyword">class</span> <span class="class-name">SugarDecorator</span>(CoffeeDecorator):
+    <span class="keyword">def</span> <span class="function">cost</span>(self) -> <span class="type">float</span>:
+        <span class="keyword">return</span> self._coffee.cost() + <span class="number">0.25</span>
+    
+    <span class="keyword">def</span> <span class="function">description</span>(self) -> <span class="type">str</span>:
+        <span class="keyword">return</span> self._coffee.description() + <span class="string">", Sugar"</span>
+
+<span class="comment"># Usage - Stack decorators!</span>
+coffee = Coffee()
+coffee = MilkDecorator(coffee)
+coffee = SugarDecorator(coffee)
+
+<span class="keyword">print</span>(coffee.description())  <span class="comment"># "Coffee, Milk, Sugar"</span>
+<span class="keyword">print</span>(coffee.cost())         <span class="comment"># 2.75</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 8: Facade -->
+            <section id="facade">
+                <h2><span class="section-number">08</span>Facade Pattern</h2>
+                <p>Provides a <strong>simplified interface</strong> to a complex subsystem. Hides complexity from the client.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Complex subsystem classes</span>
+<span class="keyword">class</span> <span class="class-name">AudioSystem</span>:
+    <span class="keyword">def</span> <span class="function">on</span>(self): <span class="keyword">print</span>(<span class="string">"Audio on"</span>)
+    <span class="keyword">def</span> <span class="function">set_volume</span>(self, level): <span class="keyword">print</span>(f<span class="string">"Volume: {level}"</span>)
+
+<span class="keyword">class</span> <span class="class-name">VideoPlayer</span>:
+    <span class="keyword">def</span> <span class="function">on</span>(self): <span class="keyword">print</span>(<span class="string">"Video on"</span>)
+    <span class="keyword">def</span> <span class="function">play</span>(self, movie): <span class="keyword">print</span>(f<span class="string">"Playing: {movie}"</span>)
+
+<span class="keyword">class</span> <span class="class-name">Lights</span>:
+    <span class="keyword">def</span> <span class="function">dim</span>(self, level): <span class="keyword">print</span>(f<span class="string">"Lights: {level}%"</span>)
+
+<span class="comment"># Facade - Simple interface</span>
+<span class="keyword">class</span> <span class="class-name">HomeTheaterFacade</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.audio = AudioSystem()
+        self.video = VideoPlayer()
+        self.lights = Lights()
+    
+    <span class="keyword">def</span> <span class="function">watch_movie</span>(self, movie: <span class="type">str</span>):
+        <span class="string">"""One simple method does everything!"""</span>
+        self.lights.dim(<span class="number">10</span>)
+        self.audio.on()
+        self.audio.set_volume(<span class="number">50</span>)
+        self.video.on()
+        self.video.play(movie)
+
+<span class="comment"># Client - Super simple!</span>
+theater = HomeTheaterFacade()
+theater.watch_movie(<span class="string">"Inception"</span>)</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 9: Observer -->
+            <section id="observer">
+                <h2><span class="section-number">09</span>Observer Pattern</h2>
+                <p>Defines a <strong>one-to-many</strong> dependency. When one object changes, all dependents are notified.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod
+<span class="keyword">from</span> typing <span class="keyword">import</span> List
+
+<span class="comment"># Observer Interface</span>
+<span class="keyword">class</span> <span class="class-name">Observer</span>(ABC):
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">update</span>(self, message: <span class="type">str</span>): <span class="keyword">pass</span>
+
+<span class="comment"># Subject (Publisher)</span>
+<span class="keyword">class</span> <span class="class-name">NewsAgency</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self._observers: List[Observer] = []
+    
+    <span class="keyword">def</span> <span class="function">subscribe</span>(self, observer: Observer):
+        self._observers.append(observer)
+    
+    <span class="keyword">def</span> <span class="function">unsubscribe</span>(self, observer: Observer):
+        self._observers.remove(observer)
+    
+    <span class="keyword">def</span> <span class="function">notify</span>(self, news: <span class="type">str</span>):
+        <span class="keyword">for</span> observer <span class="keyword">in</span> self._observers:
+            observer.update(news)
+
+<span class="comment"># Concrete Observers</span>
+<span class="keyword">class</span> <span class="class-name">EmailSubscriber</span>(Observer):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, email: <span class="type">str</span>):
+        self.email = email
+    
+    <span class="keyword">def</span> <span class="function">update</span>(self, message: <span class="type">str</span>):
+        <span class="keyword">print</span>(f<span class="string">"Email to {self.email}: {message}"</span>)
+
+<span class="keyword">class</span> <span class="class-name">SMSSubscriber</span>(Observer):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, phone: <span class="type">str</span>):
+        self.phone = phone
+    
+    <span class="keyword">def</span> <span class="function">update</span>(self, message: <span class="type">str</span>):
+        <span class="keyword">print</span>(f<span class="string">"SMS to {self.phone}: {message}"</span>)
+
+<span class="comment"># Usage</span>
+agency = NewsAgency()
+agency.subscribe(EmailSubscriber(<span class="string">"user@example.com"</span>))
+agency.subscribe(SMSSubscriber(<span class="string">"555-1234"</span>))
+
+agency.notify(<span class="string">"Breaking News!"</span>)  <span class="comment"># Both get notified</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 10: Strategy -->
+            <section id="strategy">
+                <h2><span class="section-number">10</span>Strategy Pattern</h2>
+                <p>Defines a family of algorithms, encapsulates each one, and makes them <strong>interchangeable</strong>.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod
+
+<span class="comment"># Strategy Interface</span>
+<span class="keyword">class</span> <span class="class-name">PaymentStrategy</span>(ABC):
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">pay</span>(self, amount: <span class="type">float</span>) -> <span class="type">str</span>: <span class="keyword">pass</span>
+
+<span class="comment"># Concrete Strategies</span>
+<span class="keyword">class</span> <span class="class-name">CreditCardPayment</span>(PaymentStrategy):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, card_number: <span class="type">str</span>):
+        self.card = card_number
+    
+    <span class="keyword">def</span> <span class="function">pay</span>(self, amount: <span class="type">float</span>) -> <span class="type">str</span>:
+        <span class="keyword">return</span> f<span class="string">"Paid ${amount} with card {self.card[-4:]}"</span>
+
+<span class="keyword">class</span> <span class="class-name">PayPalPayment</span>(PaymentStrategy):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, email: <span class="type">str</span>):
+        self.email = email
+    
+    <span class="keyword">def</span> <span class="function">pay</span>(self, amount: <span class="type">float</span>) -> <span class="type">str</span>:
+        <span class="keyword">return</span> f<span class="string">"Paid ${amount} via PayPal ({self.email})"</span>
+
+<span class="comment"># Context</span>
+<span class="keyword">class</span> <span class="class-name">ShoppingCart</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self._strategy: PaymentStrategy = <span class="keyword">None</span>
+    
+    <span class="keyword">def</span> <span class="function">set_payment_strategy</span>(self, strategy: PaymentStrategy):
+        self._strategy = strategy
+    
+    <span class="keyword">def</span> <span class="function">checkout</span>(self, amount: <span class="type">float</span>):
+        <span class="keyword">return</span> self._strategy.pay(amount)
+
+<span class="comment"># Usage - Switch strategies at runtime</span>
+cart = ShoppingCart()
+
+cart.set_payment_strategy(CreditCardPayment(<span class="string">"1234-5678-9012-3456"</span>))
+<span class="keyword">print</span>(cart.checkout(<span class="number">100</span>))  <span class="comment"># Paid $100 with card 3456</span>
+
+cart.set_payment_strategy(PayPalPayment(<span class="string">"user@email.com"</span>))
+<span class="keyword">print</span>(cart.checkout(<span class="number">50</span>))   <span class="comment"># Paid $50 via PayPal</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 11: Command -->
+            <section id="command">
+                <h2><span class="section-number">11</span>Command Pattern</h2>
+                <p>Encapsulates a request as an object. Enables undo/redo, queuing, and logging of operations.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod
+
+<span class="comment"># Command Interface</span>
+<span class="keyword">class</span> <span class="class-name">Command</span>(ABC):
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">execute</span>(self): <span class="keyword">pass</span>
+    
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">undo</span>(self): <span class="keyword">pass</span>
+
+<span class="comment"># Receiver</span>
+<span class="keyword">class</span> <span class="class-name">TextEditor</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.text = <span class="string">""</span>
+    
+    <span class="keyword">def</span> <span class="function">write</span>(self, text: <span class="type">str</span>):
+        self.text += text
+    
+    <span class="keyword">def</span> <span class="function">delete</span>(self, count: <span class="type">int</span>):
+        self.text = self.text[:-count]
+
+<span class="comment"># Concrete Commands</span>
+<span class="keyword">class</span> <span class="class-name">WriteCommand</span>(Command):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, editor: TextEditor, text: <span class="type">str</span>):
+        self.editor = editor
+        self.text = text
+    
+    <span class="keyword">def</span> <span class="function">execute</span>(self):
+        self.editor.write(self.text)
+    
+    <span class="keyword">def</span> <span class="function">undo</span>(self):
+        self.editor.delete(len(self.text))
+
+<span class="comment"># Invoker with history</span>
+<span class="keyword">class</span> <span class="class-name">CommandHistory</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self._history = []
+    
+    <span class="keyword">def</span> <span class="function">execute</span>(self, command: Command):
+        command.execute()
+        self._history.append(command)
+    
+    <span class="keyword">def</span> <span class="function">undo</span>(self):
+        <span class="keyword">if</span> self._history:
+            command = self._history.pop()
+            command.undo()
+
+<span class="comment"># Usage</span>
+editor = TextEditor()
+history = CommandHistory()
+
+history.execute(WriteCommand(editor, <span class="string">"Hello "</span>))
+history.execute(WriteCommand(editor, <span class="string">"World"</span>))
+<span class="keyword">print</span>(editor.text)  <span class="comment"># "Hello World"</span>
+
+history.undo()
+<span class="keyword">print</span>(editor.text)  <span class="comment"># "Hello "</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 12: MVC/MVVM -->
+            <section id="mvc">
+                <h2><span class="section-number">12</span>MVC / MVVM Patterns</h2>
+
+                <div class="pattern-grid">
+                    <div class="pattern-card">
+                        <div class="pattern-icon">🏛️</div>
+                        <div class="pattern-name">MVC</div>
+                        <div class="pattern-category">Model - View - Controller</div>
+                        <div class="pattern-desc">Separates data (Model), UI (View), and logic (Controller).</div>
+                        <div class="pattern-use"><strong>Use for:</strong> Web apps, traditional GUIs</div>
+                    </div>
+                    <div class="pattern-card">
+                        <div class="pattern-icon">🔗</div>
+                        <div class="pattern-name">MVVM</div>
+                        <div class="pattern-category">Model - View - ViewModel</div>
+                        <div class="pattern-desc">ViewModel exposes data & commands for data binding.</div>
+                        <div class="pattern-use"><strong>Use for:</strong> WPF, modern JS frameworks</div>
+                    </div>
+                    <div class="pattern-card">
+                        <div class="pattern-icon">📊</div>
+                        <div class="pattern-name">MVP</div>
+                        <div class="pattern-category">Model - View - Presenter</div>
+                        <div class="pattern-desc">Presenter handles all logic, View is passive.</div>
+                        <div class="pattern-use"><strong>Use for:</strong> Android, testable UIs</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 13: Dependency Injection -->
+            <section id="dependency-injection">
+                <h2><span class="section-number">13</span>Dependency Injection</h2>
+                <p>Dependencies are <strong>injected</strong> rather than created inside the class. Enables loose coupling and testing.</p>
+
+                <div class="compare-grid">
+                    <div class="compare-card bad">
+                        <div class="compare-card-title">❌ Tightly Coupled</div>
+                        <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);"><code>class OrderService:
+    def __init__(self):
+        # Creates its own dependency!
+        self.db = MySQLDatabase()
+        self.email = SMTPEmailer()</code></pre>
+                    </div>
+                    <div class="compare-card good">
+                        <div class="compare-card-title">✅ Dependency Injection</div>
+                        <pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);"><code>class OrderService:
+    def __init__(self, db: Database, 
+                 email: Emailer):
+        # Dependencies injected!
+        self.db = db
+        self.email = email</code></pre>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Dependency Injection Container</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Simple DI Container</span>
+<span class="keyword">class</span> <span class="class-name">Container</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self._services = {}
+    
+    <span class="keyword">def</span> <span class="function">register</span>(self, interface, implementation):
+        self._services[interface] = implementation
+    
+    <span class="keyword">def</span> <span class="function">resolve</span>(self, interface):
+        <span class="keyword">return</span> self._services[interface]()
+
+<span class="comment"># Usage</span>
+container = Container()
+container.register(Database, MySQLDatabase)
+container.register(Emailer, SMTPEmailer)
+
+<span class="comment"># Resolve dependencies</span>
+db = container.resolve(Database)
+email = container.resolve(Emailer)
+service = OrderService(db, email)</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 14: Repository Pattern -->
+            <section id="repository">
+                <h2><span class="section-number">14</span>Repository Pattern</h2>
+                <p>Abstracts data access logic. Mediates between the domain and data mapping layers.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> abc <span class="keyword">import</span> ABC, abstractmethod
+<span class="keyword">from</span> typing <span class="keyword">import</span> List, Optional
+
+<span class="comment"># Entity</span>
+<span class="keyword">class</span> <span class="class-name">User</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, id: <span class="type">int</span>, name: <span class="type">str</span>, email: <span class="type">str</span>):
+        self.id = id
+        self.name = name
+        self.email = email
+
+<span class="comment"># Repository Interface</span>
+<span class="keyword">class</span> <span class="class-name">UserRepository</span>(ABC):
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">get_by_id</span>(self, id: <span class="type">int</span>) -> Optional[User]: <span class="keyword">pass</span>
+    
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">get_all</span>(self) -> List[User]: <span class="keyword">pass</span>
+    
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">save</span>(self, user: User): <span class="keyword">pass</span>
+    
+    <span class="decorator">@abstractmethod</span>
+    <span class="keyword">def</span> <span class="function">delete</span>(self, id: <span class="type">int</span>): <span class="keyword">pass</span>
+
+<span class="comment"># Concrete Implementation</span>
+<span class="keyword">class</span> <span class="class-name">SQLUserRepository</span>(UserRepository):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, connection):
+        self.conn = connection
+    
+    <span class="keyword">def</span> <span class="function">get_by_id</span>(self, id: <span class="type">int</span>) -> Optional[User]:
+        <span class="comment"># SQL query here</span>
+        <span class="keyword">pass</span>
+    
+    <span class="keyword">def</span> <span class="function">get_all</span>(self) -> List[User]:
+        <span class="comment"># SQL query here</span>
+        <span class="keyword">pass</span>
+    
+    <span class="keyword">def</span> <span class="function">save</span>(self, user: User):
+        <span class="comment"># SQL INSERT/UPDATE</span>
+        <span class="keyword">pass</span>
+    
+    <span class="keyword">def</span> <span class="function">delete</span>(self, id: <span class="type">int</span>):
+        <span class="comment"># SQL DELETE</span>
+        <span class="keyword">pass</span>
+
+<span class="comment"># Service uses abstraction</span>
+<span class="keyword">class</span> <span class="class-name">UserService</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, repo: UserRepository):
+        self.repo = repo  <span class="comment"># Depends on interface!</span>
+    
+    <span class="keyword">def</span> <span class="function">get_user</span>(self, id: <span class="type">int</span>) -> User:
+        <span class="keyword">return</span> self.repo.get_by_id(id)</code></pre>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Benefits of Repository Pattern</div>
+                    <ul>
+                        <li>Decouples business logic from data access</li>
+                        <li>Easy to swap databases (SQL → MongoDB)</li>
+                        <li>Simplifies unit testing with mock repositories</li>
+                        <li>Centralizes data access logic</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 15: Pattern Selection -->
+            <section id="prod-usage">
+                <h2><span class="section-number">15</span>Pattern Selection</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Scenario</th><th>Pattern</th><th>Why</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Runtime composition</td><td>Factory / DI</td><td>Swap implementations without rewiring</td></tr>
+                            <tr><td>Cross-cutting behavior</td><td>Decorator</td><td>Stack behaviors like logging or caching</td></tr>
+                            <tr><td>Complex construction</td><td>Builder</td><td>Readable, testable creation logic</td></tr>
+                            <tr><td>Event-driven flows</td><td>Observer</td><td>Loose coupling between producers/consumers</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ Avoid Pattern Overuse</div>
+                    <p>Patterns are tools, not requirements. Prefer simpler code until complexity justifies a pattern.</p>
+                </div>
+            </section>
+
+            <!-- Section 16: Testing & Review -->
+            <section id="prod-testing">
+                <h2><span class="section-number">16</span>Testing & Review</h2>
+                <div class="info-box tip">
+                    <div class="info-box-title">✅ Review Checklist</div>
+                    <ul>
+                        <li>Is the pattern solving a real pain point?</li>
+                        <li>Are dependencies injected for testability?</li>
+                        <li>Is the abstraction stable under change?</li>
+                        <li>Does the pattern hide too much complexity?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 17: Maintenance -->
+            <section id="prod-maintenance">
+                <h2><span class="section-number">17</span>Maintenance</h2>
+                <div class="info-box note">
+                    <div class="info-box-title">🔧 Long-Term Care</div>
+                    <p>Refactor when patterns become excessive, document the intent, and keep constructors small by pushing complex setup into factories.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        function updateProgressBar() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            document.getElementById('progressBar').style.width = (scrollTop / docHeight) * 100 + '%';
+        }
+
+        function revealOnScroll() {
+            document.querySelectorAll('section').forEach((section, index) => {
+                if (section.getBoundingClientRect().top < window.innerHeight - 150) {
+                    section.classList.add('visible');
+                    section.style.transitionDelay = `${index * 0.03}s`;
+                }
+            });
+        }
+
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        }
+
+        function toggleBackToTop() {
+            document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 500);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function moveParticles(e) {
+            document.querySelectorAll('.particle').forEach((p, i) => {
+                const speed = (i + 1) * 0.3;
+                const x = (e.clientX / window.innerWidth - 0.5) * speed * 30;
+                const y = (e.clientY / window.innerHeight - 0.5) * speed * 30;
+                p.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        }
+
+        window.addEventListener('scroll', () => { updateProgressBar(); revealOnScroll(); updateActiveNav(); toggleBackToTop(); });
+        document.addEventListener('mousemove', moveParticles);
+        document.addEventListener('DOMContentLoaded', () => { revealOnScroll(); updateActiveNav(); });
+    </script>
+</body>
+</html>

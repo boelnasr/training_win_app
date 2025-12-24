@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Training Hub | Learn Programming</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0c10;
+            --bg-secondary: #0d1117;
+            --bg-tertiary: #161b22;
+            --bg-card: #1c2128;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-orange: #f97316;
+            --accent-red: #ef4444;
+            --accent-pink: #ec4899;
+            --border-color: #21262d;
+            --border-hover: #30363d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes morphBlob {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+        }
+
+        /* Background Effects */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+            animation: morphBlob 15s ease-in-out infinite;
+        }
+        .glow-1 { top: -200px; left: -200px; background: var(--accent-purple); }
+        .glow-2 { bottom: -200px; right: -200px; background: var(--accent-cyan); animation-delay: -5s; }
+        .glow-3 { top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--accent-blue); animation-delay: -10s; opacity: 0.1; }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            z-index: 10;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease-out, pulse 3s ease-in-out infinite;
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease-out 0.1s both, gradientMove 5s ease infinite;
+            margin-bottom: 1rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Main Content */
+        .main {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+
+        /* Guide Cards Grid */
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .guide-card {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+        .guide-card:nth-child(1) { animation-delay: 0.1s; }
+        .guide-card:nth-child(2) { animation-delay: 0.15s; }
+        .guide-card:nth-child(3) { animation-delay: 0.2s; }
+        .guide-card:nth-child(4) { animation-delay: 0.25s; }
+        .guide-card:nth-child(5) { animation-delay: 0.3s; }
+        .guide-card:nth-child(6) { animation-delay: 0.35s; }
+        .guide-card:nth-child(7) { animation-delay: 0.4s; }
+        .guide-card:nth-child(8) { animation-delay: 0.45s; }
+        .guide-card:nth-child(9) { animation-delay: 0.5s; }
+
+        .guide-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--card-accent);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+
+        .guide-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--card-accent);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(168, 85, 247, 0.1);
+        }
+        .guide-card:hover::before {
+            transform: scaleX(1);
+        }
+        .guide-card:hover::after {
+            opacity: 1;
+        }
+        .guide-card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+        .guide-card:hover .card-arrow {
+            transform: translateX(5px);
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+        .card-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--card-accent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-tag {
+            padding: 0.3rem 0.7rem;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+        .guide-card:hover .card-tag {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--accent-purple);
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .card-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .card-arrow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--card-accent);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        /* Footer */
+        .footer {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 2rem;
+        }
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+        .footer-link:hover {
+            color: var(--accent-purple);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .guides-grid { grid-template-columns: 1fr; }
+            .stats { gap: 1.5rem; }
+            .stat-value { font-size: 2rem; }
+        }
+
+        /* Cursor trail */
+        .cursor-trail {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: screen;
+            transition: transform 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+    <div class="bg-glow glow-3"></div>
+
+    <div class="particles" id="particles"></div>
+
+    <header class="header">
+        <div class="logo">🚀</div>
+        <h1>Developer Training Hub</h1>
+        <p class="subtitle">Master modern development with comprehensive, interactive guides covering everything from algorithms to UI frameworks</p>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">9</div>
+                <div class="stat-label">Guides</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">100+</div>
+                <div class="stat-label">Topics</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Languages</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <h2 class="section-title">Learning Paths</h2>
+
+        <div class="guides-grid">
+            <!-- Algorithms Guide -->
+            <a href="algorithms-guide.html" class="guide-card" style="--card-accent: #10b981;">
+                <div class="card-header">
+                    <div class="card-icon">🧮</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>Foundation</span>
+                </div>
+                <h3 class="card-title">Algorithms & Data Structures</h3>
+                <p class="card-description">Master sorting, searching, trees, graphs, and dynamic programming with visual explanations and code examples.</p>
+                <div class="card-tags">
+                    <span class="card-tag">Big O</span>
+                    <span class="card-tag">Sorting</span>
+                    <span class="card-tag">Trees</span>
+                    <span class="card-tag">DP</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">15 sections</span>
+                    <span class="card-arrow">Start Learning →</span>
+                </div>
+            </a>
+
+            <!-- Design Patterns Guide -->
+            <a href="design-patterns-guide.html" class="guide-card" style="--card-accent: #a855f7;">
+                <div class="card-header">
+                    <div class="card-icon">🏗️</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>Architecture</span>
+                </div>
+                <h3 class="card-title">Design Patterns</h3>
+                <p class="card-description">Learn SOLID principles, creational, structural, and behavioral patterns for clean, maintainable code.</p>
+                <div class="card-tags">
+                    <span class="card-tag">SOLID</span>
+                    <span class="card-tag">Factory</span>
+                    <span class="card-tag">Observer</span>
+                    <span class="card-tag">DI</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">14 sections</span>
+                    <span class="card-arrow">Start Learning →</span>
+                </div>
+            </a>
+
+            <!-- Python to C++/C# Guide -->
+            <a href="python-to-cpp-csharp-guide.html" class="guide-card" style="--card-accent: #3b82f6;">
+                <div class="card-header">
+                    <div class="card-icon">🐍</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>Language</span>
+                </div>
+                <h3 class="card-title">Python → C++ & C#</h3>
+                <p class="card-description">Transition from Python to statically-typed languages with side-by-side comparisons and OOP deep dives.</p>
+                <div class="card-tags">
+                    <span class="card-tag">Python</span>
+                    <span class="card-tag">C++</span>
+                    <span class="card-tag">C#</span>
+                    <span class="card-tag">OOP</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">15 sections</span>
+                    <span class="card-arrow">Start Learning →</span>
+                </div>
+            </a>
+
+            <!-- WPF Guide -->
+            <a href="wpf-complete-guide.html" class="guide-card" style="--card-accent: #8b5cf6;">
+                <div class="card-header">
+                    <div class="card-icon">🖼️</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>Desktop</span>
+                </div>
+                <h3 class="card-title">WPF Complete Guide</h3>
+                <p class="card-description">Build Windows desktop applications with XAML, data binding, MVVM pattern, and modern UI techniques.</p>
+                <div class="card-tags">
+                    <span class="card-tag">XAML</span>
+                    <span class="card-tag">MVVM</span>
+                    <span class="card-tag">Binding</span>
+                    <span class="card-tag">.NET</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">12 sections</span>
+                    <span class="card-arrow">Start Learning →</span>
+                </div>
+            </a>
+
+            <!-- WinUI/Blazor Guide -->
+            <a href="winui-blazor-guide.html" class="guide-card" style="--card-accent: #06b6d4;">
+                <div class="card-header">
+                    <div class="card-icon">⚡</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>Modern UI</span>
+                </div>
+                <h3 class="card-title">WinUI 3 & Blazor</h3>
+                <p class="card-description">Create modern Windows apps with WinUI 3 and cross-platform web UIs with Blazor components.</p>
+                <div class="card-tags">
+                    <span class="card-tag">WinUI 3</span>
+                    <span class="card-tag">Blazor</span>
+                    <span class="card-tag">MAUI</span>
+                    <span class="card-tag">WebAssembly</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">10 sections</span>
+                    <span class="card-arrow">Start Learning →</span>
+                </div>
+            </a>
+
+            <!-- Git Guide -->
+            <a href="git-visual-guide.html" class="guide-card" style="--card-accent: #f97316;">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>DevOps</span>
+                </div>
+                <h3 class="card-title">Git Visual Guide</h3>
+                <p class="card-description">Master version control with visual explanations of branching, merging, rebasing, and advanced Git workflows.</p>
+                <div class="card-tags">
+                    <span class="card-tag">Branching</span>
+                    <span class="card-tag">Merging</span>
+                    <span class="card-tag">Rebase</span>
+                    <span class="card-tag">GitHub</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">12 sections</span>
+                    <span class="card-arrow">Start Learning →</span>
+                </div>
+            </a>
+
+            <!-- Docker Guide -->
+            <a href="docker-containers-guide.html" class="guide-card" style="--card-accent: #0ea5e9;">
+                <div class="card-header">
+                    <div class="card-icon">🐳</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>DevOps</span>
+                </div>
+                <h3 class="card-title">Docker & Containers</h3>
+                <p class="card-description">Learn containerization, Docker Compose, networking, volumes, and deployment best practices.</p>
+                <div class="card-tags">
+                    <span class="card-tag">Containers</span>
+                    <span class="card-tag">Images</span>
+                    <span class="card-tag">Compose</span>
+                    <span class="card-tag">Networks</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">14 sections</span>
+                    <span class="card-arrow">Start Learning →</span>
+                </div>
+            </a>
+
+            <!-- Capstone Projects Guide -->
+            <a href="capstone-projects-guide.html" class="guide-card" style="--card-accent: #fbbf24;">
+                <div class="card-header">
+                    <div class="card-icon">🏆</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>Projects</span>
+                </div>
+                <h3 class="card-title">Capstone Projects</h3>
+                <p class="card-description">Apply everything you've learned with 5 hands-on projects combining algorithms, patterns, UI, and DevOps.</p>
+                <div class="card-tags">
+                    <span class="card-tag">Full Stack</span>
+                    <span class="card-tag">Portfolio</span>
+                    <span class="card-tag">Real World</span>
+                    <span class="card-tag">CI/CD</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">6 projects</span>
+                    <span class="card-arrow">Start Building →</span>
+                </div>
+            </a>
+
+            <!-- Elsa Workflows Guide -->
+            <a href="elsa-workflows-guide.html" class="guide-card" style="--card-accent: #6366f1;">
+                <div class="card-header">
+                    <div class="card-icon">🔄</div>
+                    <span class="card-badge"><span class="card-badge-dot"></span>Automation</span>
+                </div>
+                <h3 class="card-title">Elsa Workflows</h3>
+                <p class="card-description">Build powerful workflow automation in .NET with Elsa — the open-source workflow engine for business processes.</p>
+                <div class="card-tags">
+                    <span class="card-tag">.NET 8</span>
+                    <span class="card-tag">Workflows</span>
+                    <span class="card-tag">Automation</span>
+                    <span class="card-tag">Activities</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-meta">18 sections</span>
+                    <span class="card-arrow">Start Learning →</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with care for developers who want to level up their skills</p>
+        <div class="footer-links">
+            <a href="#" class="footer-link">About</a>
+            <a href="#" class="footer-link">Contribute</a>
+            <a href="#" class="footer-link">Feedback</a>
+        </div>
+    </footer>
+
+    <div class="cursor-trail" id="cursor"></div>
+
+    <script>
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#a855f7', '#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'];
+
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    width: ${Math.random() * 6 + 3}px;
+                    height: ${Math.random() * 6 + 3}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    animation-delay: ${Math.random() * 5}s;
+                    animation-duration: ${Math.random() * 10 + 8}s;
+                `;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Cursor trail effect
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.left = cursorX - 6 + 'px';
+            cursor.style.top = cursorY - 6 + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Card tilt effect
+        document.querySelectorAll('.guide-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 25;
+                const rotateY = (centerX - x) / 25;
+
+                card.style.transform = `translateY(-8px) scale(1.02) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.guide-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Smooth scroll for any anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Easter egg - Konami code
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    document.body.style.animation = 'none';
+                    document.body.offsetHeight;
+                    document.body.style.animation = 'rainbow 3s ease infinite';
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes rainbow {
+                            0% { filter: hue-rotate(0deg); }
+                            100% { filter: hue-rotate(360deg); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    setTimeout(() => document.body.style.animation = '', 5000);
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WinUI 3 & Blazor Complete Guide | Modern .NET UI Development</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0c0f1a;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1a2234;
+            --bg-card: #1e293b;
+            --bg-code: #0d1117;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-winui: #0ea5e9;
+            --accent-blazor: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --border-color: #1e293b;
+            --border-hover: #334155;
+            --xaml-tag: #569cd6;
+            --xaml-attr: #9cdcfe;
+            --xaml-string: #ce9178;
+            --razor-directive: #c586c0;
+            --csharp-keyword: #569cd6;
+            --csharp-type: #4ec9b0;
+            --csharp-string: #ce9178;
+            --csharp-number: #b5cea8;
+            --csharp-comment: #6a9955;
+            --csharp-method: #dcdcaa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
+        .header {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header .subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto; }
+
+        .badge-row { display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 100px; font-size: 0.875rem; color: var(--text-secondary); }
+        .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .badge-dot.winui { background: var(--accent-winui); }
+        .badge-dot.blazor { background: var(--accent-blazor); }
+        .badge-dot.green { background: var(--accent-green); }
+        .badge-dot.orange { background: var(--accent-orange); }
+
+        .container { display: flex; max-width: 1600px; margin: 0 auto; }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .nav-section { padding: 0 1rem; margin-bottom: 1.5rem; }
+        .nav-section-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 0 0.75rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-section-title .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .nav-section-title .dot.winui { background: var(--accent-winui); }
+        .nav-section-title .dot.blazor { background: var(--accent-blazor); }
+        .nav-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; color: var(--text-secondary); text-decoration: none; border-radius: 6px; font-size: 0.85rem; transition: all 0.2s; }
+        .nav-link:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); min-width: 20px; }
+        .home-link { background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(14, 165, 233, 0.3); margin-bottom: 0.5rem; }
+        .home-link:hover { background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(139, 92, 246, 0.2)); border-color: var(--accent-winui); }
+        .home-btn { position: fixed; top: 20px; left: 20px; z-index: 1000; padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease; display: none; }
+        .home-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--accent-winui); }
+        @media (max-width: 900px) { .home-btn { display: block; } }
+
+        .main-content { flex: 1; padding: 2.5rem; max-width: calc(100% - 280px); }
+
+        section { margin-bottom: 4rem; }
+        section h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; color: var(--text-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+        .section-number { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; font-size: 1rem; font-weight: 700; color: white; }
+        .section-number.winui { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+        .section-number.blazor { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .section-number.both { background: linear-gradient(135deg, #0ea5e9, #8b5cf6); }
+        section h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; color: var(--text-primary); margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        section h4 { font-size: 1.1rem; font-weight: 600; color: var(--accent-green); margin: 1.5rem 0 0.75rem; }
+        section p { color: var(--text-secondary); margin-bottom: 1rem; max-width: 800px; }
+
+        .tech-label { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem; }
+        .tech-label.winui { background: rgba(14, 165, 233, 0.2); color: var(--accent-winui); }
+        .tech-label.blazor { background: rgba(139, 92, 246, 0.2); color: var(--accent-blazor); }
+
+        .code-comparison { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+        .code-comparison.single { grid-template-columns: 1fr; }
+        .code-comparison.triple { grid-template-columns: repeat(3, 1fr); }
+
+        .code-block { background: var(--bg-code); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; }
+        .code-block.full-width { grid-column: 1 / -1; }
+        .code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 1rem; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .code-lang { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); }
+        .code-lang-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .code-lang-dot.xaml { background: var(--accent-winui); }
+        .code-lang-dot.razor { background: var(--accent-blazor); }
+        .code-lang-dot.csharp { background: var(--accent-green); }
+        .code-lang-dot.html { background: var(--accent-orange); }
+
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.25rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
+
+        .code-block pre { padding: 1rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.6; }
+
+        .keyword { color: var(--csharp-keyword); }
+        .type { color: var(--csharp-type); }
+        .string { color: var(--csharp-string); }
+        .number { color: var(--csharp-number); }
+        .comment { color: var(--csharp-comment); font-style: italic; }
+        .method { color: var(--csharp-method); }
+        .tag { color: var(--xaml-tag); }
+        .attr { color: var(--xaml-attr); }
+        .attr-value { color: var(--xaml-string); }
+        .directive { color: var(--razor-directive); }
+
+        .info-box { padding: 1rem; border-radius: 10px; margin: 1.5rem 0; border: 1px solid; }
+        .info-box.tip { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+        .info-box.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+        .info-box.note { background: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.3); }
+        .info-box.blazor { background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3); }
+        .info-box-title { font-weight: 600; margin-bottom: 0.5rem; }
+        .info-box.tip .info-box-title { color: var(--accent-green); }
+        .info-box.warning .info-box-title { color: var(--accent-orange); }
+        .info-box.note .info-box-title { color: var(--accent-winui); }
+        .info-box.blazor .info-box-title { color: var(--accent-blazor); }
+        .info-box p { margin: 0; color: var(--text-secondary); }
+
+        .table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 10px; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { color: var(--text-secondary); }
+        tr:last-child td { border-bottom: none; }
+        td code { background: var(--bg-tertiary); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent-green); }
+
+        .file-structure { background: var(--bg-code); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.8; }
+        .file-structure .folder { color: var(--accent-winui); }
+        .file-structure .file-xaml { color: var(--accent-winui); }
+        .file-structure .file-razor { color: var(--accent-blazor); }
+        .file-structure .file-cs { color: var(--accent-green); }
+        .file-structure .file-config { color: var(--accent-orange); }
+
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+        .comparison-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; }
+        .comparison-card h4 { margin-top: 0; display: flex; align-items: center; gap: 0.5rem; }
+        .comparison-card.winui { border-top: 3px solid var(--accent-winui); }
+        .comparison-card.winui h4 { color: var(--accent-winui); }
+        .comparison-card.blazor { border-top: 3px solid var(--accent-blazor); }
+        .comparison-card.blazor h4 { color: var(--accent-blazor); }
+        .comparison-card ul { margin: 0; padding-left: 1.25rem; color: var(--text-secondary); }
+        .comparison-card li { margin: 0.5rem 0; }
+
+        @media (max-width: 1200px) { .code-comparison { grid-template-columns: 1fr; } .code-comparison.triple { grid-template-columns: 1fr; } .comparison-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .sidebar { display: none; } .main-content { max-width: 100%; padding: 1.5rem; } }
+
+        /* ========== ANIMATIONS ========== */
+
+        /* Scroll animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Page load animation */
+        body {
+            animation: pageLoad 0.5s ease-out;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Header animations */
+        .header h1 {
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .header .subtitle {
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .badge-row {
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Badge animations */
+        .badge {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .badge-dot {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.8; }
+        }
+
+        /* Sidebar navigation animations */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(135deg, var(--accent-winui), var(--accent-blazor));
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-link:hover {
+            padding-left: 1rem;
+        }
+
+        .nav-number {
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .nav-link:hover .nav-number {
+            color: var(--accent-winui);
+            transform: scale(1.1);
+        }
+
+        /* Section number animation */
+        .section-number {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        section:hover .section-number {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        section:hover .section-number.winui { box-shadow: 0 5px 20px rgba(14, 165, 233, 0.4); }
+        section:hover .section-number.blazor { box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4); }
+        section:hover .section-number.both { box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4); }
+
+        /* Comparison cards animations */
+        .comparison-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .comparison-card.winui:hover {
+            box-shadow: 0 15px 40px rgba(14, 165, 233, 0.2);
+        }
+
+        .comparison-card.blazor:hover {
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Code block animations */
+        .code-block {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .code-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Code language dot pulse */
+        .code-lang-dot {
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.8; }
+        }
+
+        /* Copy button animations */
+        .copy-btn {
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.1);
+            background: var(--accent-winui);
+            color: white;
+            border-color: var(--accent-winui);
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+            animation: copySuccess 0.3s ease;
+        }
+
+        @keyframes copySuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Table animations */
+        .table-wrapper {
+            transition: box-shadow 0.3s ease;
+        }
+
+        .table-wrapper:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        tbody tr {
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        tbody tr:hover {
+            transform: scale(1.01);
+        }
+
+        td code {
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        tr:hover td code {
+            background: var(--accent-winui);
+            color: white;
+        }
+
+        /* Info box animations */
+        .info-box {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info-box:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* File structure animation */
+        .file-structure {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .file-structure:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tech label animations */
+        .tech-label {
+            transition: transform 0.3s ease;
+        }
+
+        .tech-label:hover {
+            transform: scale(1.1);
+        }
+
+        /* Section h3 underline animation */
+        section h3 {
+            position: relative;
+        }
+
+        section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-winui), var(--accent-blazor));
+            transition: width 0.5s ease;
+        }
+
+        section:hover h3::after {
+            width: 50%;
+        }
+
+        /* Comparison grid staggered animation */
+        .comparison-grid .comparison-card {
+            opacity: 0;
+            animation: cardSlideIn 0.5s ease-out forwards;
+        }
+
+        .comparison-grid .comparison-card:nth-child(1) { animation-delay: 0.1s; }
+        .comparison-grid .comparison-card:nth-child(2) { animation-delay: 0.2s; }
+
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Code comparison staggered animation */
+        .code-comparison .code-block {
+            opacity: 0;
+            animation: codeBlockSlideIn 0.5s ease-out forwards;
+        }
+
+        .code-comparison .code-block:nth-child(1) { animation-delay: 0.1s; }
+        .code-comparison .code-block:nth-child(2) { animation-delay: 0.2s; }
+        .code-comparison .code-block:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes codeBlockSlideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Scrollbar hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-winui);
+        }
+
+        /* Focus styles */
+        .nav-link:focus,
+        .copy-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.5);
+        }
+
+        /* ========== ELABORATE ANIMATIONS ========== */
+
+        /* Animated gradient background */
+        .header { position: relative; overflow: hidden; }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(45deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1), rgba(14, 165, 233, 0.1));
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed; pointer-events: none; border-radius: 50%;
+            animation: float 20s infinite ease-in-out; z-index: 0; opacity: 0.3;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; } 90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Morphing blobs */
+        .blob {
+            position: fixed; width: 400px; height: 400px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 50%; filter: blur(80px);
+            animation: blobMorph 20s ease-in-out infinite;
+            z-index: -1; pointer-events: none;
+        }
+
+        .blob-1 { top: -150px; left: -150px; animation-delay: 0s; }
+        .blob-2 { top: 50%; right: -150px; animation-delay: -5s; }
+        .blob-3 { bottom: -150px; left: 30%; animation-delay: -10s; }
+
+        @keyframes blobMorph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: rotate(0deg) scale(1); }
+            50% { border-radius: 50% 60% 30% 60% / 30% 70% 70% 50%; transform: rotate(180deg) scale(1.1); }
+        }
+
+        /* Glow border */
+        .glow-border { position: relative; }
+        .glow-border::after {
+            content: ''; position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-winui), var(--accent-blazor), var(--accent-winui));
+            background-size: 400% 400%; border-radius: inherit; z-index: -1;
+            animation: glowPulse 3s ease-in-out infinite;
+            filter: blur(10px); opacity: 0; transition: opacity 0.3s ease;
+        }
+        .glow-border:hover::after { opacity: 0.7; }
+
+        @keyframes glowPulse { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+        /* Shine effect */
+        .shine { position: relative; overflow: hidden; }
+        .shine::before {
+            content: ''; position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: skewX(-25deg); transition: left 0.6s;
+        }
+        .shine:hover::before { left: 150%; }
+
+        /* Reveal animations */
+        .reveal-left { opacity: 0; transform: translateX(-60px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal-left.revealed { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(60px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal-right.revealed { opacity: 1; transform: translateX(0); }
+
+        /* Cursor trail */
+        .cursor-trail {
+            position: fixed; width: 20px; height: 20px; border-radius: 50%;
+            background: rgba(14, 165, 233, 0.3); pointer-events: none;
+            z-index: 9999; mix-blend-mode: screen;
+        }
+
+        /* Progress line */
+        .progress-line {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-winui), var(--accent-blazor));
+            z-index: 9999; transition: width 0.2s ease;
+            box-shadow: 0 0 10px var(--accent-winui);
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%); width: 30px; height: 50px;
+            border: 2px solid var(--accent-winui); border-radius: 25px;
+            opacity: 0.7; transition: opacity 0.3s;
+        }
+        .scroll-indicator::before {
+            content: ''; position: absolute;
+            top: 8px; left: 50%; transform: translateX(-50%);
+            width: 6px; height: 6px; background: var(--accent-winui);
+            border-radius: 50%; animation: scrollBounce 2s infinite;
+        }
+
+        @keyframes scrollBounce { 0%, 100% { top: 8px; opacity: 1; } 50% { top: 25px; opacity: 0.3; } }
+
+        /* Text reveal */
+        .text-reveal span { opacity: 0; display: inline-block; animation: letterReveal 0.5s forwards; }
+        @keyframes letterReveal { to { opacity: 1; } }
+
+        /* Lift shadow */
+        .lift-shadow { transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .lift-shadow:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 20px 40px rgba(14, 165, 233, 0.15);
+        }
+
+        /* Elastic */
+        .elastic:hover { animation: elastic 0.5s ease; }
+        @keyframes elastic {
+            0% { transform: scale(1); } 30% { transform: scale(1.15); }
+            50% { transform: scale(0.95); } 70% { transform: scale(1.05); } 100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🚀 WinUI 3 & Blazor Guide</h1>
+        <p class="subtitle">Master modern .NET UI development — Build native Windows apps with WinUI 3 and cross-platform web apps with Blazor</p>
+        <div class="badge-row">
+            <span class="badge"><span class="badge-dot winui"></span>WinUI 3</span>
+            <span class="badge"><span class="badge-dot blazor"></span>Blazor</span>
+            <span class="badge"><span class="badge-dot green"></span>C# Everywhere</span>
+            <span class="badge"><span class="badge-dot orange"></span>.NET 8+</span>
+        </div>
+    </header>
+
+    <a href="index.html" class="home-btn">← Back to Hub</a>
+
+    <div class="container">
+        <nav class="sidebar">
+            <div class="nav-section">
+                <a href="index.html" class="nav-link home-link"><span class="nav-number">🏠</span>Training Hub</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a href="#introduction" class="nav-link"><span class="nav-number">01</span>Introduction</a>
+                <a href="#comparison" class="nav-link"><span class="nav-number">02</span>WinUI vs Blazor</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title"><span class="dot winui"></span>WinUI 3</div>
+                <a href="#winui-setup" class="nav-link"><span class="nav-number">03</span>Project Setup</a>
+                <a href="#winui-xaml" class="nav-link"><span class="nav-number">04</span>XAML Basics</a>
+                <a href="#winui-controls" class="nav-link"><span class="nav-number">05</span>Controls</a>
+                <a href="#winui-navigation" class="nav-link"><span class="nav-number">06</span>Navigation</a>
+                <a href="#winui-mvvm" class="nav-link"><span class="nav-number">07</span>MVVM Pattern</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title"><span class="dot blazor"></span>Blazor</div>
+                <a href="#blazor-setup" class="nav-link"><span class="nav-number">08</span>Project Setup</a>
+                <a href="#blazor-components" class="nav-link"><span class="nav-number">09</span>Components</a>
+                <a href="#blazor-binding" class="nav-link"><span class="nav-number">10</span>Data Binding</a>
+                <a href="#blazor-forms" class="nav-link"><span class="nav-number">11</span>Forms & Validation</a>
+                <a href="#blazor-services" class="nav-link"><span class="nav-number">12</span>Services & DI</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Advanced</div>
+                <a href="#hybrid" class="nav-link"><span class="nav-number">13</span>Blazor Hybrid</a>
+                <a href="#styling" class="nav-link"><span class="nav-number">14</span>Styling</a>
+                <a href="#best-practices" class="nav-link"><span class="nav-number">15</span>Best Practices</a>
+                <a href="#winui-webview2" class="nav-link"><span class="nav-number">16</span>WinUI WebView2 Shell</a>
+                <a href="#auth-security" class="nav-link"><span class="nav-number">17</span>Auth & Security</a>
+                <a href="#deployment-ops" class="nav-link"><span class="nav-number">18</span>Deployment & Ops</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Section 1: Introduction -->
+            <section id="introduction">
+                <h2><span class="section-number both">01</span>Introduction</h2>
+                
+                <p>WinUI 3 and Blazor are Microsoft's modern UI frameworks for .NET developers. Both use C# but target different platforms and use different markup languages.</p>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card winui">
+                        <h4>🪟 WinUI 3</h4>
+                        <ul>
+                            <li>Native Windows desktop apps</li>
+                            <li>XAML markup language</li>
+                            <li>Successor to UWP/WPF XAML</li>
+                            <li>Windows App SDK</li>
+                            <li>Full Windows API access</li>
+                            <li>Best performance on Windows</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card blazor">
+                        <h4>🔥 Blazor</h4>
+                        <ul>
+                            <li>Web apps with C# (no JavaScript)</li>
+                            <li>Razor/HTML markup</li>
+                            <li>Server-side or WebAssembly</li>
+                            <li>Cross-platform (any browser)</li>
+                            <li>Can be hosted anywhere</li>
+                            <li>Blazor Hybrid for desktop</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>When to Use What?</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Requirement</th><th>Best Choice</th><th>Why</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Windows-only desktop app</td><td><strong>WinUI 3</strong></td><td>Native performance, full Windows integration</td></tr>
+                            <tr><td>Cross-platform web app</td><td><strong>Blazor WebAssembly</strong></td><td>Runs in any browser, no server needed</td></tr>
+                            <tr><td>Internal business app</td><td><strong>Blazor Server</strong></td><td>Fast initial load, real-time updates</td></tr>
+                            <tr><td>Desktop + Web hybrid</td><td><strong>Blazor Hybrid + MAUI</strong></td><td>Share UI code across platforms</td></tr>
+                            <tr><td>High-performance desktop</td><td><strong>WinUI 3</strong></td><td>DirectX rendering, native controls</td></tr>
+                            <tr><td>Existing web developers</td><td><strong>Blazor</strong></td><td>HTML/CSS skills transfer</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 2: Comparison -->
+            <section id="comparison">
+                <h2><span class="section-number both">02</span>WinUI vs Blazor Comparison</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Feature</th><th>WinUI 3</th><th>Blazor</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Markup</td><td><code>XAML</code></td><td><code>Razor (HTML + C#)</code></td></tr>
+                            <tr><td>Language</td><td>C#</td><td>C#</td></tr>
+                            <tr><td>Platform</td><td>Windows 10/11</td><td>Any browser / Hybrid</td></tr>
+                            <tr><td>Architecture</td><td>MVVM</td><td>Component-based</td></tr>
+                            <tr><td>Data Binding</td><td><code>{x:Bind}</code> / <code>{Binding}</code></td><td><code>@bind</code></td></tr>
+                            <tr><td>Events</td><td><code>Click="Handler"</code></td><td><code>@onclick="Handler"</code></td></tr>
+                            <tr><td>Loops</td><td><code>ItemsSource</code> binding</td><td><code>@foreach</code></td></tr>
+                            <tr><td>Conditionals</td><td>Visibility binding + converter</td><td><code>@if</code></td></tr>
+                            <tr><td>Styling</td><td>XAML Styles & Resources</td><td>CSS + scoped CSS</td></tr>
+                            <tr><td>State Management</td><td>ViewModels</td><td>Component state / Services</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Syntax Comparison</h3>
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>WinUI 3 (XAML)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;StackPanel&gt;</span>
+    <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"Hello, WinUI!"</span><span class="tag">/&gt;</span>
+    
+    <span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{x:Bind ViewModel.Name, Mode=TwoWay}"</span><span class="tag">/&gt;</span>
+    
+    <span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"Click Me"</span>
+            <span class="attr">Click</span>=<span class="attr-value">"OnButtonClick"</span><span class="tag">/&gt;</span>
+    
+    <span class="comment">&lt;!-- List --&gt;</span>
+    <span class="tag">&lt;ListView</span> <span class="attr">ItemsSource</span>=<span class="attr-value">"{x:Bind ViewModel.Items}"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;ListView.ItemTemplate&gt;</span>
+            <span class="tag">&lt;DataTemplate</span> <span class="attr">x:DataType</span>=<span class="attr-value">"local:Item"</span><span class="tag">&gt;</span>
+                <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{x:Bind Name}"</span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;/DataTemplate&gt;</span>
+        <span class="tag">&lt;/ListView.ItemTemplate&gt;</span>
+    <span class="tag">&lt;/ListView&gt;</span>
+<span class="tag">&lt;/StackPanel&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>Blazor (Razor)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;div&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Hello, Blazor!<span class="tag">&lt;/p&gt;</span>
+    
+    <span class="tag">&lt;input</span> <span class="directive">@bind</span>=<span class="attr-value">"name"</span> <span class="tag">/&gt;</span>
+    
+    <span class="tag">&lt;button</span> <span class="directive">@onclick</span>=<span class="attr-value">"OnButtonClick"</span><span class="tag">&gt;</span>Click Me<span class="tag">&lt;/button&gt;</span>
+    
+    <span class="comment">&lt;!-- List --&gt;</span>
+    <span class="tag">&lt;ul&gt;</span>
+        <span class="directive">@foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> items)
+        {
+            <span class="tag">&lt;li&gt;</span><span class="directive">@item.Name</span><span class="tag">&lt;/li&gt;</span>
+        }
+    <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="directive">@code</span> {
+    <span class="keyword">private</span> <span class="type">string</span> name = <span class="string">""</span>;
+    <span class="keyword">private</span> <span class="type">List</span>&lt;<span class="type">Item</span>&gt; items = <span class="keyword">new</span>();
+    
+    <span class="keyword">private void</span> <span class="method">OnButtonClick</span>() { }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: WinUI Setup -->
+            <section id="winui-setup">
+                <h2><span class="section-number winui">03</span>WinUI 3 Project Setup</h2>
+
+                <div class="info-box note">
+                    <div class="info-box-title">📦 Prerequisites</div>
+                    <p>Install: Visual Studio 2022+ with ".NET Desktop Development" and "Windows App SDK" workloads.</p>
+                </div>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Create Project</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment"># Using Visual Studio:</span>
+<span class="comment"># New Project → "Blank App, Packaged (WinUI 3 in Desktop)"</span>
+
+<span class="comment"># Or using CLI (with Windows App SDK):</span>
+dotnet new winui3 -n MyWinUIApp
+cd MyWinUIApp
+dotnet build</code></pre>
+                    </div>
+                </div>
+
+                <h3>Project Structure</h3>
+                <div class="file-structure">
+<span class="folder">📁 MyWinUIApp/</span>
+├── <span class="file-config">📄 MyWinUIApp.csproj</span>
+├── <span class="file-config">📄 Package.appxmanifest</span>      <span class="comment">// App metadata, capabilities</span>
+├── <span class="file-xaml">📄 App.xaml</span>                    <span class="comment">// Application resources</span>
+├── <span class="file-cs">📄 App.xaml.cs</span>                 <span class="comment">// Application startup</span>
+├── <span class="file-xaml">📄 MainWindow.xaml</span>             <span class="comment">// Main window UI</span>
+├── <span class="file-cs">📄 MainWindow.xaml.cs</span>          <span class="comment">// Code-behind</span>
+├── <span class="folder">📁 Views/</span>
+├── <span class="folder">📁 ViewModels/</span>
+├── <span class="folder">📁 Models/</span>
+├── <span class="folder">📁 Services/</span>
+└── <span class="folder">📁 Assets/</span>                     <span class="comment">// Images, icons</span>
+                </div>
+
+                <h3>App.xaml.cs - Entry Point</h3>
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>App.xaml.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public partial class</span> <span class="type">App</span> : <span class="type">Application</span>
+{
+    <span class="keyword">private</span> <span class="type">Window</span>? m_window;
+    
+    <span class="keyword">public</span> <span class="method">App</span>()
+    {
+        <span class="keyword">this</span>.<span class="method">InitializeComponent</span>();
+    }
+    
+    <span class="keyword">protected override void</span> <span class="method">OnLaunched</span>(<span class="type">LaunchActivatedEventArgs</span> args)
+    {
+        m_window = <span class="keyword">new</span> <span class="type">MainWindow</span>();
+        m_window.<span class="method">Activate</span>();
+    }
+    
+    <span class="comment">// Access window from anywhere</span>
+    <span class="keyword">public static</span> <span class="type">Window</span> MainWindow => 
+        ((<span class="type">App</span>)<span class="type">Application</span>.Current).m_window!;
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: WinUI XAML -->
+            <section id="winui-xaml">
+                <h2><span class="section-number winui">04</span>WinUI 3 XAML Basics</h2>
+
+                <h3>x:Bind vs Binding</h3>
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Use x:Bind</div>
+                    <p>WinUI 3 uses <code>{x:Bind}</code> for compile-time checked bindings. It's faster than <code>{Binding}</code> and catches errors at build time.</p>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>x:Bind (Compiled)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Default: OneTime (set once) --&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{x:Bind Title}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- OneWay: Source → Target --&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{x:Bind ViewModel.Status, Mode=OneWay}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- TwoWay: Source ↔ Target --&gt;</span>
+<span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{x:Bind ViewModel.Name, Mode=TwoWay}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Bind to method --&gt;</span>
+<span class="tag">&lt;Button</span> <span class="attr">Click</span>=<span class="attr-value">"{x:Bind ViewModel.Save}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Bind with function --&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{x:Bind FormatDate(ViewModel.Date)}"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Code-Behind Property</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public sealed partial class</span> <span class="type">MainPage</span> : <span class="type">Page</span>
+{
+    <span class="comment">// x:Bind binds to code-behind properties</span>
+    <span class="keyword">public</span> <span class="type">MainViewModel</span> ViewModel { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="type">string</span> Title => <span class="string">"My App"</span>;
+    
+    <span class="keyword">public</span> <span class="method">MainPage</span>()
+    {
+        ViewModel = <span class="keyword">new</span> <span class="type">MainViewModel</span>();
+        <span class="keyword">this</span>.<span class="method">InitializeComponent</span>();
+    }
+    
+    <span class="comment">// Function for binding</span>
+    <span class="keyword">public</span> <span class="type">string</span> <span class="method">FormatDate</span>(<span class="type">DateTime</span> date)
+    {
+        <span class="keyword">return</span> date.<span class="method">ToString</span>(<span class="string">"MMM dd, yyyy"</span>);
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Layouts</h3>
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>StackPanel & Grid</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- StackPanel --&gt;</span>
+<span class="tag">&lt;StackPanel</span> <span class="attr">Spacing</span>=<span class="attr-value">"8"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"Name:"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;TextBox</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"Submit"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/StackPanel&gt;</span>
+
+<span class="comment">&lt;!-- Grid --&gt;</span>
+<span class="tag">&lt;Grid</span> <span class="attr">RowSpacing</span>=<span class="attr-value">"8"</span> <span class="attr">ColumnSpacing</span>=<span class="attr-value">"12"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="tag">&lt;RowDefinition</span> <span class="attr">Height</span>=<span class="attr-value">"Auto"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;RowDefinition</span> <span class="attr">Height</span>=<span class="attr-value">"*"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/Grid.RowDefinitions&gt;</span>
+    <span class="tag">&lt;Grid.ColumnDefinitions&gt;</span>
+        <span class="tag">&lt;ColumnDefinition</span> <span class="attr">Width</span>=<span class="attr-value">"200"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;ColumnDefinition</span> <span class="attr">Width</span>=<span class="attr-value">"*"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/Grid.ColumnDefinitions&gt;</span>
+    
+    <span class="tag">&lt;TextBlock</span> <span class="attr">Grid.Row</span>=<span class="attr-value">"0"</span> <span class="attr">Grid.Column</span>=<span class="attr-value">"0"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/Grid&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>NavigationView (App Shell)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;NavigationView</span> <span class="attr">x:Name</span>=<span class="attr-value">"NavView"</span>
+    <span class="attr">SelectionChanged</span>=<span class="attr-value">"NavView_SelectionChanged"</span><span class="tag">&gt;</span>
+    
+    <span class="tag">&lt;NavigationView.MenuItems&gt;</span>
+        <span class="tag">&lt;NavigationViewItem</span> <span class="attr">Content</span>=<span class="attr-value">"Home"</span> 
+            <span class="attr">Icon</span>=<span class="attr-value">"Home"</span> <span class="attr">Tag</span>=<span class="attr-value">"HomePage"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;NavigationViewItem</span> <span class="attr">Content</span>=<span class="attr-value">"Settings"</span> 
+            <span class="attr">Icon</span>=<span class="attr-value">"Setting"</span> <span class="attr">Tag</span>=<span class="attr-value">"SettingsPage"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/NavigationView.MenuItems&gt;</span>
+    
+    <span class="comment">&lt;!-- Content area --&gt;</span>
+    <span class="tag">&lt;Frame</span> <span class="attr">x:Name</span>=<span class="attr-value">"ContentFrame"</span><span class="tag">/&gt;</span>
+    
+<span class="tag">&lt;/NavigationView&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: WinUI Controls -->
+            <section id="winui-controls">
+                <h2><span class="section-number winui">05</span>WinUI 3 Controls</h2>
+
+                <h3>Common Controls</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Control</th><th>Purpose</th><th>Key Properties</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>Button</code></td><td>Clickable button</td><td><code>Content</code>, <code>Click</code>, <code>Command</code></td></tr>
+                            <tr><td><code>TextBox</code></td><td>Text input</td><td><code>Text</code>, <code>PlaceholderText</code>, <code>Header</code></td></tr>
+                            <tr><td><code>TextBlock</code></td><td>Display text</td><td><code>Text</code>, <code>TextWrapping</code></td></tr>
+                            <tr><td><code>CheckBox</code></td><td>Boolean toggle</td><td><code>IsChecked</code>, <code>Content</code></td></tr>
+                            <tr><td><code>RadioButton</code></td><td>Single selection</td><td><code>IsChecked</code>, <code>GroupName</code></td></tr>
+                            <tr><td><code>ComboBox</code></td><td>Dropdown</td><td><code>ItemsSource</code>, <code>SelectedItem</code></td></tr>
+                            <tr><td><code>ListView</code></td><td>Scrollable list</td><td><code>ItemsSource</code>, <code>ItemTemplate</code></td></tr>
+                            <tr><td><code>ProgressRing</code></td><td>Loading indicator</td><td><code>IsActive</code></td></tr>
+                            <tr><td><code>InfoBar</code></td><td>Notifications</td><td><code>Message</code>, <code>Severity</code>, <code>IsOpen</code></td></tr>
+                            <tr><td><code>ContentDialog</code></td><td>Modal dialogs</td><td><code>Title</code>, <code>Content</code>, <code>PrimaryButtonText</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Input Controls</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- TextBox with header --&gt;</span>
+<span class="tag">&lt;TextBox</span> <span class="attr">Header</span>=<span class="attr-value">"Username"</span>
+         <span class="attr">PlaceholderText</span>=<span class="attr-value">"Enter username..."</span>
+         <span class="attr">Text</span>=<span class="attr-value">"{x:Bind ViewModel.Username, Mode=TwoWay}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- PasswordBox --&gt;</span>
+<span class="tag">&lt;PasswordBox</span> <span class="attr">Header</span>=<span class="attr-value">"Password"</span>
+             <span class="attr">PlaceholderText</span>=<span class="attr-value">"Enter password..."</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- NumberBox --&gt;</span>
+<span class="tag">&lt;NumberBox</span> <span class="attr">Header</span>=<span class="attr-value">"Quantity"</span>
+           <span class="attr">Value</span>=<span class="attr-value">"{x:Bind ViewModel.Quantity, Mode=TwoWay}"</span>
+           <span class="attr">Minimum</span>=<span class="attr-value">"0"</span>
+           <span class="attr">SpinButtonPlacementMode</span>=<span class="attr-value">"Inline"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- DatePicker --&gt;</span>
+<span class="tag">&lt;CalendarDatePicker</span> <span class="attr">Header</span>=<span class="attr-value">"Date"</span>
+                    <span class="attr">Date</span>=<span class="attr-value">"{x:Bind ViewModel.SelectedDate, Mode=TwoWay}"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Selection Controls</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- ToggleSwitch --&gt;</span>
+<span class="tag">&lt;ToggleSwitch</span> <span class="attr">Header</span>=<span class="attr-value">"Dark Mode"</span>
+              <span class="attr">IsOn</span>=<span class="attr-value">"{x:Bind ViewModel.IsDarkMode, Mode=TwoWay}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- ComboBox --&gt;</span>
+<span class="tag">&lt;ComboBox</span> <span class="attr">Header</span>=<span class="attr-value">"Select Country"</span>
+          <span class="attr">ItemsSource</span>=<span class="attr-value">"{x:Bind ViewModel.Countries}"</span>
+          <span class="attr">SelectedItem</span>=<span class="attr-value">"{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"</span>
+          <span class="attr">DisplayMemberPath</span>=<span class="attr-value">"Name"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- RadioButtons group --&gt;</span>
+<span class="tag">&lt;RadioButtons</span> <span class="attr">Header</span>=<span class="attr-value">"Size"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;RadioButton</span> <span class="attr">Content</span>=<span class="attr-value">"Small"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;RadioButton</span> <span class="attr">Content</span>=<span class="attr-value">"Medium"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;RadioButton</span> <span class="attr">Content</span>=<span class="attr-value">"Large"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/RadioButtons&gt;</span></code></pre>
+                    </div>
+                </div>
+
+                <h3>InfoBar & ContentDialog</h3>
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>InfoBar (Notifications)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;InfoBar</span> <span class="attr">Title</span>=<span class="attr-value">"Success"</span>
+         <span class="attr">Message</span>=<span class="attr-value">"Your changes have been saved."</span>
+         <span class="attr">Severity</span>=<span class="attr-value">"Success"</span>
+         <span class="attr">IsOpen</span>=<span class="attr-value">"{x:Bind ViewModel.ShowSuccess, Mode=TwoWay}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Severity: Informational, Success, Warning, Error --&gt;</span>
+<span class="tag">&lt;InfoBar</span> <span class="attr">Title</span>=<span class="attr-value">"Error"</span>
+         <span class="attr">Message</span>=<span class="attr-value">"Something went wrong."</span>
+         <span class="attr">Severity</span>=<span class="attr-value">"Error"</span>
+         <span class="attr">IsOpen</span>=<span class="attr-value">"True"</span>
+         <span class="attr">IsClosable</span>=<span class="attr-value">"True"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>ContentDialog (Modal)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">private async void</span> <span class="method">ShowConfirmDialog</span>()
+{
+    <span class="keyword">var</span> dialog = <span class="keyword">new</span> <span class="type">ContentDialog</span>
+    {
+        Title = <span class="string">"Confirm Delete"</span>,
+        Content = <span class="string">"Are you sure you want to delete this item?"</span>,
+        PrimaryButtonText = <span class="string">"Delete"</span>,
+        CloseButtonText = <span class="string">"Cancel"</span>,
+        XamlRoot = <span class="keyword">this</span>.XamlRoot
+    };
+    
+    <span class="keyword">var</span> result = <span class="keyword">await</span> dialog.<span class="method">ShowAsync</span>();
+    
+    <span class="keyword">if</span> (result == <span class="type">ContentDialogResult</span>.Primary)
+    {
+        <span class="comment">// User clicked Delete</span>
+        ViewModel.<span class="method">DeleteItem</span>();
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: WinUI Navigation -->
+            <section id="winui-navigation">
+                <h2><span class="section-number winui">06</span>WinUI 3 Navigation</h2>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>MainWindow with NavigationView</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Window</span> <span class="attr">x:Class</span>=<span class="attr-value">"MyApp.MainWindow"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;NavigationView</span> <span class="attr">x:Name</span>=<span class="attr-value">"NavView"</span>
+                    <span class="attr">IsBackButtonVisible</span>=<span class="attr-value">"Auto"</span>
+                    <span class="attr">SelectionChanged</span>=<span class="attr-value">"NavView_SelectionChanged"</span>
+                    <span class="attr">BackRequested</span>=<span class="attr-value">"NavView_BackRequested"</span><span class="tag">&gt;</span>
+        
+        <span class="tag">&lt;NavigationView.MenuItems&gt;</span>
+            <span class="tag">&lt;NavigationViewItem</span> <span class="attr">Content</span>=<span class="attr-value">"Home"</span> <span class="attr">Tag</span>=<span class="attr-value">"HomePage"</span><span class="tag">&gt;</span>
+                <span class="tag">&lt;NavigationViewItem.Icon&gt;</span>
+                    <span class="tag">&lt;FontIcon</span> <span class="attr">Glyph</span>=<span class="attr-value">"&#xE80F;"</span><span class="tag">/&gt;</span>
+                <span class="tag">&lt;/NavigationViewItem.Icon&gt;</span>
+            <span class="tag">&lt;/NavigationViewItem&gt;</span>
+            <span class="tag">&lt;NavigationViewItem</span> <span class="attr">Content</span>=<span class="attr-value">"Users"</span> <span class="attr">Tag</span>=<span class="attr-value">"UsersPage"</span>
+                <span class="attr">Icon</span>=<span class="attr-value">"People"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/NavigationView.MenuItems&gt;</span>
+        
+        <span class="tag">&lt;NavigationView.FooterMenuItems&gt;</span>
+            <span class="tag">&lt;NavigationViewItem</span> <span class="attr">Content</span>=<span class="attr-value">"Settings"</span> <span class="attr">Tag</span>=<span class="attr-value">"SettingsPage"</span>
+                <span class="attr">Icon</span>=<span class="attr-value">"Setting"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/NavigationView.FooterMenuItems&gt;</span>
+        
+        <span class="tag">&lt;Frame</span> <span class="attr">x:Name</span>=<span class="attr-value">"ContentFrame"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/NavigationView&gt;</span>
+<span class="tag">&lt;/Window&gt;</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Navigation Code-Behind</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public sealed partial class</span> <span class="type">MainWindow</span> : <span class="type">Window</span>
+{
+    <span class="keyword">private readonly</span> Dictionary&lt;<span class="type">string</span>, <span class="type">Type</span>&gt; _pages = <span class="keyword">new</span>()
+    {
+        { <span class="string">"HomePage"</span>, <span class="keyword">typeof</span>(<span class="type">HomePage</span>) },
+        { <span class="string">"UsersPage"</span>, <span class="keyword">typeof</span>(<span class="type">UsersPage</span>) },
+        { <span class="string">"SettingsPage"</span>, <span class="keyword">typeof</span>(<span class="type">SettingsPage</span>) }
+    };
+    
+    <span class="keyword">public</span> <span class="method">MainWindow</span>()
+    {
+        <span class="keyword">this</span>.<span class="method">InitializeComponent</span>();
+        ContentFrame.<span class="method">Navigate</span>(<span class="keyword">typeof</span>(<span class="type">HomePage</span>));
+    }
+    
+    <span class="keyword">private void</span> <span class="method">NavView_SelectionChanged</span>(
+        <span class="type">NavigationView</span> sender, <span class="type">NavigationViewSelectionChangedEventArgs</span> args)
+    {
+        <span class="keyword">if</span> (args.SelectedItemContainer <span class="keyword">is</span> <span class="type">NavigationViewItem</span> item)
+        {
+            <span class="keyword">var</span> tag = item.Tag.<span class="method">ToString</span>();
+            <span class="keyword">if</span> (_pages.<span class="method">TryGetValue</span>(tag!, <span class="keyword">out var</span> pageType))
+            {
+                ContentFrame.<span class="method">Navigate</span>(pageType);
+            }
+        }
+    }
+    
+    <span class="keyword">private void</span> <span class="method">NavView_BackRequested</span>(
+        <span class="type">NavigationView</span> sender, <span class="type">NavigationViewBackRequestedEventArgs</span> args)
+    {
+        <span class="keyword">if</span> (ContentFrame.<span class="method">CanGoBack</span>)
+            ContentFrame.<span class="method">GoBack</span>();
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: WinUI MVVM -->
+            <section id="winui-mvvm">
+                <h2><span class="section-number winui">07</span>WinUI 3 MVVM Pattern</h2>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Use CommunityToolkit.Mvvm</div>
+                    <p>Install <code>CommunityToolkit.Mvvm</code> NuGet package for source-generated MVVM with minimal boilerplate.</p>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>ViewModel with Toolkit</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> CommunityToolkit.Mvvm.ComponentModel;
+<span class="keyword">using</span> CommunityToolkit.Mvvm.Input;
+
+<span class="keyword">public partial class</span> <span class="type">MainViewModel</span> : <span class="type">ObservableObject</span>
+{
+    <span class="comment">// Auto-generates property with change notification</span>
+    [<span class="type">ObservableProperty</span>]
+    <span class="keyword">private</span> <span class="type">string</span> _name = <span class="string">""</span>;
+    
+    [<span class="type">ObservableProperty</span>]
+    <span class="keyword">private</span> <span class="type">bool</span> _isLoading;
+    
+    [<span class="type">ObservableProperty</span>]
+    <span class="keyword">private</span> <span class="type">ObservableCollection</span>&lt;<span class="type">User</span>&gt; _users = <span class="keyword">new</span>();
+    
+    <span class="comment">// Auto-generates ICommand</span>
+    [<span class="type">RelayCommand</span>]
+    <span class="keyword">private async</span> <span class="type">Task</span> <span class="method">LoadDataAsync</span>()
+    {
+        IsLoading = <span class="keyword">true</span>;
+        <span class="keyword">var</span> data = <span class="keyword">await</span> _userService.<span class="method">GetAllAsync</span>();
+        Users = <span class="keyword">new</span>(data);
+        IsLoading = <span class="keyword">false</span>;
+    }
+    
+    <span class="comment">// Command with CanExecute</span>
+    [<span class="type">RelayCommand</span>(CanExecute = <span class="keyword">nameof</span>(CanSave))]
+    <span class="keyword">private void</span> <span class="method">Save</span>() { }
+    
+    <span class="keyword">private bool</span> <span class="method">CanSave</span>() => !<span class="type">string</span>.<span class="method">IsNullOrEmpty</span>(Name);
+}</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>XAML Binding</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Page</span> <span class="attr">x:Class</span>=<span class="attr-value">"MyApp.Views.MainPage"</span><span class="tag">&gt;</span>
+    
+    <span class="tag">&lt;StackPanel</span> <span class="attr">Spacing</span>=<span class="attr-value">"12"</span> <span class="attr">Padding</span>=<span class="attr-value">"24"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;TextBox</span> <span class="attr">Header</span>=<span class="attr-value">"Name"</span>
+                 <span class="attr">Text</span>=<span class="attr-value">"{x:Bind ViewModel.Name, Mode=TwoWay}"</span><span class="tag">/&gt;</span>
+        
+        <span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"Save"</span>
+                <span class="attr">Command</span>=<span class="attr-value">"{x:Bind ViewModel.SaveCommand}"</span><span class="tag">/&gt;</span>
+        
+        <span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"Load Data"</span>
+                <span class="attr">Command</span>=<span class="attr-value">"{x:Bind ViewModel.LoadDataCommand}"</span><span class="tag">/&gt;</span>
+        
+        <span class="tag">&lt;ProgressRing</span> <span class="attr">IsActive</span>=<span class="attr-value">"{x:Bind ViewModel.IsLoading, Mode=OneWay}"</span><span class="tag">/&gt;</span>
+        
+        <span class="tag">&lt;ListView</span> <span class="attr">ItemsSource</span>=<span class="attr-value">"{x:Bind ViewModel.Users, Mode=OneWay}"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;ListView.ItemTemplate&gt;</span>
+                <span class="tag">&lt;DataTemplate</span> <span class="attr">x:DataType</span>=<span class="attr-value">"models:User"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{x:Bind Name}"</span><span class="tag">/&gt;</span>
+                <span class="tag">&lt;/DataTemplate&gt;</span>
+            <span class="tag">&lt;/ListView.ItemTemplate&gt;</span>
+        <span class="tag">&lt;/ListView&gt;</span>
+    <span class="tag">&lt;/StackPanel&gt;</span>
+<span class="tag">&lt;/Page&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: Blazor Setup -->
+            <section id="blazor-setup">
+                <h2><span class="section-number blazor">08</span>Blazor Project Setup</h2>
+
+                <h3>Blazor Hosting Models</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Model</th><th>Description</th><th>Best For</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Blazor Server</strong></td><td>Runs on server, UI updates via SignalR</td><td>Internal apps, real-time updates</td></tr>
+                            <tr><td><strong>Blazor WebAssembly</strong></td><td>Runs in browser (WASM)</td><td>Public sites, offline support</td></tr>
+                            <tr><td><strong>Blazor Hybrid</strong></td><td>Runs in native app (MAUI/WPF)</td><td>Desktop apps with web UI</td></tr>
+                            <tr><td><strong>Blazor Web App</strong></td><td>.NET 8 unified model (Server + WASM)</td><td>Flexible rendering per-component</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Create Blazor Projects</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment"># Blazor Web App (.NET 8 - recommended)</span>
+dotnet new blazor -n MyBlazorApp
+cd MyBlazorApp
+dotnet run
+
+<span class="comment"># Blazor WebAssembly (standalone)</span>
+dotnet new blazorwasm -n MyWasmApp
+
+<span class="comment"># Blazor Server</span>
+dotnet new blazorserver -n MyServerApp</code></pre>
+                    </div>
+                </div>
+
+                <h3>Blazor Web App Structure (.NET 8)</h3>
+                <div class="file-structure">
+<span class="folder">📁 MyBlazorApp/</span>
+├── <span class="file-config">📄 Program.cs</span>                 <span class="comment">// App startup, DI config</span>
+├── <span class="file-razor">📄 App.razor</span>                  <span class="comment">// Root component</span>
+├── <span class="file-razor">📄 Routes.razor</span>               <span class="comment">// Router configuration</span>
+├── <span class="folder">📁 Components/</span>
+│   ├── <span class="folder">📁 Layout/</span>
+│   │   ├── <span class="file-razor">📄 MainLayout.razor</span>   <span class="comment">// App shell layout</span>
+│   │   └── <span class="file-razor">📄 NavMenu.razor</span>      <span class="comment">// Navigation</span>
+│   └── <span class="folder">📁 Pages/</span>
+│       ├── <span class="file-razor">📄 Home.razor</span>         <span class="comment">// @page "/"</span>
+│       ├── <span class="file-razor">📄 Counter.razor</span>      <span class="comment">// @page "/counter"</span>
+│       └── <span class="file-razor">📄 Weather.razor</span>      <span class="comment">// @page "/weather"</span>
+├── <span class="folder">📁 Services/</span>
+└── <span class="folder">📁 wwwroot/</span>                   <span class="comment">// Static files (CSS, JS, images)</span>
+                </div>
+            </section>
+
+            <!-- Section 9: Blazor Components -->
+            <section id="blazor-components">
+                <h2><span class="section-number blazor">09</span>Blazor Components</h2>
+
+                <p>Blazor uses Razor syntax (.razor files) combining HTML with C# code.</p>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>Basic Component</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="directive">@page</span> <span class="string">"/counter"</span>
+
+<span class="tag">&lt;h1&gt;</span>Counter<span class="tag">&lt;/h1&gt;</span>
+
+<span class="tag">&lt;p&gt;</span>Current count: <span class="directive">@count</span><span class="tag">&lt;/p&gt;</span>
+
+<span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="attr-value">"btn btn-primary"</span> <span class="directive">@onclick</span>=<span class="attr-value">"IncrementCount"</span><span class="tag">&gt;</span>
+    Click me
+<span class="tag">&lt;/button&gt;</span>
+
+<span class="directive">@code</span> {
+    <span class="keyword">private</span> <span class="type">int</span> count = <span class="number">0</span>;
+    
+    <span class="keyword">private void</span> <span class="method">IncrementCount</span>()
+    {
+        count++;
+    }
+}</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>Component with Parameters</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- UserCard.razor --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="attr-value">"card"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h3&gt;</span><span class="directive">@User.Name</span><span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span><span class="directive">@User.Email</span><span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;button</span> <span class="directive">@onclick</span>=<span class="attr-value">"() => OnDelete.InvokeAsync(User)"</span><span class="tag">&gt;</span>
+        Delete
+    <span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="directive">@code</span> {
+    <span class="comment">// Required parameter</span>
+    [<span class="type">Parameter</span>]
+    <span class="keyword">public</span> <span class="type">User</span> User { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">default</span>!;
+    
+    <span class="comment">// Event callback (child → parent)</span>
+    [<span class="type">Parameter</span>]
+    <span class="keyword">public</span> <span class="type">EventCallback</span>&lt;<span class="type">User</span>&gt; OnDelete { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+<span class="comment">&lt;!-- Usage --&gt;</span>
+<span class="tag">&lt;UserCard</span> <span class="attr">User</span>=<span class="attr-value">"@user"</span> <span class="attr">OnDelete</span>=<span class="attr-value">"HandleDelete"</span> <span class="tag">/&gt;</span></code></pre>
+                    </div>
+                </div>
+
+                <h3>Razor Syntax</h3>
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>Razor Syntax Examples</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Variables --&gt;</span>
+<span class="tag">&lt;p&gt;</span>Hello, <span class="directive">@name</span>!<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p&gt;</span>Total: <span class="directive">@(price * quantity)</span><span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- Conditionals --&gt;</span>
+<span class="directive">@if</span> (isLoggedIn)
+{
+    <span class="tag">&lt;p&gt;</span>Welcome back!<span class="tag">&lt;/p&gt;</span>
+}
+<span class="directive">else</span>
+{
+    <span class="tag">&lt;p&gt;</span>Please log in.<span class="tag">&lt;/p&gt;</span>
+}
+
+<span class="comment">&lt;!-- Loops --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+    <span class="directive">@foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> items)
+    {
+        <span class="tag">&lt;li&gt;</span><span class="directive">@item.Name</span> - <span class="directive">@item.Price.ToString("C")</span><span class="tag">&lt;/li&gt;</span>
+    }
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="comment">&lt;!-- Switch --&gt;</span>
+<span class="directive">@switch</span> (status)
+{
+    <span class="keyword">case</span> <span class="string">"pending"</span>:
+        <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="attr-value">"badge bg-warning"</span><span class="tag">&gt;</span>Pending<span class="tag">&lt;/span&gt;</span>
+        <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="string">"approved"</span>:
+        <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="attr-value">"badge bg-success"</span><span class="tag">&gt;</span>Approved<span class="tag">&lt;/span&gt;</span>
+        <span class="keyword">break</span>;
+}
+
+<span class="comment">&lt;!-- Conditional attributes --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">disabled</span>=<span class="attr-value">"@isDisabled"</span><span class="tag">&gt;</span>Submit<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="attr-value">"@(isActive ? "active" : "")"</span><span class="tag">&gt;</span>...</div></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 10: Blazor Binding -->
+            <section id="blazor-binding">
+                <h2><span class="section-number blazor">10</span>Blazor Data Binding</h2>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>Two-Way Binding</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Basic binding --&gt;</span>
+<span class="tag">&lt;input</span> <span class="directive">@bind</span>=<span class="attr-value">"name"</span> <span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Bind with event (default: onchange) --&gt;</span>
+<span class="tag">&lt;input</span> <span class="directive">@bind</span>=<span class="attr-value">"searchText"</span> <span class="directive">@bind:event</span>=<span class="attr-value">"oninput"</span> <span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Bind with format --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="attr-value">"date"</span> <span class="directive">@bind</span>=<span class="attr-value">"birthDate"</span> 
+       <span class="directive">@bind:format</span>=<span class="attr-value">"yyyy-MM-dd"</span> <span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Checkbox --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="attr-value">"checkbox"</span> <span class="directive">@bind</span>=<span class="attr-value">"isChecked"</span> <span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Select --&gt;</span>
+<span class="tag">&lt;select</span> <span class="directive">@bind</span>=<span class="attr-value">"selectedCountry"</span><span class="tag">&gt;</span>
+    <span class="directive">@foreach</span> (<span class="keyword">var</span> c <span class="keyword">in</span> countries)
+    {
+        <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="attr-value">"@c.Code"</span><span class="tag">&gt;</span><span class="directive">@c.Name</span><span class="tag">&lt;/option&gt;</span>
+    }
+<span class="tag">&lt;/select&gt;</span>
+
+<span class="directive">@code</span> {
+    <span class="keyword">private</span> <span class="type">string</span> name = <span class="string">""</span>;
+    <span class="keyword">private</span> <span class="type">string</span> searchText = <span class="string">""</span>;
+    <span class="keyword">private</span> <span class="type">DateTime</span> birthDate = <span class="type">DateTime</span>.Today;
+    <span class="keyword">private</span> <span class="type">bool</span> isChecked = <span class="keyword">false</span>;
+    <span class="keyword">private</span> <span class="type">string</span> selectedCountry = <span class="string">"US"</span>;
+}</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>Event Handling</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Click events --&gt;</span>
+<span class="tag">&lt;button</span> <span class="directive">@onclick</span>=<span class="attr-value">"HandleClick"</span><span class="tag">&gt;</span>Click<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;button</span> <span class="directive">@onclick</span>=<span class="attr-value">"() => HandleDelete(item.Id)"</span><span class="tag">&gt;</span>Delete<span class="tag">&lt;/button&gt;</span>
+
+<span class="comment">&lt;!-- With event args --&gt;</span>
+<span class="tag">&lt;button</span> <span class="directive">@onclick</span>=<span class="attr-value">"HandleClickWithArgs"</span><span class="tag">&gt;</span>Click<span class="tag">&lt;/button&gt;</span>
+
+<span class="comment">&lt;!-- Keyboard events --&gt;</span>
+<span class="tag">&lt;input</span> <span class="directive">@onkeydown</span>=<span class="attr-value">"HandleKeyDown"</span> <span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Prevent default --&gt;</span>
+<span class="tag">&lt;form</span> <span class="directive">@onsubmit</span>=<span class="attr-value">"HandleSubmit"</span> <span class="directive">@onsubmit:preventDefault</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- Stop propagation --&gt;</span>
+<span class="tag">&lt;div</span> <span class="directive">@onclick</span>=<span class="attr-value">"ParentClick"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;button</span> <span class="directive">@onclick</span>=<span class="attr-value">"ChildClick"</span> <span class="directive">@onclick:stopPropagation</span><span class="tag">&gt;</span>
+        Child
+    <span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="directive">@code</span> {
+    <span class="keyword">private void</span> <span class="method">HandleClick</span>() { }
+    
+    <span class="keyword">private void</span> <span class="method">HandleClickWithArgs</span>(<span class="type">MouseEventArgs</span> e)
+    {
+        <span class="keyword">var</span> x = e.ClientX;
+    }
+    
+    <span class="keyword">private void</span> <span class="method">HandleKeyDown</span>(<span class="type">KeyboardEventArgs</span> e)
+    {
+        <span class="keyword">if</span> (e.Key == <span class="string">"Enter"</span>) { }
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 11: Blazor Forms -->
+            <section id="blazor-forms">
+                <h2><span class="section-number blazor">11</span>Blazor Forms & Validation</h2>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Model with Validation</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> System.ComponentModel.DataAnnotations;
+
+<span class="keyword">public class</span> <span class="type">UserModel</span>
+{
+    [<span class="type">Required</span>(ErrorMessage = <span class="string">"Name is required"</span>)]
+    [<span class="type">StringLength</span>(<span class="number">50</span>, MinimumLength = <span class="number">2</span>)]
+    <span class="keyword">public</span> <span class="type">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">""</span>;
+    
+    [<span class="type">Required</span>]
+    [<span class="type">EmailAddress</span>(ErrorMessage = <span class="string">"Invalid email"</span>)]
+    <span class="keyword">public</span> <span class="type">string</span> Email { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">""</span>;
+    
+    [<span class="type">Range</span>(<span class="number">18</span>, <span class="number">120</span>, ErrorMessage = <span class="string">"Age must be 18-120"</span>)]
+    <span class="keyword">public</span> <span class="type">int</span> Age { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    
+    [<span class="type">Required</span>]
+    [<span class="type">MinLength</span>(<span class="number">8</span>, ErrorMessage = <span class="string">"Password min 8 chars"</span>)]
+    <span class="keyword">public</span> <span class="type">string</span> Password { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">""</span>;
+}</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>EditForm Component</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;EditForm</span> <span class="attr">Model</span>=<span class="attr-value">"@user"</span> <span class="attr">OnValidSubmit</span>=<span class="attr-value">"HandleSubmit"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;DataAnnotationsValidator /&gt;</span>
+    <span class="tag">&lt;ValidationSummary /&gt;</span>
+    
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="attr-value">"mb-3"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;label&gt;</span>Name<span class="tag">&lt;/label&gt;</span>
+        <span class="tag">&lt;InputText</span> <span class="directive">@bind-Value</span>=<span class="attr-value">"user.Name"</span> 
+                   <span class="attr">class</span>=<span class="attr-value">"form-control"</span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;ValidationMessage</span> <span class="attr">For</span>=<span class="attr-value">"() => user.Name"</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="attr-value">"mb-3"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;label&gt;</span>Email<span class="tag">&lt;/label&gt;</span>
+        <span class="tag">&lt;InputText</span> <span class="directive">@bind-Value</span>=<span class="attr-value">"user.Email"</span> 
+                   <span class="attr">class</span>=<span class="attr-value">"form-control"</span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;ValidationMessage</span> <span class="attr">For</span>=<span class="attr-value">"() => user.Email"</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    
+    <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="attr-value">"submit"</span> <span class="attr">class</span>=<span class="attr-value">"btn btn-primary"</span><span class="tag">&gt;</span>Submit<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;/EditForm&gt;</span>
+
+<span class="directive">@code</span> {
+    <span class="keyword">private</span> <span class="type">UserModel</span> user = <span class="keyword">new</span>();
+    
+    <span class="keyword">private async</span> <span class="type">Task</span> <span class="method">HandleSubmit</span>()
+    {
+        <span class="comment">// Form is valid, submit</span>
+        <span class="keyword">await</span> userService.<span class="method">CreateAsync</span>(user);
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 12: Blazor Services -->
+            <section id="blazor-services">
+                <h2><span class="section-number blazor">12</span>Blazor Services & DI</h2>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Service Definition</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public interface</span> <span class="type">IUserService</span>
+{
+    <span class="type">Task</span>&lt;<span class="type">List</span>&lt;<span class="type">User</span>&gt;&gt; <span class="method">GetAllAsync</span>();
+    <span class="type">Task</span>&lt;<span class="type">User</span>?&gt; <span class="method">GetByIdAsync</span>(<span class="type">int</span> id);
+    <span class="type">Task</span> <span class="method">CreateAsync</span>(<span class="type">User</span> user);
+}
+
+<span class="keyword">public class</span> <span class="type">UserService</span> : <span class="type">IUserService</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">HttpClient</span> _http;
+    
+    <span class="keyword">public</span> <span class="method">UserService</span>(<span class="type">HttpClient</span> http)
+    {
+        _http = http;
+    }
+    
+    <span class="keyword">public async</span> <span class="type">Task</span>&lt;<span class="type">List</span>&lt;<span class="type">User</span>&gt;&gt; <span class="method">GetAllAsync</span>()
+    {
+        <span class="keyword">return await</span> _http
+            .<span class="method">GetFromJsonAsync</span>&lt;<span class="type">List</span>&lt;<span class="type">User</span>&gt;&gt;(<span class="string">"/api/users"</span>) 
+            ?? <span class="keyword">new</span>();
+    }
+}</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Program.cs Registration</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">var</span> builder = <span class="type">WebApplication</span>.<span class="method">CreateBuilder</span>(args);
+
+<span class="comment">// Add services to DI container</span>
+builder.Services.<span class="method">AddScoped</span>&lt;<span class="type">IUserService</span>, <span class="type">UserService</span>&gt;();
+builder.Services.<span class="method">AddHttpClient</span>&lt;<span class="type">IUserService</span>, <span class="type">UserService</span>&gt;(
+    client => client.BaseAddress = <span class="keyword">new</span> <span class="type">Uri</span>(<span class="string">"https://api.example.com"</span>)
+);
+
+<span class="comment">// Blazor components</span>
+builder.Services.<span class="method">AddRazorComponents</span>()
+    .<span class="method">AddInteractiveServerComponents</span>();
+
+<span class="keyword">var</span> app = builder.<span class="method">Build</span>();
+app.<span class="method">Run</span>();</code></pre>
+                    </div>
+                </div>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>Inject Service in Component</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="directive">@page</span> <span class="string">"/users"</span>
+<span class="directive">@inject</span> <span class="type">IUserService</span> UserService
+<span class="directive">@inject</span> <span class="type">NavigationManager</span> Navigation
+
+<span class="tag">&lt;h1&gt;</span>Users<span class="tag">&lt;/h1&gt;</span>
+
+<span class="directive">@if</span> (isLoading)
+{
+    <span class="tag">&lt;p&gt;</span>Loading...<span class="tag">&lt;/p&gt;</span>
+}
+<span class="directive">else</span>
+{
+    <span class="tag">&lt;ul&gt;</span>
+        <span class="directive">@foreach</span> (<span class="keyword">var</span> user <span class="keyword">in</span> users)
+        {
+            <span class="tag">&lt;li&gt;</span><span class="directive">@user.Name</span><span class="tag">&lt;/li&gt;</span>
+        }
+    <span class="tag">&lt;/ul&gt;</span>
+}
+
+<span class="directive">@code</span> {
+    <span class="keyword">private</span> <span class="type">List</span>&lt;<span class="type">User</span>&gt; users = <span class="keyword">new</span>();
+    <span class="keyword">private</span> <span class="type">bool</span> isLoading = <span class="keyword">true</span>;
+    
+    <span class="keyword">protected override async</span> <span class="type">Task</span> <span class="method">OnInitializedAsync</span>()
+    {
+        users = <span class="keyword">await</span> UserService.<span class="method">GetAllAsync</span>();
+        isLoading = <span class="keyword">false</span>;
+    }
+    
+    <span class="keyword">private void</span> <span class="method">NavigateToUser</span>(<span class="type">int</span> id)
+    {
+        Navigation.<span class="method">NavigateTo</span>(<span class="string">$"/users/{id}"</span>);
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 13: Blazor Hybrid -->
+            <section id="hybrid">
+                <h2><span class="section-number both">13</span>Blazor Hybrid</h2>
+
+                <p>Blazor Hybrid lets you run Blazor components in native desktop/mobile apps using .NET MAUI, WPF, or WinForms.</p>
+
+                <div class="info-box blazor">
+                    <div class="info-box-title">🔥 Best of Both Worlds</div>
+                    <p>Use Blazor components inside WPF/WinUI apps. Share UI code between web and desktop!</p>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>WPF MainWindow.xaml</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Window</span> <span class="attr">x:Class</span>=<span class="attr-value">"MyHybridApp.MainWindow"</span>
+        <span class="attr">xmlns:blazor</span>=<span class="attr-value">"clr-namespace:Microsoft.AspNetCore.Components.WebView.Wpf;assembly=Microsoft.AspNetCore.Components.WebView.Wpf"</span><span class="tag">&gt;</span>
+    
+    <span class="tag">&lt;Grid&gt;</span>
+        <span class="comment">&lt;!-- Blazor WebView hosts Blazor components --&gt;</span>
+        <span class="tag">&lt;blazor:BlazorWebView</span> <span class="attr">HostPage</span>=<span class="attr-value">"wwwroot/index.html"</span>
+                              <span class="attr">Services</span>=<span class="attr-value">"{DynamicResource services}"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;blazor:BlazorWebView.RootComponents&gt;</span>
+                <span class="tag">&lt;blazor:RootComponent</span> 
+                    <span class="attr">Selector</span>=<span class="attr-value">"#app"</span>
+                    <span class="attr">ComponentType</span>=<span class="attr-value">"{x:Type local:App}"</span> <span class="tag">/&gt;</span>
+            <span class="tag">&lt;/blazor:BlazorWebView.RootComponents&gt;</span>
+        <span class="tag">&lt;/blazor:BlazorWebView&gt;</span>
+    <span class="tag">&lt;/Grid&gt;</span>
+<span class="tag">&lt;/Window&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>MainWindow.xaml.cs</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public partial class</span> <span class="type">MainWindow</span> : <span class="type">Window</span>
+{
+    <span class="keyword">public</span> <span class="method">MainWindow</span>()
+    {
+        <span class="keyword">var</span> services = <span class="keyword">new</span> <span class="type">ServiceCollection</span>();
+        services.<span class="method">AddWpfBlazorWebView</span>();
+        
+        <span class="comment">// Register your services</span>
+        services.<span class="method">AddScoped</span>&lt;<span class="type">IUserService</span>, <span class="type">UserService</span>&gt;();
+        
+        Resources.<span class="method">Add</span>(<span class="string">"services"</span>, 
+            services.<span class="method">BuildServiceProvider</span>());
+        
+        <span class="method">InitializeComponent</span>();
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 14: Styling -->
+            <section id="styling">
+                <h2><span class="section-number both">14</span>Styling Comparison</h2>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>WinUI 3 Styles (XAML)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Page.Resources&gt;</span>
+    <span class="tag">&lt;Style</span> <span class="attr">x:Key</span>=<span class="attr-value">"PrimaryButton"</span> <span class="attr">TargetType</span>=<span class="attr-value">"Button"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Background"</span> <span class="attr">Value</span>=<span class="attr-value">"{ThemeResource AccentButtonBackground}"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Foreground"</span> <span class="attr">Value</span>=<span class="attr-value">"White"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Padding"</span> <span class="attr">Value</span>=<span class="attr-value">"24,12"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"CornerRadius"</span> <span class="attr">Value</span>=<span class="attr-value">"8"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/Style&gt;</span>
+<span class="tag">&lt;/Page.Resources&gt;</span>
+
+<span class="tag">&lt;Button</span> <span class="attr">Style</span>=<span class="attr-value">"{StaticResource PrimaryButton}"</span>
+        <span class="attr">Content</span>=<span class="attr-value">"Save"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Use built-in theme resources --&gt;</span>
+<span class="tag">&lt;Button</span> <span class="attr">Style</span>=<span class="attr-value">"{StaticResource AccentButtonStyle}"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot razor"></span>Blazor Styles (CSS)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Component.razor --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="attr-value">"btn-primary"</span><span class="tag">&gt;</span>Save<span class="tag">&lt;/button&gt;</span>
+
+<span class="comment">&lt;!-- Component.razor.css (scoped CSS) --&gt;</span>
+.btn-primary {
+    background: <span class="number">#0ea5e9</span>;
+    color: white;
+    padding: <span class="number">12px 24px</span>;
+    border-radius: <span class="number">8px</span>;
+    border: none;
+    cursor: pointer;
+    transition: background <span class="number">0.2s</span>;
+}
+
+.btn-primary:hover {
+    background: <span class="number">#0284c7</span>;
+}
+
+<span class="comment">&lt;!-- Or use Bootstrap/Tailwind --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="attr-value">"btn btn-primary"</span><span class="tag">&gt;</span>Save<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="attr-value">"bg-blue-500 text-white px-6 py-3 rounded-lg"</span><span class="tag">&gt;</span>Save<span class="tag">&lt;/button&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 15: Best Practices -->
+            <section id="best-practices">
+                <h2><span class="section-number both">15</span>Best Practices</h2>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card winui">
+                        <h4>🪟 WinUI 3 Best Practices</h4>
+                        <ul>
+                            <li>Use <code>x:Bind</code> over <code>{Binding}</code></li>
+                            <li>Use <code>CommunityToolkit.Mvvm</code></li>
+                            <li>Follow MVVM pattern strictly</li>
+                            <li>Use <code>ObservableCollection&lt;T&gt;</code></li>
+                            <li>Handle async properly with commands</li>
+                            <li>Use built-in theme resources</li>
+                            <li>Test ViewModels with unit tests</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card blazor">
+                        <h4>🔥 Blazor Best Practices</h4>
+                        <ul>
+                            <li>Keep components small and focused</li>
+                            <li>Use <code>[Parameter]</code> for component inputs</li>
+                            <li>Use <code>EventCallback</code> for parent communication</li>
+                            <li>Inject services via DI</li>
+                            <li>Use <code>StateHasChanged()</code> sparingly</li>
+                            <li>Use scoped CSS for component styles</li>
+                            <li>Handle errors with <code>ErrorBoundary</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Recommended NuGet Packages</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Package</th><th>For</th><th>Purpose</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>CommunityToolkit.Mvvm</code></td><td>WinUI</td><td>MVVM helpers</td></tr>
+                            <tr><td><code>CommunityToolkit.WinUI</code></td><td>WinUI</td><td>Extra controls & helpers</td></tr>
+                            <tr><td><code>Blazored.LocalStorage</code></td><td>Blazor</td><td>Browser local storage</td></tr>
+                            <tr><td><code>Blazored.Toast</code></td><td>Blazor</td><td>Toast notifications</td></tr>
+                            <tr><td><code>MudBlazor</code></td><td>Blazor</td><td>Material Design components</td></tr>
+                            <tr><td><code>Radzen.Blazor</code></td><td>Blazor</td><td>Rich component library</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 When to Choose What</div>
+                    <p>
+                        <strong>WinUI 3:</strong> Windows-only, performance-critical, full Windows integration<br>
+                        <strong>Blazor Server:</strong> Internal apps, real-time features, fast initial load<br>
+                        <strong>Blazor WebAssembly:</strong> Public web apps, offline support, CDN hosting<br>
+                        <strong>Blazor Hybrid:</strong> Desktop + web code sharing, native features with web UI
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 16: WinUI WebView2 Shell -->
+            <section id="winui-webview2">
+                <h2><span class="section-number both">16</span>WinUI WebView2 Shell</h2>
+
+                <p>When WinUI embeds a Blazor Web App, the WinUI app becomes a lightweight shell and the web app is the real UI. Keep the shell stable and let the web app update independently.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">WinUI WebView2 Host</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                    </div>
+                    <pre><code><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">partial</span> <span class="class-name">MainWindow</span> : <span class="class-name">Window</span>
+{
+    <span class="keyword">public</span> <span class="class-name">MainWindow</span>()
+    {
+        InitializeComponent();
+        WebView.NavigationCompleted += OnNavigationCompleted;
+        WebView.Source = <span class="keyword">new</span> Uri(<span class="string">"https://app.company.local"</span>);
+    }
+
+    <span class="keyword">private</span> <span class="keyword">void</span> <span class="method">OnNavigationCompleted</span>(<span class="keyword">object</span> sender, <span class="class-name">CoreWebView2NavigationCompletedEventArgs</span> e)
+    {
+        <span class="keyword">if</span> (!e.IsSuccess) { ShowOfflineFallback(); }
+    }
+}</code></pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang csharp">Message Bridge</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                    </div>
+                    <pre><code><span class="comment">// JS -> WinUI</span>
+window.chrome.webview.postMessage({ type: <span class="string">"openSettings"</span> });
+
+<span class="comment">// WinUI -> JS</span>
+WebView.CoreWebView2.WebMessageReceived += (_, args) =>
+{
+    <span class="keyword">var</span> message = args.WebMessageAsJson;
+    HandleMessage(message);
+};</code></pre>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ Offline & Error Handling</div>
+                    <ul>
+                        <li>Detect failed navigation and show a native fallback page.</li>
+                        <li>Whitelist allowed domains to avoid unexpected navigation.</li>
+                        <li>Decide how the shell behaves when the web app is down.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 17: Auth & Security -->
+            <section id="auth-security">
+                <h2><span class="section-number both">17</span>Auth & Security</h2>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card winui">
+                        <h4>🪟 WinUI Shell</h4>
+                        <ul>
+                            <li>Prefer OS-backed identity (SSO, brokered auth)</li>
+                            <li>Do not store long-lived tokens in the shell</li>
+                            <li>Keep the shell stateless where possible</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card blazor">
+                        <h4>🔥 Blazor Web App</h4>
+                        <ul>
+                            <li>Use server-side auth with secure cookies</li>
+                            <li>Protect all backend APIs (including Elsa)</li>
+                            <li>Log out and token refresh must be predictable</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Recommended Boundary</div>
+                    <p>The WinUI shell should never call Elsa APIs directly. The web app and its backend own workflow access and enforce permissions.</p>
+                </div>
+            </section>
+
+            <!-- Section 18: Deployment & Ops -->
+            <section id="deployment-ops">
+                <h2><span class="section-number both">18</span>Deployment & Ops</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Area</th><th>What to Plan</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>WinUI Packaging</td><td>MSIX vs unpackaged, update channel, signing</td></tr>
+                            <tr><td>Web App Hosting</td><td>IIS/Kestrel, reverse proxy, HTTPS</td></tr>
+                            <tr><td>Config</td><td>Env-specific URLs, feature flags, secrets</td></tr>
+                            <tr><td>Telemetry</td><td>Client errors, web app logs, correlation IDs</td></tr>
+                            <tr><td>Resilience</td><td>Retry policies, graceful downtime messaging</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Practical Release Flow</div>
+                    <p>Ship the WinUI shell rarely, update the web app frequently, and keep a status page or fallback view when the web app is unavailable.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Copy code functionality with animation
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = '✓';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋';
+                    btn.classList.remove('copied');
+                }, 1500);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animate-on-scroll class to elements
+            const animateElements = document.querySelectorAll('section, .code-block, .table-wrapper, .info-box, .comparison-card, .file-structure');
+            animateElements.forEach(el => {
+                el.classList.add('animate-on-scroll');
+            });
+
+            // Intersection Observer for scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Active navigation link on scroll
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const navObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.3,
+                rootMargin: '-100px 0px -66%'
+            });
+
+            sections.forEach(section => navObserver.observe(section));
+
+            // Smooth scroll for navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Ripple effect on code blocks
+            document.querySelectorAll('.code-block').forEach(block => {
+                block.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('copy-btn')) return;
+
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(14, 165, 233, 0.2);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s ease-out;
+                        pointer-events: none;
+                    `;
+
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+
+            // Add ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Parallax effect on header
+            const header = document.querySelector('.header');
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                if (scrolled < 400) {
+                    header.style.backgroundPositionY = scrolled * 0.5 + 'px';
+                }
+            });
+
+            // Comparison cards click animation
+            document.querySelectorAll('.comparison-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.animation = 'none';
+                    this.offsetHeight;
+                    this.style.animation = 'cardPop 0.3s ease';
+                });
+            });
+
+            // Add card pop animation
+            const cardStyle = document.createElement('style');
+            cardStyle.textContent = `
+                @keyframes cardPop {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.02) translateY(-10px); }
+                    100% { transform: scale(1); }
+                }
+            `;
+            document.head.appendChild(cardStyle);
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.activeElement.blur();
+                }
+            });
+        });
+
+        // ========== ELABORATE ANIMATIONS ==========
+
+        // Create particles
+        const colors = ['#0ea5e9', '#8b5cf6', '#10b981', '#f97316'];
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.cssText = `
+                left: ${Math.random() * 100}%;
+                width: ${Math.random() * 8 + 4}px; height: ${Math.random() * 8 + 4}px;
+                background: ${colors[Math.floor(Math.random() * colors.length)]};
+                animation-delay: ${Math.random() * 20}s;
+                animation-duration: ${Math.random() * 20 + 15}s;
+            `;
+            document.body.appendChild(particle);
+        }
+
+        // Create blobs
+        for (let i = 1; i <= 3; i++) {
+            const blob = document.createElement('div');
+            blob.className = `blob blob-${i}`;
+            document.body.appendChild(blob);
+        }
+
+        // Progress line
+        const progressLine = document.createElement('div');
+        progressLine.className = 'progress-line';
+        document.body.appendChild(progressLine);
+
+        window.addEventListener('scroll', () => {
+            const progress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            progressLine.style.width = progress + '%';
+        });
+
+        // Scroll indicator
+        const scrollInd = document.createElement('div');
+        scrollInd.className = 'scroll-indicator';
+        document.body.appendChild(scrollInd);
+        window.addEventListener('scroll', () => scrollInd.style.opacity = window.scrollY > 200 ? '0' : '0.7');
+
+        // Cursor trail
+        const trails = [];
+        for (let i = 0; i < 8; i++) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.opacity = (8 - i) / 8 * 0.5;
+            trail.style.transform = `scale(${(8 - i) / 8})`;
+            document.body.appendChild(trail);
+            trails.push(trail);
+        }
+
+        let mx = 0, my = 0;
+        let positions = Array(8).fill({ x: 0, y: 0 });
+        document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+        function animateTrail() {
+            positions.unshift({ x: mx, y: my });
+            positions.pop();
+            trails.forEach((t, i) => { t.style.left = positions[i].x - 10 + 'px'; t.style.top = positions[i].y - 10 + 'px'; });
+            requestAnimationFrame(animateTrail);
+        }
+        animateTrail();
+
+        // 3D tilt on cards
+        document.querySelectorAll('.code-block, .comparison-card').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const rotateX = (e.clientY - rect.top - rect.height / 2) / 15;
+                const rotateY = (rect.width / 2 - (e.clientX - rect.left)) / 15;
+                this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+            card.addEventListener('mouseleave', function() { this.style.transform = ''; });
+        });
+
+        // Add effects
+        document.querySelectorAll('.code-block').forEach(el => el.classList.add('shine', 'glow-border'));
+        document.querySelectorAll('.info-box').forEach(el => el.classList.add('lift-shadow'));
+
+        // Reveal animations
+        const revealObs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section:nth-child(odd)').forEach(el => { el.classList.add('reveal-left'); revealObs.observe(el); });
+        document.querySelectorAll('section:nth-child(even)').forEach(el => { el.classList.add('reveal-right'); revealObs.observe(el); });
+
+        // Text split for header
+        const h1 = document.querySelector('.header h1');
+        if (h1) {
+            const txt = h1.textContent;
+            h1.innerHTML = '';
+            h1.classList.add('text-reveal');
+            txt.split('').forEach((c, i) => {
+                const s = document.createElement('span');
+                s.textContent = c === ' ' ? '\u00A0' : c;
+                s.style.animationDelay = `${i * 0.04}s`;
+                h1.appendChild(s);
+            });
+        }
+
+        // Confetti on copy
+        function confetti(x, y) {
+            for (let i = 0; i < 25; i++) {
+                const c = document.createElement('div');
+                c.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:6px;height:6px;background:${colors[Math.floor(Math.random()*colors.length)]};pointer-events:none;z-index:10000;border-radius:${Math.random()>0.5?'50%':'0'}`;
+                document.body.appendChild(c);
+                const angle = Math.random() * Math.PI * 2, vel = Math.random() * 200 + 80;
+                let px = x, py = y, op = 1;
+                const vx = Math.cos(angle) * vel, vy = Math.sin(angle) * vel;
+                (function anim() {
+                    px += vx * 0.016; py += vy * 0.016 + 4; op -= 0.025;
+                    c.style.left = px + 'px'; c.style.top = py + 'px'; c.style.opacity = op;
+                    if (op > 0) requestAnimationFrame(anim); else c.remove();
+                })();
+            }
+        }
+
+        const origCopy = window.copyCode;
+        window.copyCode = function(btn) {
+            const r = btn.getBoundingClientRect();
+            confetti(r.left + r.width / 2, r.top);
+            origCopy(btn);
+        };
+
+        // Parallax blobs
+        document.addEventListener('mousemove', e => {
+            const mx = e.clientX / window.innerWidth - 0.5;
+            const my = e.clientY / window.innerHeight - 0.5;
+            document.querySelectorAll('.blob').forEach((b, i) => {
+                b.style.transform = `translate(${mx * (i + 1) * 15}px, ${my * (i + 1) * 15}px)`;
+            });
+        });
+    </script>
+</body>
+</html>

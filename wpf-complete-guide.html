@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WPF Complete Guide | From PyQt to Windows Presentation Foundation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #0f1420;
+            --bg-tertiary: #141a28;
+            --bg-card: #171e2e;
+            --bg-code: #0d1117;
+            --text-primary: #e6edf5;
+            --text-secondary: #8b99ad;
+            --text-muted: #5a6a7e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --border-color: #1e293b;
+            --border-hover: #334155;
+            --xaml-tag: #569cd6;
+            --xaml-attr: #9cdcfe;
+            --xaml-string: #ce9178;
+            --csharp-keyword: #569cd6;
+            --csharp-type: #4ec9b0;
+            --csharp-string: #ce9178;
+            --csharp-number: #b5cea8;
+            --csharp-comment: #6a9955;
+            --csharp-method: #dcdcaa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
+        .header {
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header .subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+
+        .badge-row { display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 100px; font-size: 0.875rem; color: var(--text-secondary); }
+        .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .badge-dot.blue { background: var(--accent-blue); }
+        .badge-dot.purple { background: var(--accent-purple); }
+        .badge-dot.cyan { background: var(--accent-cyan); }
+        .badge-dot.green { background: var(--accent-green); }
+
+        .container { display: flex; max-width: 1600px; margin: 0 auto; }
+
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .nav-section { padding: 0 1rem; margin-bottom: 1.5rem; }
+        .nav-section-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 0 0.75rem; margin-bottom: 0.5rem; }
+        .nav-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; color: var(--text-secondary); text-decoration: none; border-radius: 6px; font-size: 0.85rem; transition: all 0.2s; }
+        .nav-link:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); min-width: 20px; }
+        .home-link { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(59, 130, 246, 0.3); margin-bottom: 0.5rem; }
+        .home-link:hover { background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)); border-color: var(--accent-blue); }
+        .home-btn { position: fixed; top: 20px; left: 20px; z-index: 1000; padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease; display: none; }
+        .home-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--accent-blue); }
+        @media (max-width: 900px) { .home-btn { display: block; } }
+
+        .main-content { flex: 1; padding: 2.5rem; max-width: calc(100% - 260px); }
+
+        section { margin-bottom: 4rem; }
+        section h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; color: var(--text-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+        .section-number { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 10px; font-size: 1rem; font-weight: 700; color: white; }
+        section h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; color: var(--text-primary); margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        section h4 { font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin: 1.5rem 0 0.75rem; }
+        section p { color: var(--text-secondary); margin-bottom: 1rem; max-width: 800px; }
+
+        .code-comparison { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+        .code-comparison.single { grid-template-columns: 1fr; }
+
+        .code-block { background: var(--bg-code); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; }
+        .code-block.full-width { grid-column: 1 / -1; }
+        .code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 1rem; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .code-lang { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); }
+        .code-lang-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .code-lang-dot.xaml { background: var(--accent-blue); }
+        .code-lang-dot.csharp { background: var(--accent-purple); }
+        .code-lang-dot.python { background: var(--accent-green); }
+
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.25rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
+
+        .code-block pre { padding: 1rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.6; }
+
+        .keyword { color: var(--csharp-keyword); }
+        .type { color: var(--csharp-type); }
+        .string { color: var(--csharp-string); }
+        .number { color: var(--csharp-number); }
+        .comment { color: var(--csharp-comment); font-style: italic; }
+        .method { color: var(--csharp-method); }
+        .tag { color: var(--xaml-tag); }
+        .attr { color: var(--xaml-attr); }
+        .attr-value { color: var(--xaml-string); }
+
+        .info-box { padding: 1rem; border-radius: 10px; margin: 1.5rem 0; border: 1px solid; }
+        .info-box.tip { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+        .info-box.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+        .info-box.note { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+        .info-box-title { font-weight: 600; margin-bottom: 0.5rem; }
+        .info-box.tip .info-box-title { color: var(--accent-green); }
+        .info-box.warning .info-box-title { color: var(--accent-orange); }
+        .info-box.note .info-box-title { color: var(--accent-blue); }
+        .info-box p { margin: 0; color: var(--text-secondary); }
+
+        .table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 10px; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { color: var(--text-secondary); }
+        tr:last-child td { border-bottom: none; }
+        td code { background: var(--bg-tertiary); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent-cyan); }
+
+        .file-structure { background: var(--bg-code); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.8; }
+        .file-structure .folder { color: var(--accent-blue); }
+        .file-structure .file-xaml { color: var(--accent-cyan); }
+        .file-structure .file-cs { color: var(--accent-purple); }
+        .file-structure .file-config { color: var(--accent-orange); }
+
+        @media (max-width: 1200px) { .code-comparison { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .sidebar { display: none; } .main-content { max-width: 100%; padding: 1.5rem; } }
+
+        /* ========== ANIMATIONS ========== */
+
+        /* Scroll animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Page load animation */
+        body {
+            animation: pageLoad 0.5s ease-out;
+        }
+
+        @keyframes pageLoad {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Header animations */
+        .header h1 {
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .header .subtitle {
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .badge-row {
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Badge animations */
+        .badge {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .badge-dot {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.8; }
+        }
+
+        /* Sidebar navigation animations */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-link:hover {
+            padding-left: 1rem;
+        }
+
+        .nav-number {
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .nav-link:hover .nav-number {
+            color: var(--accent-blue);
+            transform: scale(1.1);
+        }
+
+        /* Section number animation */
+        .section-number {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        section:hover .section-number {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Code block animations */
+        .code-block {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .code-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Code language dot pulse */
+        .code-lang-dot {
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.8; }
+        }
+
+        /* Copy button animations */
+        .copy-btn {
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.1);
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+            animation: copySuccess 0.3s ease;
+        }
+
+        @keyframes copySuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Table animations */
+        .table-wrapper {
+            transition: box-shadow 0.3s ease;
+        }
+
+        .table-wrapper:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        tbody tr {
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        tbody tr:hover {
+            transform: scale(1.01);
+        }
+
+        td code {
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        tr:hover td code {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        /* Info box animations */
+        .info-box {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info-box:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* File structure animation */
+        .file-structure {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .file-structure:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Section h3 underline animation */
+        section h3 {
+            position: relative;
+        }
+
+        section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transition: width 0.5s ease;
+        }
+
+        section:hover h3::after {
+            width: 50%;
+        }
+
+        /* Code comparison staggered animation */
+        .code-comparison .code-block {
+            opacity: 0;
+            animation: codeBlockSlideIn 0.5s ease-out forwards;
+        }
+
+        .code-comparison .code-block:nth-child(1) { animation-delay: 0.1s; }
+        .code-comparison .code-block:nth-child(2) { animation-delay: 0.2s; }
+
+        @keyframes codeBlockSlideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Scrollbar hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Focus styles */
+        .nav-link:focus,
+        .copy-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        }
+
+        /* ========== ELABORATE ANIMATIONS ========== */
+
+        /* Animated gradient background */
+        .header { position: relative; overflow: hidden; }
+        .header::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed; pointer-events: none; border-radius: 50%;
+            animation: float 20s infinite ease-in-out; z-index: 0; opacity: 0.3;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; } 90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Morphing blobs */
+        .blob {
+            position: fixed; width: 400px; height: 400px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 50%; filter: blur(80px);
+            animation: blobMorph 20s ease-in-out infinite;
+            z-index: -1; pointer-events: none;
+        }
+
+        .blob-1 { top: -150px; left: -150px; animation-delay: 0s; }
+        .blob-2 { top: 50%; right: -150px; animation-delay: -5s; }
+        .blob-3 { bottom: -150px; left: 30%; animation-delay: -10s; }
+
+        @keyframes blobMorph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: rotate(0deg) scale(1); }
+            50% { border-radius: 50% 60% 30% 60% / 30% 70% 70% 50%; transform: rotate(180deg) scale(1.1); }
+        }
+
+        /* Glow border */
+        .glow-border { position: relative; }
+        .glow-border::after {
+            content: ''; position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple), var(--accent-blue));
+            background-size: 400% 400%; border-radius: inherit; z-index: -1;
+            animation: glowPulse 3s ease-in-out infinite;
+            filter: blur(10px); opacity: 0; transition: opacity 0.3s ease;
+        }
+        .glow-border:hover::after { opacity: 0.7; }
+
+        @keyframes glowPulse { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+        /* Shine effect */
+        .shine { position: relative; overflow: hidden; }
+        .shine::before {
+            content: ''; position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: skewX(-25deg); transition: left 0.6s;
+        }
+        .shine:hover::before { left: 150%; }
+
+        /* Reveal animations */
+        .reveal-left { opacity: 0; transform: translateX(-60px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal-left.revealed { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(60px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal-right.revealed { opacity: 1; transform: translateX(0); }
+
+        /* Cursor trail */
+        .cursor-trail {
+            position: fixed; width: 20px; height: 20px; border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3); pointer-events: none;
+            z-index: 9999; mix-blend-mode: screen;
+        }
+
+        /* Progress line */
+        .progress-line {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            z-index: 9999; transition: width 0.2s ease;
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%); width: 30px; height: 50px;
+            border: 2px solid var(--accent-blue); border-radius: 25px;
+            opacity: 0.7; transition: opacity 0.3s;
+        }
+        .scroll-indicator::before {
+            content: ''; position: absolute;
+            top: 8px; left: 50%; transform: translateX(-50%);
+            width: 6px; height: 6px; background: var(--accent-blue);
+            border-radius: 50%; animation: scrollBounce 2s infinite;
+        }
+
+        @keyframes scrollBounce { 0%, 100% { top: 8px; opacity: 1; } 50% { top: 25px; opacity: 0.3; } }
+
+        /* Text reveal */
+        .text-reveal span { opacity: 0; display: inline-block; animation: letterReveal 0.5s forwards; }
+        @keyframes letterReveal { to { opacity: 1; } }
+
+        /* Lift shadow */
+        .lift-shadow { transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .lift-shadow:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 20px 40px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Elastic */
+        .elastic:hover { animation: elastic 0.5s ease; }
+        @keyframes elastic {
+            0% { transform: scale(1); } 30% { transform: scale(1.15); }
+            50% { transform: scale(0.95); } 70% { transform: scale(1.05); } 100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📐 WPF Complete Guide</h1>
+        <p class="subtitle">Master Windows Presentation Foundation — From PyQt developer to WPF expert with practical examples and MVVM patterns</p>
+        <div class="badge-row">
+            <span class="badge"><span class="badge-dot blue"></span>XAML</span>
+            <span class="badge"><span class="badge-dot purple"></span>C#</span>
+            <span class="badge"><span class="badge-dot cyan"></span>MVVM</span>
+            <span class="badge"><span class="badge-dot green"></span>Data Binding</span>
+        </div>
+    </header>
+
+    <a href="index.html" class="home-btn">← Back to Hub</a>
+
+    <div class="container">
+        <nav class="sidebar">
+            <div class="nav-section">
+                <a href="index.html" class="nav-link home-link"><span class="nav-number">🏠</span>Training Hub</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Getting Started</div>
+                <a href="#introduction" class="nav-link"><span class="nav-number">01</span>Introduction</a>
+                <a href="#project-structure" class="nav-link"><span class="nav-number">02</span>Project Structure</a>
+                <a href="#xaml-basics" class="nav-link"><span class="nav-number">03</span>XAML Basics</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Core Concepts</div>
+                <a href="#layouts" class="nav-link"><span class="nav-number">04</span>Layouts</a>
+                <a href="#controls" class="nav-link"><span class="nav-number">05</span>Controls</a>
+                <a href="#data-binding" class="nav-link"><span class="nav-number">06</span>Data Binding</a>
+                <a href="#resources" class="nav-link"><span class="nav-number">07</span>Resources & Styles</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Architecture</div>
+                <a href="#mvvm" class="nav-link"><span class="nav-number">08</span>MVVM Pattern</a>
+                <a href="#commands" class="nav-link"><span class="nav-number">09</span>Commands</a>
+                <a href="#converters" class="nav-link"><span class="nav-number">10</span>Converters</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Advanced</div>
+                <a href="#templates" class="nav-link"><span class="nav-number">11</span>Templates</a>
+                <a href="#validation" class="nav-link"><span class="nav-number">12</span>Validation</a>
+                <a href="#async" class="nav-link"><span class="nav-number">13</span>Async Operations</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Reference</div>
+                <a href="#pyqt-comparison" class="nav-link"><span class="nav-number">14</span>PyQt Comparison</a>
+                <a href="#best-practices" class="nav-link"><span class="nav-number">15</span>Best Practices</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Production</div>
+                <a href="#wpf-security" class="nav-link"><span class="nav-number">16</span>Security</a>
+                <a href="#wpf-ops" class="nav-link"><span class="nav-number">17</span>Ops & Diagnostics</a>
+                <a href="#wpf-deploy" class="nav-link"><span class="nav-number">18</span>Deployment</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Section 1: Introduction -->
+            <section id="introduction">
+                <h2><span class="section-number">01</span>Introduction to WPF</h2>
+                
+                <p>Windows Presentation Foundation (WPF) is Microsoft's UI framework for building Windows desktop applications with rich graphics, data binding, and XAML-based UI.</p>
+
+                <h3>WPF vs PyQt Quick Comparison</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Concept</th><th>PyQt</th><th>WPF</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>UI Definition</td><td>Python code or Qt Designer (.ui)</td><td>XAML (declarative XML)</td></tr>
+                            <tr><td>UI Elements</td><td>Widgets (QWidget, QPushButton)</td><td>Controls (Button, TextBox)</td></tr>
+                            <tr><td>Event Handling</td><td>Signals & Slots</td><td>Events & Commands (MVVM)</td></tr>
+                            <tr><td>Data Binding</td><td>Manual or Qt Model/View</td><td>Built-in powerful binding</td></tr>
+                            <tr><td>Styling</td><td>QSS (Qt Style Sheets)</td><td>Styles & Templates (XAML)</td></tr>
+                            <tr><td>Layout</td><td>QVBoxLayout, QGridLayout</td><td>StackPanel, Grid, DockPanel</td></tr>
+                            <tr><td>Architecture</td><td>MVC or custom</td><td>MVVM (recommended)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 2: Project Structure -->
+            <section id="project-structure">
+                <h2><span class="section-number">02</span>Project Structure</h2>
+
+                <h3>Creating a WPF Project</h3>
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Terminal</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment"># Create new WPF project</span>
+dotnet new wpf -n MyWpfApp
+cd MyWpfApp
+dotnet run
+
+<span class="comment"># Or in Visual Studio:</span>
+<span class="comment"># File → New → Project → WPF Application</span></code></pre>
+                    </div>
+                </div>
+
+                <h3>Typical Project Structure</h3>
+                <div class="file-structure">
+<span class="folder">📁 MyWpfApp/</span>
+├── <span class="file-config">📄 MyWpfApp.csproj</span>         <span class="comment">// Project file</span>
+├── <span class="file-xaml">📄 App.xaml</span>                 <span class="comment">// Application resources</span>
+├── <span class="file-cs">📄 App.xaml.cs</span>              <span class="comment">// Application code-behind</span>
+├── <span class="file-xaml">📄 MainWindow.xaml</span>          <span class="comment">// Main window UI</span>
+├── <span class="file-cs">📄 MainWindow.xaml.cs</span>       <span class="comment">// Main window code-behind</span>
+├── <span class="folder">📁 Views/</span>                    <span class="comment">// XAML views</span>
+├── <span class="folder">📁 ViewModels/</span>               <span class="comment">// ViewModels (MVVM)</span>
+├── <span class="folder">📁 Models/</span>                   <span class="comment">// Data models</span>
+├── <span class="folder">📁 Services/</span>                 <span class="comment">// Business logic</span>
+├── <span class="folder">📁 Commands/</span>                 <span class="comment">// ICommand implementations</span>
+├── <span class="folder">📁 Converters/</span>               <span class="comment">// Value converters</span>
+└── <span class="folder">📁 Resources/</span>                <span class="comment">// Styles, images</span>
+                </div>
+            </section>
+
+            <!-- Section 3: XAML Basics -->
+            <section id="xaml-basics">
+                <h2><span class="section-number">03</span>XAML Basics</h2>
+
+                <p>XAML (eXtensible Application Markup Language) defines UI declaratively. Each element maps to a .NET class.</p>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>XAML Syntax</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Element = Class instance --&gt;</span>
+<span class="tag">&lt;Button&gt;</span>Click Me<span class="tag">&lt;/Button&gt;</span>
+
+<span class="comment">&lt;!-- Attribute = Property --&gt;</span>
+<span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"Click Me"</span> 
+        <span class="attr">Width</span>=<span class="attr-value">"100"</span> 
+        <span class="attr">Height</span>=<span class="attr-value">"30"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Property Element Syntax --&gt;</span>
+<span class="tag">&lt;Button&gt;</span>
+    <span class="tag">&lt;Button.Content&gt;</span>
+        <span class="tag">&lt;StackPanel</span> <span class="attr">Orientation</span>=<span class="attr-value">"Horizontal"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;Image</span> <span class="attr">Source</span>=<span class="attr-value">"icon.png"</span> <span class="attr">Width</span>=<span class="attr-value">"16"</span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"Save"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/StackPanel&gt;</span>
+    <span class="tag">&lt;/Button.Content&gt;</span>
+<span class="tag">&lt;/Button&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Equivalent C#</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">// Simple button</span>
+<span class="keyword">var</span> button = <span class="keyword">new</span> <span class="type">Button</span> 
+{ 
+    Content = <span class="string">"Click Me"</span>,
+    Width = <span class="number">100</span>,
+    Height = <span class="number">30</span>
+};
+
+<span class="comment">// Button with complex content</span>
+<span class="keyword">var</span> panel = <span class="keyword">new</span> <span class="type">StackPanel</span> 
+{ 
+    Orientation = <span class="type">Orientation</span>.Horizontal 
+};
+panel.Children.<span class="method">Add</span>(<span class="keyword">new</span> <span class="type">Image</span> 
+{ 
+    Source = <span class="keyword">new</span> <span class="type">BitmapImage</span>(
+        <span class="keyword">new</span> <span class="type">Uri</span>(<span class="string">"icon.png"</span>)),
+    Width = <span class="number">16</span> 
+});
+panel.Children.<span class="method">Add</span>(<span class="keyword">new</span> <span class="type">TextBlock</span> 
+{ 
+    Text = <span class="string">"Save"</span> 
+});
+<span class="keyword">var</span> btn = <span class="keyword">new</span> <span class="type">Button</span> { Content = panel };</code></pre>
+                    </div>
+                </div>
+
+                <h3>Common Markup Extensions</h3>
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Markup Extensions</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Binding - data binding --&gt;</span>
+<span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding UserName}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- StaticResource - reference a resource --&gt;</span>
+<span class="tag">&lt;Button</span> <span class="attr">Style</span>=<span class="attr-value">"{StaticResource PrimaryButton}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- DynamicResource - runtime changeable --&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Foreground</span>=<span class="attr-value">"{DynamicResource TextColor}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- x:Type - reference a type --&gt;</span>
+<span class="tag">&lt;Style</span> <span class="attr">TargetType</span>=<span class="attr-value">"{x:Type Button}"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- x:Static - static member --&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{x:Static local:Constants.AppName}"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Layouts -->
+            <section id="layouts">
+                <h2><span class="section-number">04</span>Layouts</h2>
+
+                <h3>Layout Panels</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>WPF Panel</th><th>PyQt Equivalent</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>StackPanel</code></td><td><code>QVBoxLayout/QHBoxLayout</code></td><td>Stack items linearly</td></tr>
+                            <tr><td><code>Grid</code></td><td><code>QGridLayout</code></td><td>Rows/columns with sizing</td></tr>
+                            <tr><td><code>DockPanel</code></td><td><code>QMainWindow</code></td><td>Dock to edges</td></tr>
+                            <tr><td><code>WrapPanel</code></td><td>QFlowLayout (custom)</td><td>Wrap to next line</td></tr>
+                            <tr><td><code>Canvas</code></td><td><code>QGraphicsScene</code></td><td>Absolute positioning</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>StackPanel</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Vertical (default) --&gt;</span>
+<span class="tag">&lt;StackPanel</span> <span class="attr">Margin</span>=<span class="attr-value">"10"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"Username:"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;TextBox</span> <span class="attr">Margin</span>=<span class="attr-value">"0,5,0,10"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"Password:"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;PasswordBox</span> <span class="attr">Margin</span>=<span class="attr-value">"0,5,0,10"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"Login"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/StackPanel&gt;</span>
+
+<span class="comment">&lt;!-- Horizontal --&gt;</span>
+<span class="tag">&lt;StackPanel</span> <span class="attr">Orientation</span>=<span class="attr-value">"Horizontal"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"New"</span> <span class="attr">Margin</span>=<span class="attr-value">"5"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"Open"</span> <span class="attr">Margin</span>=<span class="attr-value">"5"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;Button</span> <span class="attr">Content</span>=<span class="attr-value">"Save"</span> <span class="attr">Margin</span>=<span class="attr-value">"5"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/StackPanel&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Grid</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Grid&gt;</span>
+    <span class="tag">&lt;Grid.RowDefinitions&gt;</span>
+        <span class="tag">&lt;RowDefinition</span> <span class="attr">Height</span>=<span class="attr-value">"Auto"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;RowDefinition</span> <span class="attr">Height</span>=<span class="attr-value">"*"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;RowDefinition</span> <span class="attr">Height</span>=<span class="attr-value">"50"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/Grid.RowDefinitions&gt;</span>
+    
+    <span class="tag">&lt;Grid.ColumnDefinitions&gt;</span>
+        <span class="tag">&lt;ColumnDefinition</span> <span class="attr">Width</span>=<span class="attr-value">"200"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;ColumnDefinition</span> <span class="attr">Width</span>=<span class="attr-value">"*"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/Grid.ColumnDefinitions&gt;</span>
+    
+    <span class="tag">&lt;TextBlock</span> <span class="attr">Grid.Row</span>=<span class="attr-value">"0"</span> <span class="attr">Grid.Column</span>=<span class="attr-value">"0"</span> 
+               <span class="attr">Text</span>=<span class="attr-value">"Name:"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;TextBox</span> <span class="attr">Grid.Row</span>=<span class="attr-value">"0"</span> <span class="attr">Grid.Column</span>=<span class="attr-value">"1"</span><span class="tag">/&gt;</span>
+    
+    <span class="comment">&lt;!-- Span columns --&gt;</span>
+    <span class="tag">&lt;Button</span> <span class="attr">Grid.Row</span>=<span class="attr-value">"2"</span> <span class="attr">Grid.ColumnSpan</span>=<span class="attr-value">"2"</span>
+            <span class="attr">Content</span>=<span class="attr-value">"Submit"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/Grid&gt;</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>DockPanel (App Shell)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;DockPanel</span> <span class="attr">LastChildFill</span>=<span class="attr-value">"True"</span><span class="tag">&gt;</span>
+    <span class="comment">&lt;!-- Menu at top --&gt;</span>
+    <span class="tag">&lt;Menu</span> <span class="attr">DockPanel.Dock</span>=<span class="attr-value">"Top"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;MenuItem</span> <span class="attr">Header</span>=<span class="attr-value">"File"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;MenuItem</span> <span class="attr">Header</span>=<span class="attr-value">"Edit"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/Menu&gt;</span>
+    
+    <span class="comment">&lt;!-- Status bar at bottom --&gt;</span>
+    <span class="tag">&lt;StatusBar</span> <span class="attr">DockPanel.Dock</span>=<span class="attr-value">"Bottom"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"Ready"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/StatusBar&gt;</span>
+    
+    <span class="comment">&lt;!-- Sidebar --&gt;</span>
+    <span class="tag">&lt;Border</span> <span class="attr">DockPanel.Dock</span>=<span class="attr-value">"Left"</span> <span class="attr">Width</span>=<span class="attr-value">"200"</span> <span class="attr">Background</span>=<span class="attr-value">"LightGray"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"Sidebar"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/Border&gt;</span>
+    
+    <span class="comment">&lt;!-- Main content (fills remaining) --&gt;</span>
+    <span class="tag">&lt;TextBox</span> <span class="attr">AcceptsReturn</span>=<span class="attr-value">"True"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/DockPanel&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Controls -->
+            <section id="controls">
+                <h2><span class="section-number">05</span>Controls</h2>
+
+                <h3>Common Controls Reference</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>WPF Control</th><th>PyQt Widget</th><th>Purpose</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>Button</code></td><td><code>QPushButton</code></td><td>Clickable button</td></tr>
+                            <tr><td><code>TextBox</code></td><td><code>QLineEdit</code></td><td>Single-line input</td></tr>
+                            <tr><td><code>TextBlock</code></td><td><code>QLabel</code></td><td>Display text</td></tr>
+                            <tr><td><code>CheckBox</code></td><td><code>QCheckBox</code></td><td>Boolean toggle</td></tr>
+                            <tr><td><code>RadioButton</code></td><td><code>QRadioButton</code></td><td>Single selection</td></tr>
+                            <tr><td><code>ComboBox</code></td><td><code>QComboBox</code></td><td>Dropdown</td></tr>
+                            <tr><td><code>ListBox</code></td><td><code>QListWidget</code></td><td>List of items</td></tr>
+                            <tr><td><code>DataGrid</code></td><td><code>QTableWidget</code></td><td>Tabular data</td></tr>
+                            <tr><td><code>Slider</code></td><td><code>QSlider</code></td><td>Value slider</td></tr>
+                            <tr><td><code>ProgressBar</code></td><td><code>QProgressBar</code></td><td>Progress</td></tr>
+                            <tr><td><code>TabControl</code></td><td><code>QTabWidget</code></td><td>Tabs</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Input Controls</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- TextBlock (display) --&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"Hello World"</span>
+           <span class="attr">FontSize</span>=<span class="attr-value">"16"</span>
+           <span class="attr">FontWeight</span>=<span class="attr-value">"Bold"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- TextBox (input) --&gt;</span>
+<span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding UserName}"</span>
+         <span class="attr">MaxLength</span>=<span class="attr-value">"50"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Multi-line --&gt;</span>
+<span class="tag">&lt;TextBox</span> <span class="attr">AcceptsReturn</span>=<span class="attr-value">"True"</span>
+         <span class="attr">TextWrapping</span>=<span class="attr-value">"Wrap"</span>
+         <span class="attr">Height</span>=<span class="attr-value">"100"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Password --&gt;</span>
+<span class="tag">&lt;PasswordBox</span> <span class="attr">PasswordChar</span>=<span class="attr-value">"●"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Selection Controls</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- CheckBox --&gt;</span>
+<span class="tag">&lt;CheckBox</span> <span class="attr">Content</span>=<span class="attr-value">"Remember me"</span>
+          <span class="attr">IsChecked</span>=<span class="attr-value">"{Binding RememberMe}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- RadioButtons --&gt;</span>
+<span class="tag">&lt;RadioButton</span> <span class="attr">Content</span>=<span class="attr-value">"Small"</span> <span class="attr">GroupName</span>=<span class="attr-value">"Size"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;RadioButton</span> <span class="attr">Content</span>=<span class="attr-value">"Medium"</span> <span class="attr">GroupName</span>=<span class="attr-value">"Size"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;RadioButton</span> <span class="attr">Content</span>=<span class="attr-value">"Large"</span> <span class="attr">GroupName</span>=<span class="attr-value">"Size"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- ComboBox --&gt;</span>
+<span class="tag">&lt;ComboBox</span> <span class="attr">ItemsSource</span>=<span class="attr-value">"{Binding Countries}"</span>
+          <span class="attr">SelectedItem</span>=<span class="attr-value">"{Binding SelectedCountry}"</span>
+          <span class="attr">DisplayMemberPath</span>=<span class="attr-value">"Name"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Data Binding -->
+            <section id="data-binding">
+                <h2><span class="section-number">06</span>Data Binding</h2>
+
+                <p>Data binding automatically synchronizes UI and data. This is WPF's killer feature!</p>
+
+                <div class="info-box note">
+                    <div class="info-box-title">📝 PyQt vs WPF</div>
+                    <p>In PyQt: <code>widget.setText(value)</code> manually. In WPF: bind once, changes propagate automatically!</p>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Binding Syntax</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Simple binding --&gt;</span>
+<span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding UserName}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Two-way (default for TextBox) --&gt;</span>
+<span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding UserName, Mode=TwoWay}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Update on every keystroke --&gt;</span>
+<span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding SearchText, 
+    UpdateSourceTrigger=PropertyChanged}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- String formatting --&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding Price, StringFormat=C2}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding Date, StringFormat=yyyy-MM-dd}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Fallback --&gt;</span>
+<span class="tag">&lt;TextBlock</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding Name, FallbackValue='Unknown'}"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>INotifyPropertyChanged</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public class</span> <span class="type">ViewModelBase</span> : <span class="type">INotifyPropertyChanged</span>
+{
+    <span class="keyword">public event</span> <span class="type">PropertyChangedEventHandler</span>? 
+        PropertyChanged;
+    
+    <span class="keyword">protected void</span> <span class="method">OnPropertyChanged</span>(
+        [<span class="type">CallerMemberName</span>] <span class="type">string</span>? name = <span class="keyword">null</span>)
+    {
+        PropertyChanged?.<span class="method">Invoke</span>(<span class="keyword">this</span>, 
+            <span class="keyword">new</span> <span class="type">PropertyChangedEventArgs</span>(name));
+    }
+    
+    <span class="keyword">protected bool</span> <span class="method">SetProperty</span>&lt;T&gt;(
+        <span class="keyword">ref</span> T field, T value,
+        [<span class="type">CallerMemberName</span>] <span class="type">string</span>? name = <span class="keyword">null</span>)
+    {
+        <span class="keyword">if</span> (Equals(field, value)) <span class="keyword">return false</span>;
+        field = value;
+        <span class="method">OnPropertyChanged</span>(name);
+        <span class="keyword">return true</span>;
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>ViewModel with Properties</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public class</span> <span class="type">MainViewModel</span> : <span class="type">ViewModelBase</span>
+{
+    <span class="keyword">private</span> <span class="type">string</span> _userName = <span class="string">""</span>;
+    <span class="keyword">public</span> <span class="type">string</span> UserName
+    {
+        <span class="keyword">get</span> => _userName;
+        <span class="keyword">set</span> => <span class="method">SetProperty</span>(<span class="keyword">ref</span> _userName, value);
+    }
+    
+    <span class="keyword">private</span> <span class="type">bool</span> _isLoading;
+    <span class="keyword">public</span> <span class="type">bool</span> IsLoading
+    {
+        <span class="keyword">get</span> => _isLoading;
+        <span class="keyword">set</span> => <span class="method">SetProperty</span>(<span class="keyword">ref</span> _isLoading, value);
+    }
+    
+    <span class="comment">// ObservableCollection auto-notifies on add/remove</span>
+    <span class="keyword">public</span> <span class="type">ObservableCollection</span>&lt;<span class="type">User</span>&gt; Users { <span class="keyword">get</span>; } = <span class="keyword">new</span>();
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Resources & Styles -->
+            <section id="resources">
+                <h2><span class="section-number">07</span>Resources & Styles</h2>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Resources</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Window.Resources&gt;</span>
+    <span class="comment">&lt;!-- Brushes --&gt;</span>
+    <span class="tag">&lt;SolidColorBrush</span> <span class="attr">x:Key</span>=<span class="attr-value">"PrimaryBrush"</span> 
+                     <span class="attr">Color</span>=<span class="attr-value">"#3b82f6"</span><span class="tag">/&gt;</span>
+    
+    <span class="comment">&lt;!-- Gradient --&gt;</span>
+    <span class="tag">&lt;LinearGradientBrush</span> <span class="attr">x:Key</span>=<span class="attr-value">"GradientBrush"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;GradientStop</span> <span class="attr">Color</span>=<span class="attr-value">"#3b82f6"</span> <span class="attr">Offset</span>=<span class="attr-value">"0"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;GradientStop</span> <span class="attr">Color</span>=<span class="attr-value">"#8b5cf6"</span> <span class="attr">Offset</span>=<span class="attr-value">"1"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/LinearGradientBrush&gt;</span>
+    
+    <span class="comment">&lt;!-- Values --&gt;</span>
+    <span class="tag">&lt;sys:Double</span> <span class="attr">x:Key</span>=<span class="attr-value">"Margin"</span><span class="tag">&gt;</span>10<span class="tag">&lt;/sys:Double&gt;</span>
+<span class="tag">&lt;/Window.Resources&gt;</span>
+
+<span class="comment">&lt;!-- Use resource --&gt;</span>
+<span class="tag">&lt;Button</span> <span class="attr">Background</span>=<span class="attr-value">"{StaticResource PrimaryBrush}"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Styles with Triggers</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Style</span> <span class="attr">x:Key</span>=<span class="attr-value">"PrimaryButton"</span> <span class="attr">TargetType</span>=<span class="attr-value">"Button"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Background"</span> <span class="attr">Value</span>=<span class="attr-value">"#3b82f6"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Foreground"</span> <span class="attr">Value</span>=<span class="attr-value">"White"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Padding"</span> <span class="attr">Value</span>=<span class="attr-value">"20,10"</span><span class="tag">/&gt;</span>
+    
+    <span class="tag">&lt;Style.Triggers&gt;</span>
+        <span class="tag">&lt;Trigger</span> <span class="attr">Property</span>=<span class="attr-value">"IsMouseOver"</span> <span class="attr">Value</span>=<span class="attr-value">"True"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Background"</span> 
+                    <span class="attr">Value</span>=<span class="attr-value">"#2563eb"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/Trigger&gt;</span>
+        <span class="tag">&lt;Trigger</span> <span class="attr">Property</span>=<span class="attr-value">"IsEnabled"</span> <span class="attr">Value</span>=<span class="attr-value">"False"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Background"</span> 
+                    <span class="attr">Value</span>=<span class="attr-value">"Gray"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/Trigger&gt;</span>
+    <span class="tag">&lt;/Style.Triggers&gt;</span>
+<span class="tag">&lt;/Style&gt;</span>
+
+<span class="tag">&lt;Button</span> <span class="attr">Style</span>=<span class="attr-value">"{StaticResource PrimaryButton}"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: MVVM -->
+            <section id="mvvm">
+                <h2><span class="section-number">08</span>MVVM Pattern</h2>
+
+                <p>MVVM separates UI (View) from business logic (ViewModel) and data (Model).</p>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Component</th><th>Role</th><th>Example</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Model</strong></td><td>Data & business logic</td><td><code>User</code>, <code>Order</code></td></tr>
+                            <tr><td><strong>View</strong></td><td>UI (XAML)</td><td><code>MainWindow.xaml</code></td></tr>
+                            <tr><td><strong>ViewModel</strong></td><td>Bridge, presentation logic</td><td><code>MainViewModel</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Model</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public class</span> <span class="type">User</span>
+{
+    <span class="keyword">public</span> <span class="type">int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="type">string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">""</span>;
+    <span class="keyword">public</span> <span class="type">string</span> Email { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">""</span>;
+}
+
+<span class="comment">// Or use record</span>
+<span class="keyword">public record</span> <span class="type">User</span>(<span class="type">int</span> Id, <span class="type">string</span> Name, <span class="type">string</span> Email);</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>View (Connect DataContext)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Window</span> <span class="attr">x:Class</span>=<span class="attr-value">"MyApp.MainWindow"</span>
+        <span class="attr">xmlns:vm</span>=<span class="attr-value">"clr-namespace:MyApp.ViewModels"</span><span class="tag">&gt;</span>
+    
+    <span class="tag">&lt;Window.DataContext&gt;</span>
+        <span class="tag">&lt;vm:MainViewModel/&gt;</span>
+    <span class="tag">&lt;/Window.DataContext&gt;</span>
+    
+    <span class="tag">&lt;StackPanel&gt;</span>
+        <span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding UserName}"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;Button</span> <span class="attr">Command</span>=<span class="attr-value">"{Binding SaveCommand}"</span>
+                <span class="attr">Content</span>=<span class="attr-value">"Save"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/StackPanel&gt;</span>
+<span class="tag">&lt;/Window&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 9: Commands -->
+            <section id="commands">
+                <h2><span class="section-number">09</span>Commands</h2>
+
+                <p>Commands handle user actions (button clicks) without code-behind, keeping logic in ViewModels.</p>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>RelayCommand</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public class</span> <span class="type">RelayCommand</span> : <span class="type">ICommand</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">Action</span> _execute;
+    <span class="keyword">private readonly</span> <span class="type">Func</span>&lt;<span class="type">bool</span>&gt;? _canExecute;
+    
+    <span class="keyword">public</span> <span class="method">RelayCommand</span>(<span class="type">Action</span> execute, 
+        <span class="type">Func</span>&lt;<span class="type">bool</span>&gt;? canExecute = <span class="keyword">null</span>)
+    {
+        _execute = execute;
+        _canExecute = canExecute;
+    }
+    
+    <span class="keyword">public event</span> <span class="type">EventHandler</span>? CanExecuteChanged
+    {
+        <span class="keyword">add</span> => <span class="type">CommandManager</span>.RequerySuggested += value;
+        <span class="keyword">remove</span> => <span class="type">CommandManager</span>.RequerySuggested -= value;
+    }
+    
+    <span class="keyword">public bool</span> <span class="method">CanExecute</span>(<span class="type">object</span>? p) => 
+        _canExecute?.<span class="method">Invoke</span>() ?? <span class="keyword">true</span>;
+    
+    <span class="keyword">public void</span> <span class="method">Execute</span>(<span class="type">object</span>? p) => _execute();
+}</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Using Commands in ViewModel</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public class</span> <span class="type">MainViewModel</span> : <span class="type">ViewModelBase</span>
+{
+    <span class="keyword">public</span> <span class="type">ICommand</span> SaveCommand { <span class="keyword">get</span>; }
+    <span class="keyword">public</span> <span class="type">ICommand</span> DeleteCommand { <span class="keyword">get</span>; }
+    
+    <span class="keyword">public</span> <span class="method">MainViewModel</span>()
+    {
+        SaveCommand = <span class="keyword">new</span> <span class="type">RelayCommand</span>(
+            <span class="method">Save</span>, 
+            () => !<span class="type">string</span>.<span class="method">IsNullOrEmpty</span>(UserName)
+        );
+        
+        DeleteCommand = <span class="keyword">new</span> <span class="type">RelayCommand</span>&lt;<span class="type">User</span>&gt;(
+            user => Users.<span class="method">Remove</span>(user)
+        );
+    }
+    
+    <span class="keyword">private void</span> <span class="method">Save</span>()
+    {
+        <span class="comment">// Save logic</span>
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 10: Converters -->
+            <section id="converters">
+                <h2><span class="section-number">10</span>Value Converters</h2>
+
+                <p>Converters transform data between binding source and target.</p>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>BoolToVisibility Converter</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public class</span> <span class="type">BoolToVisibilityConverter</span> : <span class="type">IValueConverter</span>
+{
+    <span class="keyword">public object</span> <span class="method">Convert</span>(<span class="type">object</span> value, <span class="type">Type</span> targetType,
+        <span class="type">object</span> parameter, <span class="type">CultureInfo</span> culture)
+    {
+        <span class="keyword">return</span> value <span class="keyword">is</span> <span class="type">bool</span> b && b 
+            ? <span class="type">Visibility</span>.Visible 
+            : <span class="type">Visibility</span>.Collapsed;
+    }
+    
+    <span class="keyword">public object</span> <span class="method">ConvertBack</span>(<span class="type">object</span> value, <span class="type">Type</span> targetType,
+        <span class="type">object</span> parameter, <span class="type">CultureInfo</span> culture)
+    {
+        <span class="keyword">return</span> value <span class="keyword">is</span> <span class="type">Visibility</span> v 
+            && v == <span class="type">Visibility</span>.Visible;
+    }
+}</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Using Converters</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Register converter --&gt;</span>
+<span class="tag">&lt;Window.Resources&gt;</span>
+    <span class="tag">&lt;local:BoolToVisibilityConverter</span> 
+        <span class="attr">x:Key</span>=<span class="attr-value">"BoolToVis"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/Window.Resources&gt;</span>
+
+<span class="comment">&lt;!-- Use in binding --&gt;</span>
+<span class="tag">&lt;ProgressBar</span> <span class="attr">Visibility</span>=<span class="attr-value">"{Binding IsLoading, 
+    Converter={StaticResource BoolToVis}}"</span><span class="tag">/&gt;</span>
+
+<span class="tag">&lt;TextBlock</span> <span class="attr">Visibility</span>=<span class="attr-value">"{Binding HasError, 
+    Converter={StaticResource BoolToVis}}"</span>
+           <span class="attr">Text</span>=<span class="attr-value">"Error occurred!"</span>
+           <span class="attr">Foreground</span>=<span class="attr-value">"Red"</span><span class="tag">/&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 11: Templates -->
+            <section id="templates">
+                <h2><span class="section-number">11</span>Control Templates</h2>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Custom Button Template</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;Style</span> <span class="attr">x:Key</span>=<span class="attr-value">"RoundedButton"</span> <span class="attr">TargetType</span>=<span class="attr-value">"Button"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Template"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;Setter.Value&gt;</span>
+            <span class="tag">&lt;ControlTemplate</span> <span class="attr">TargetType</span>=<span class="attr-value">"Button"</span><span class="tag">&gt;</span>
+                <span class="tag">&lt;Border</span> <span class="attr">x:Name</span>=<span class="attr-value">"border"</span>
+                        <span class="attr">Background</span>=<span class="attr-value">"{TemplateBinding Background}"</span>
+                        <span class="attr">BorderBrush</span>=<span class="attr-value">"{TemplateBinding BorderBrush}"</span>
+                        <span class="attr">BorderThickness</span>=<span class="attr-value">"1"</span>
+                        <span class="attr">CornerRadius</span>=<span class="attr-value">"8"</span>
+                        <span class="attr">Padding</span>=<span class="attr-value">"{TemplateBinding Padding}"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;ContentPresenter</span> <span class="attr">HorizontalAlignment</span>=<span class="attr-value">"Center"</span>
+                                      <span class="attr">VerticalAlignment</span>=<span class="attr-value">"Center"</span><span class="tag">/&gt;</span>
+                <span class="tag">&lt;/Border&gt;</span>
+                
+                <span class="tag">&lt;ControlTemplate.Triggers&gt;</span>
+                    <span class="tag">&lt;Trigger</span> <span class="attr">Property</span>=<span class="attr-value">"IsMouseOver"</span> <span class="attr">Value</span>=<span class="attr-value">"True"</span><span class="tag">&gt;</span>
+                        <span class="tag">&lt;Setter</span> <span class="attr">TargetName</span>=<span class="attr-value">"border"</span> <span class="attr">Property</span>=<span class="attr-value">"Background"</span> <span class="attr">Value</span>=<span class="attr-value">"#2563eb"</span><span class="tag">/&gt;</span>
+                    <span class="tag">&lt;/Trigger&gt;</span>
+                <span class="tag">&lt;/ControlTemplate.Triggers&gt;</span>
+            <span class="tag">&lt;/ControlTemplate&gt;</span>
+        <span class="tag">&lt;/Setter.Value&gt;</span>
+    <span class="tag">&lt;/Setter&gt;</span>
+<span class="tag">&lt;/Style&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 12: Validation -->
+            <section id="validation">
+                <h2><span class="section-number">12</span>Input Validation</h2>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>INotifyDataErrorInfo</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public class</span> <span class="type">ValidatingViewModel</span> : <span class="type">ViewModelBase</span>, 
+    <span class="type">INotifyDataErrorInfo</span>
+{
+    <span class="keyword">private readonly</span> Dictionary&lt;<span class="type">string</span>, List&lt;<span class="type">string</span>&gt;&gt; 
+        _errors = <span class="keyword">new</span>();
+    
+    <span class="keyword">public bool</span> HasErrors => _errors.Any();
+    
+    <span class="keyword">public event</span> <span class="type">EventHandler</span>&lt;<span class="type">DataErrorsChangedEventArgs</span>&gt;? 
+        ErrorsChanged;
+    
+    <span class="keyword">public</span> IEnumerable <span class="method">GetErrors</span>(<span class="type">string</span>? name)
+    {
+        <span class="keyword">if</span> (name != <span class="keyword">null</span> && _errors.ContainsKey(name))
+            <span class="keyword">return</span> _errors[name];
+        <span class="keyword">return</span> <span class="type">Enumerable</span>.<span class="method">Empty</span>&lt;<span class="type">string</span>&gt;();
+    }
+    
+    <span class="keyword">private</span> <span class="type">string</span> _email = <span class="string">""</span>;
+    <span class="keyword">public</span> <span class="type">string</span> Email
+    {
+        <span class="keyword">get</span> => _email;
+        <span class="keyword">set</span>
+        {
+            <span class="method">SetProperty</span>(<span class="keyword">ref</span> _email, value);
+            <span class="method">ValidateEmail</span>();
+        }
+    }
+    
+    <span class="keyword">private void</span> <span class="method">ValidateEmail</span>()
+    {
+        _errors.<span class="method">Remove</span>(<span class="keyword">nameof</span>(Email));
+        <span class="keyword">if</span> (!Email.Contains(<span class="string">"@"</span>))
+            _errors[<span class="keyword">nameof</span>(Email)] = 
+                <span class="keyword">new</span> List&lt;<span class="type">string</span>&gt; { <span class="string">"Invalid email"</span> };
+    }
+}</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot xaml"></span>Validation Error Style</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="tag">&lt;TextBox</span> <span class="attr">Text</span>=<span class="attr-value">"{Binding Email, 
+    ValidatesOnNotifyDataErrors=True,
+    UpdateSourceTrigger=PropertyChanged}"</span><span class="tag">/&gt;</span>
+
+<span class="comment">&lt;!-- Error template --&gt;</span>
+<span class="tag">&lt;Style</span> <span class="attr">TargetType</span>=<span class="attr-value">"TextBox"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;Setter</span> <span class="attr">Property</span>=<span class="attr-value">"Validation.ErrorTemplate"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;Setter.Value&gt;</span>
+            <span class="tag">&lt;ControlTemplate&gt;</span>
+                <span class="tag">&lt;StackPanel&gt;</span>
+                    <span class="tag">&lt;AdornedElementPlaceholder/&gt;</span>
+                    <span class="tag">&lt;TextBlock</span> <span class="attr">Foreground</span>=<span class="attr-value">"Red"</span> <span class="attr">FontSize</span>=<span class="attr-value">"10"</span>
+                        <span class="attr">Text</span>=<span class="attr-value">"{Binding [0].ErrorContent}"</span><span class="tag">/&gt;</span>
+                <span class="tag">&lt;/StackPanel&gt;</span>
+            <span class="tag">&lt;/ControlTemplate&gt;</span>
+        <span class="tag">&lt;/Setter.Value&gt;</span>
+    <span class="tag">&lt;/Setter&gt;</span>
+<span class="tag">&lt;/Style&gt;</span></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 13: Async -->
+            <section id="async">
+                <h2><span class="section-number">13</span>Async Operations</h2>
+
+                <div class="code-comparison single">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>Async Command</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">public class</span> <span class="type">AsyncRelayCommand</span> : <span class="type">ICommand</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">Func</span>&lt;<span class="type">Task</span>&gt; _execute;
+    <span class="keyword">private</span> <span class="type">bool</span> _isExecuting;
+    
+    <span class="keyword">public</span> <span class="method">AsyncRelayCommand</span>(<span class="type">Func</span>&lt;<span class="type">Task</span>&gt; execute) => _execute = execute;
+    
+    <span class="keyword">public</span> <span class="type">bool</span> <span class="method">CanExecute</span>(<span class="type">object</span>? p) => !_isExecuting;
+    
+    <span class="keyword">public async void</span> <span class="method">Execute</span>(<span class="type">object</span>? p)
+    {
+        _isExecuting = <span class="keyword">true</span>;
+        <span class="keyword">try</span> { <span class="keyword">await</span> _execute(); }
+        <span class="keyword">finally</span> { _isExecuting = <span class="keyword">false</span>; }
+    }
+    
+    <span class="keyword">public event</span> <span class="type">EventHandler</span>? CanExecuteChanged;
+}
+
+<span class="comment">// Usage in ViewModel</span>
+<span class="keyword">public</span> <span class="type">ICommand</span> LoadCommand => <span class="keyword">new</span> <span class="type">AsyncRelayCommand</span>(<span class="keyword">async</span> () =>
+{
+    IsLoading = <span class="keyword">true</span>;
+    <span class="keyword">var</span> data = <span class="keyword">await</span> _service.<span class="method">GetDataAsync</span>();
+    Items.<span class="method">Clear</span>();
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> data) Items.<span class="method">Add</span>(item);
+    IsLoading = <span class="keyword">false</span>;
+});</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 14: PyQt Comparison -->
+            <section id="pyqt-comparison">
+                <h2><span class="section-number">14</span>PyQt to WPF Cheat Sheet</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>PyQt</th><th>WPF</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>QWidget</code></td><td><code>UserControl</code></td></tr>
+                            <tr><td><code>QMainWindow</code></td><td><code>Window</code></td></tr>
+                            <tr><td><code>QPushButton</code></td><td><code>Button</code></td></tr>
+                            <tr><td><code>QLineEdit</code></td><td><code>TextBox</code></td></tr>
+                            <tr><td><code>QLabel</code></td><td><code>TextBlock</code> / <code>Label</code></td></tr>
+                            <tr><td><code>QCheckBox</code></td><td><code>CheckBox</code></td></tr>
+                            <tr><td><code>QComboBox</code></td><td><code>ComboBox</code></td></tr>
+                            <tr><td><code>QListWidget</code></td><td><code>ListBox</code></td></tr>
+                            <tr><td><code>QTableWidget</code></td><td><code>DataGrid</code></td></tr>
+                            <tr><td><code>QVBoxLayout</code></td><td><code>StackPanel</code> (Vertical)</td></tr>
+                            <tr><td><code>QHBoxLayout</code></td><td><code>StackPanel Orientation="Horizontal"</code></td></tr>
+                            <tr><td><code>QGridLayout</code></td><td><code>Grid</code></td></tr>
+                            <tr><td><code>signal.connect(slot)</code></td><td><code>Command="{Binding ...}"</code></td></tr>
+                            <tr><td><code>widget.setText(value)</code></td><td><code>Text="{Binding Value}"</code></td></tr>
+                            <tr><td>QSS Stylesheets</td><td>XAML Styles & Templates</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 15: Best Practices -->
+            <section id="best-practices">
+                <h2><span class="section-number">15</span>Best Practices</h2>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 WPF Best Practices</div>
+                    <p>
+                        <strong>1. Use MVVM</strong> - Keep logic in ViewModels, not code-behind<br>
+                        <strong>2. Use ObservableCollection</strong> - For lists that update UI<br>
+                        <strong>3. Use ICommand</strong> - For button actions, not Click events<br>
+                        <strong>4. Use Converters</strong> - For data transformation in bindings<br>
+                        <strong>5. Use Resource Dictionaries</strong> - Organize styles/templates<br>
+                        <strong>6. Use async/await</strong> - Keep UI responsive<br>
+                        <strong>7. Validate with INotifyDataErrorInfo</strong> - Built-in validation<br>
+                        <strong>8. Use Dependency Injection</strong> - For testable ViewModels
+                    </p>
+                </div>
+
+                <h3>Recommended NuGet Packages</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Package</th><th>Purpose</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>CommunityToolkit.Mvvm</code></td><td>MVVM helpers (RelayCommand, ObservableObject)</td></tr>
+                            <tr><td><code>MaterialDesignThemes</code></td><td>Material Design UI components</td></tr>
+                            <tr><td><code>MahApps.Metro</code></td><td>Modern flat UI theme</td></tr>
+                            <tr><td><code>Prism</code></td><td>Full MVVM framework with navigation</td></tr>
+                            <tr><td><code>Microsoft.Extensions.DI</code></td><td>Dependency injection</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 16: Security -->
+            <section id="wpf-security">
+                <h2><span class="section-number">16</span>Security</h2>
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ Desktop Security Basics</div>
+                    <p>Validate all file paths and user input, avoid storing secrets in config files, and prefer OS-backed credential storage where possible.</p>
+                </div>
+            </section>
+
+            <!-- Section 17: Ops & Diagnostics -->
+            <section id="wpf-ops">
+                <h2><span class="section-number">17</span>Ops & Diagnostics</h2>
+                <div class="info-box tip">
+                    <div class="info-box-title">🧭 Troubleshooting</div>
+                    <p>Use structured logging, capture unhandled exceptions, and add simple health screens for background tasks and data sync.</p>
+                </div>
+            </section>
+
+            <!-- Section 18: Deployment -->
+            <section id="wpf-deploy">
+                <h2><span class="section-number">18</span>Deployment</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Option</th><th>When to Use</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>MSIX</td><td>Enterprise distribution, auto-updates</td></tr>
+                            <tr><td>Installer (MSI/EXE)</td><td>Legacy environments or custom setup</td></tr>
+                            <tr><td>ClickOnce</td><td>Simple internal apps</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Copy code functionality with animation
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = '✓';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋';
+                    btn.classList.remove('copied');
+                }, 1500);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animate-on-scroll class to elements
+            const animateElements = document.querySelectorAll('section, .code-block, .table-wrapper, .info-box, .file-structure');
+            animateElements.forEach(el => {
+                el.classList.add('animate-on-scroll');
+            });
+
+            // Intersection Observer for scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Active navigation link on scroll
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const navObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.3,
+                rootMargin: '-100px 0px -66%'
+            });
+
+            sections.forEach(section => navObserver.observe(section));
+
+            // Smooth scroll for navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Ripple effect on code blocks
+            document.querySelectorAll('.code-block').forEach(block => {
+                block.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('copy-btn')) return;
+
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(59, 130, 246, 0.2);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s ease-out;
+                        pointer-events: none;
+                    `;
+
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+
+            // Add ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Parallax effect on header
+            const header = document.querySelector('.header');
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                if (scrolled < 400) {
+                    header.style.backgroundPositionY = scrolled * 0.5 + 'px';
+                }
+            });
+
+            // Table row click animation
+            document.querySelectorAll('tbody tr').forEach(row => {
+                row.addEventListener('click', function() {
+                    this.style.animation = 'none';
+                    this.offsetHeight;
+                    this.style.animation = 'rowPop 0.3s ease';
+                });
+            });
+
+            // Add row pop animation
+            const rowStyle = document.createElement('style');
+            rowStyle.textContent = `
+                @keyframes rowPop {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.02); background: var(--bg-tertiary); }
+                    100% { transform: scale(1); }
+                }
+            `;
+            document.head.appendChild(rowStyle);
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.activeElement.blur();
+                }
+            });
+
+            // ========== ELABORATE ANIMATIONS ==========
+
+            // Create floating particles
+            function createParticles() {
+                const header = document.querySelector('.header');
+                const particleContainer = document.createElement('div');
+                particleContainer.className = 'particles';
+                header.appendChild(particleContainer);
+
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.cssText = `
+                        left: ${Math.random() * 100}%;
+                        top: ${Math.random() * 100}%;
+                        width: ${Math.random() * 6 + 2}px;
+                        height: ${Math.random() * 6 + 2}px;
+                        animation-delay: ${Math.random() * 8}s;
+                        animation-duration: ${Math.random() * 10 + 10}s;
+                    `;
+                    particleContainer.appendChild(particle);
+                }
+            }
+            createParticles();
+
+            // Create morphing blobs
+            function createBlobs() {
+                const header = document.querySelector('.header');
+                for (let i = 1; i <= 3; i++) {
+                    const blob = document.createElement('div');
+                    blob.className = `blob blob-${i}`;
+                    header.appendChild(blob);
+                }
+            }
+            createBlobs();
+
+            // Progress line at top
+            const progressLine = document.createElement('div');
+            progressLine.className = 'progress-line';
+            document.body.appendChild(progressLine);
+
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = (scrollTop / docHeight) * 100;
+                progressLine.style.width = progress + '%';
+            });
+
+            // Scroll indicator
+            const scrollIndicator = document.createElement('div');
+            scrollIndicator.className = 'scroll-indicator';
+            scrollIndicator.innerHTML = '<span>↓</span>';
+            document.querySelector('.header').appendChild(scrollIndicator);
+
+            window.addEventListener('scroll', () => {
+                scrollIndicator.style.opacity = window.scrollY > 100 ? '0' : '1';
+            });
+
+            // Cursor trail effect
+            let mouseX = 0, mouseY = 0;
+            let trailElements = [];
+            const trailCount = 12;
+
+            for (let i = 0; i < trailCount; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.opacity = 1 - (i / trailCount);
+                trail.style.transform = `scale(${1 - (i / trailCount) * 0.5})`;
+                document.body.appendChild(trail);
+                trailElements.push({ el: trail, x: 0, y: 0 });
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function animateTrail() {
+                let x = mouseX, y = mouseY;
+                trailElements.forEach((trail, index) => {
+                    const speed = 0.35 - (index * 0.02);
+                    trail.x += (x - trail.x) * speed;
+                    trail.y += (y - trail.y) * speed;
+                    trail.el.style.left = trail.x + 'px';
+                    trail.el.style.top = trail.y + 'px';
+                    x = trail.x;
+                    y = trail.y;
+                });
+                requestAnimationFrame(animateTrail);
+            }
+            animateTrail();
+
+            // 3D tilt effect on cards
+            document.querySelectorAll('.info-box, .code-block').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = (centerX - x) / 20;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+                });
+            });
+
+            // Confetti on copy
+            function createConfetti(x, y) {
+                const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
+                for (let i = 0; i < 30; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.style.cssText = `
+                        position: fixed;
+                        width: ${Math.random() * 10 + 5}px;
+                        height: ${Math.random() * 10 + 5}px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        left: ${x}px;
+                        top: ${y}px;
+                        pointer-events: none;
+                        border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                        z-index: 10000;
+                    `;
+                    document.body.appendChild(confetti);
+
+                    const angle = Math.random() * Math.PI * 2;
+                    const velocity = Math.random() * 300 + 200;
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+                    let posX = x, posY = y;
+                    let opacity = 1;
+                    let rotation = 0;
+
+                    function animateConfetti() {
+                        posX += vx * 0.016;
+                        posY += vy * 0.016 + 2;
+                        opacity -= 0.02;
+                        rotation += 10;
+                        confetti.style.left = posX + 'px';
+                        confetti.style.top = posY + 'px';
+                        confetti.style.opacity = opacity;
+                        confetti.style.transform = `rotate(${rotation}deg)`;
+                        if (opacity > 0) {
+                            requestAnimationFrame(animateConfetti);
+                        } else {
+                            confetti.remove();
+                        }
+                    }
+                    animateConfetti();
+                }
+            }
+
+            // Enhanced copy with confetti
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    createConfetti(e.clientX, e.clientY);
+                });
+            });
+
+            // Text split animation for header
+            const headerTitle = document.querySelector('.header h1');
+            if (headerTitle) {
+                const text = headerTitle.textContent;
+                headerTitle.innerHTML = '';
+                headerTitle.classList.add('text-reveal');
+                text.split('').forEach((char, i) => {
+                    const span = document.createElement('span');
+                    span.textContent = char === ' ' ? '\u00A0' : char;
+                    span.className = 'char';
+                    span.style.animationDelay = `${i * 0.05}s`;
+                    headerTitle.appendChild(span);
+                });
+            }
+
+            // Reveal animations with stagger
+            const revealElements = document.querySelectorAll('section h2, section h3, p, li, .code-block, .info-box');
+            revealElements.forEach((el, i) => {
+                el.classList.add('reveal');
+                el.style.transitionDelay = `${(i % 5) * 0.1}s`;
+            });
+
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            // Magnetic effect on navigation links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('mousemove', (e) => {
+                    const rect = link.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    link.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    link.style.transform = 'translate(0, 0)';
+                });
+            });
+
+            // Easter egg - Konami code
+            const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+            let konamiIndex = 0;
+            document.addEventListener('keydown', (e) => {
+                if (e.key === konamiCode[konamiIndex]) {
+                    konamiIndex++;
+                    if (konamiIndex === konamiCode.length) {
+                        document.body.style.animation = 'rainbow 2s ease infinite';
+                        const rainbowStyle = document.createElement('style');
+                        rainbowStyle.textContent = `
+                            @keyframes rainbow {
+                                0% { filter: hue-rotate(0deg); }
+                                100% { filter: hue-rotate(360deg); }
+                            }
+                        `;
+                        document.head.appendChild(rainbowStyle);
+                        setTimeout(() => {
+                            document.body.style.animation = '';
+                        }, 5000);
+                        konamiIndex = 0;
+                    }
+                } else {
+                    konamiIndex = 0;
+                }
+            });
+
+            // Floating action button with pulse
+            const fab = document.createElement('div');
+            fab.innerHTML = '↑';
+            fab.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 50px;
+                height: 50px;
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
+                opacity: 0;
+                transform: scale(0);
+                transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+                z-index: 1000;
+            `;
+            document.body.appendChild(fab);
+
+            fab.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 500) {
+                    fab.style.opacity = '1';
+                    fab.style.transform = 'scale(1)';
+                } else {
+                    fab.style.opacity = '0';
+                    fab.style.transform = 'scale(0)';
+                }
+            });
+
+            // Add hover animation to FAB
+            fab.addEventListener('mouseenter', () => {
+                fab.style.transform = 'scale(1.1)';
+                fab.style.boxShadow = '0 6px 30px rgba(59, 130, 246, 0.6)';
+            });
+            fab.addEventListener('mouseleave', () => {
+                fab.style.transform = window.scrollY > 500 ? 'scale(1)' : 'scale(0)';
+                fab.style.boxShadow = '0 4px 20px rgba(59, 130, 246, 0.4)';
+            });
+
+            // Typewriter effect for subtitle
+            const subtitle = document.querySelector('.header p');
+            if (subtitle) {
+                const text = subtitle.textContent;
+                subtitle.textContent = '';
+                let i = 0;
+                function typeWriter() {
+                    if (i < text.length) {
+                        subtitle.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 30);
+                    }
+                }
+                setTimeout(typeWriter, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithms Visual Guide | Master DSA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #0f1419;
+            --bg-tertiary: #1a1f2e;
+            --bg-card: #151b28;
+            --bg-code: #0d1117;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent-green: #00d97e;
+            --accent-blue: #0ea5e9;
+            --accent-purple: #a855f7;
+            --accent-yellow: #fbbf24;
+            --accent-orange: #f97316;
+            --accent-red: #ef4444;
+            --accent-cyan: #22d3ee;
+            --accent-pink: #ec4899;
+            --border-color: #21262d;
+            --border-hover: #30363d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px currentColor; }
+            50% { box-shadow: 0 0 20px currentColor; }
+        }
+        @keyframes swap {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(40px); }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan), var(--accent-green));
+            background-size: 200% 100%;
+            animation: gradientMove 2s linear infinite;
+            z-index: 9999;
+            transition: width 0.2s ease;
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+        }
+        .particle:nth-child(1) { left: 10%; top: 10%; background: var(--accent-green); }
+        .particle:nth-child(2) { left: 20%; top: 30%; background: var(--accent-blue); animation-delay: 1s; }
+        .particle:nth-child(3) { left: 70%; top: 20%; background: var(--accent-purple); animation-delay: 2s; }
+        .particle:nth-child(4) { left: 80%; top: 50%; background: var(--accent-cyan); animation-delay: 3s; }
+        .particle:nth-child(5) { left: 30%; top: 60%; background: var(--accent-yellow); animation-delay: 4s; }
+        .particle:nth-child(6) { left: 60%; top: 70%; background: var(--accent-pink); animation-delay: 5s; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, rgba(0, 217, 126, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 217, 126, 0.1) 0%, transparent 50%);
+            animation: float 8s ease-in-out infinite;
+        }
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .badge:hover {
+            transform: translateY(-3px) scale(1.05);
+            border-color: var(--accent-green);
+            box-shadow: 0 10px 30px rgba(0, 217, 126, 0.2);
+        }
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Layout */
+        .container { display: flex; max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+        
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+            animation: fadeInLeft 0.6s ease-out;
+        }
+        .nav-section { padding: 0 1rem; margin-bottom: 1.5rem; }
+        .nav-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            padding: 0 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent-green), var(--accent-cyan));
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        .nav-link:hover { background: var(--bg-tertiary); color: var(--text-primary); padding-left: 1rem; }
+        .nav-link:hover::before, .nav-link.active::before { transform: scaleY(1); }
+        .nav-link.active { background: rgba(0, 217, 126, 0.1); color: var(--accent-green); }
+        .nav-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); min-width: 20px; }
+        .home-link { background: linear-gradient(135deg, rgba(0, 217, 126, 0.1), rgba(14, 165, 233, 0.1)); border: 1px solid rgba(0, 217, 126, 0.3); margin-bottom: 0.5rem; }
+        .home-link:hover { background: linear-gradient(135deg, rgba(0, 217, 126, 0.2), rgba(14, 165, 233, 0.2)); border-color: var(--accent-green); }
+        .home-btn { position: fixed; top: 20px; left: 20px; z-index: 1000; padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease; display: none; }
+        .home-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--accent-green); }
+        @media (max-width: 900px) { .home-btn { display: block; } }
+
+        .main-content { flex: 1; padding: 2.5rem; max-width: calc(100% - 280px); }
+
+        /* Sections */
+        section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+        section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        section:hover .section-number {
+            transform: rotate(-5deg) scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 217, 126, 0.4);
+        }
+        section h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            transition: width 0.5s ease;
+        }
+        section:hover h3::after { width: 100px; }
+        section h4 { font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); margin: 1.5rem 0 0.75rem; }
+        section p { color: var(--text-secondary); margin-bottom: 1rem; max-width: 800px; }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .code-block:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 30px rgba(0, 217, 126, 0.15);
+            transform: translateY(-2px);
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .code-lang::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .code-lang.python::before { background: var(--accent-yellow); }
+        .code-lang.javascript::before { background: var(--accent-yellow); }
+        .code-lang.pseudo::before { background: var(--accent-purple); }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--accent-green); }
+        .copy-btn.copied { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+        .code-block pre {
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .keyword { color: var(--accent-purple); }
+        .function { color: var(--accent-blue); }
+        .string { color: var(--accent-green); }
+        .number { color: var(--accent-orange); }
+        .comment { color: var(--text-muted); font-style: italic; }
+        .operator { color: var(--accent-cyan); }
+
+        .code-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        /* Visual Boxes */
+        .visual-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            transition: all 0.4s ease;
+        }
+        .visual-box:hover {
+            border-color: rgba(0, 217, 126, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+        .visual-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Big O Chart */
+        .bigo-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            gap: 0.5rem;
+        }
+        .bigo-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+        .bigo-bar-fill {
+            width: 100%;
+            max-width: 50px;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+        .bigo-bar:hover .bigo-bar-fill {
+            transform: scaleY(1.1);
+            box-shadow: 0 0 20px currentColor;
+        }
+        .bigo-bar-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        .bigo-bar-name {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* Array Visualization */
+        .array-visual {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 1rem;
+        }
+        .array-item {
+            width: 45px;
+            height: 45px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--accent-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .array-item:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+            border-color: var(--accent-cyan);
+        }
+        .array-item.highlight {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+            animation: glow 1s ease-in-out infinite;
+        }
+        .array-item.comparing {
+            background: var(--accent-yellow);
+            border-color: var(--accent-yellow);
+            color: var(--bg-primary);
+        }
+        .array-item.sorted {
+            background: rgba(0, 217, 126, 0.2);
+            border-color: var(--accent-green);
+        }
+        .array-index {
+            position: absolute;
+            bottom: -20px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* Tree Visualization */
+        .tree-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        .tree-level {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .tree-node {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--accent-purple);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tree-node:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px var(--accent-purple);
+            background: var(--accent-purple);
+            color: white;
+        }
+        .tree-node.root { border-color: var(--accent-green); }
+        .tree-node.root:hover { box-shadow: 0 0 20px var(--accent-green); background: var(--accent-green); }
+
+        /* Graph Visualization */
+        .graph-visual {
+            position: relative;
+            height: 250px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+        .graph-node {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        .graph-node:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 25px var(--accent-cyan);
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+
+        /* Complexity Table */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        .table-wrapper:hover {
+            border-color: rgba(0, 217, 126, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { color: var(--text-secondary); transition: background 0.3s ease; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(0, 217, 126, 0.05); }
+        td code {
+            background: var(--bg-tertiary);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        tr:hover td code { background: rgba(0, 217, 126, 0.2); }
+        .complexity-good { color: var(--accent-green); }
+        .complexity-ok { color: var(--accent-yellow); }
+        .complexity-bad { color: var(--accent-orange); }
+        .complexity-worst { color: var(--accent-red); }
+
+        /* Info Boxes */
+        .info-box {
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border: 1px solid;
+            transition: all 0.4s ease;
+        }
+        .info-box:hover { transform: translateX(5px); }
+        .info-box.tip { background: rgba(0, 217, 126, 0.1); border-color: rgba(0, 217, 126, 0.3); }
+        .info-box.tip:hover { box-shadow: -5px 0 20px rgba(0, 217, 126, 0.2); }
+        .info-box.warning { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3); }
+        .info-box.warning:hover { box-shadow: -5px 0 20px rgba(251, 191, 36, 0.2); }
+        .info-box.note { background: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.3); }
+        .info-box.note:hover { box-shadow: -5px 0 20px rgba(14, 165, 233, 0.2); }
+        .info-box-title { font-weight: 600; margin-bottom: 0.5rem; }
+        .info-box.tip .info-box-title { color: var(--accent-green); }
+        .info-box.warning .info-box-title { color: var(--accent-yellow); }
+        .info-box.note .info-box-title { color: var(--accent-blue); }
+        .info-box p, .info-box ul { margin: 0; color: var(--text-secondary); }
+        .info-box ul { padding-left: 1.25rem; }
+        .info-box li { margin: 0.25rem 0; }
+
+        /* Algorithm Cards */
+        .algo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .algo-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.4s ease;
+        }
+        .algo-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-green);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        .algo-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        .algo-card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .algo-card-complexity {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+        }
+        .algo-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+        .algo-card-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .algo-tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        /* Step Visualization */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+            transition: all 0.3s ease;
+        }
+        .step:hover {
+            transform: translateX(5px);
+            border-left-color: var(--accent-cyan);
+        }
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        .step-content { flex: 1; }
+        .step-title { font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+        .step-desc { font-size: 0.85rem; color: var(--text-secondary); }
+
+        /* Comparison Diagram */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .compare-card {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+        }
+        .compare-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        .compare-card.good { border-top: 3px solid var(--accent-green); }
+        .compare-card.bad { border-top: 3px solid var(--accent-red); }
+        .compare-card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-card.good .compare-card-title { color: var(--accent-green); }
+        .compare-card.bad .compare-card-title { color: var(--accent-red); }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(0, 217, 126, 0.4);
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 217, 126, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .code-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { max-width: 100%; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <header class="header">
+        <h1>⚡ Algorithms Visual Guide</h1>
+        <p class="subtitle">Master Data Structures & Algorithms with visual explanations and code examples</p>
+        <div class="badge-row">
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-green);"></span>Big O</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-blue);"></span>Sorting</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-purple);"></span>Data Structures</span>
+            <span class="badge"><span class="badge-dot" style="background: var(--accent-cyan);"></span>Searching</span>
+        </div>
+    </header>
+
+    <a href="index.html" class="home-btn">← Back to Hub</a>
+
+    <div class="container">
+        <nav class="sidebar">
+            <div class="nav-section">
+                <a href="index.html" class="nav-link home-link"><span class="nav-number">🏠</span>Training Hub</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Fundamentals</div>
+                <a href="#big-o" class="nav-link"><span class="nav-number">01</span>Big O Notation</a>
+                <a href="#arrays" class="nav-link"><span class="nav-number">02</span>Arrays & Strings</a>
+                <a href="#linked-lists" class="nav-link"><span class="nav-number">03</span>Linked Lists</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Sorting</div>
+                <a href="#bubble-sort" class="nav-link"><span class="nav-number">04</span>Bubble Sort</a>
+                <a href="#merge-sort" class="nav-link"><span class="nav-number">05</span>Merge Sort</a>
+                <a href="#quick-sort" class="nav-link"><span class="nav-number">06</span>Quick Sort</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Searching</div>
+                <a href="#binary-search" class="nav-link"><span class="nav-number">07</span>Binary Search</a>
+                <a href="#bfs-dfs" class="nav-link"><span class="nav-number">08</span>BFS & DFS</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Data Structures</div>
+                <a href="#stacks-queues" class="nav-link"><span class="nav-number">09</span>Stacks & Queues</a>
+                <a href="#trees" class="nav-link"><span class="nav-number">10</span>Trees</a>
+                <a href="#hash-tables" class="nav-link"><span class="nav-number">11</span>Hash Tables</a>
+                <a href="#graphs" class="nav-link"><span class="nav-number">12</span>Graphs</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Advanced</div>
+                <a href="#recursion" class="nav-link"><span class="nav-number">13</span>Recursion</a>
+                <a href="#dynamic-programming" class="nav-link"><span class="nav-number">14</span>Dynamic Programming</a>
+                <a href="#patterns" class="nav-link"><span class="nav-number">15</span>Common Patterns</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Production</div>
+                <a href="#prod-constraints" class="nav-link"><span class="nav-number">16</span>Real-World Constraints</a>
+                <a href="#prod-testing" class="nav-link"><span class="nav-number">17</span>Testing & Verification</a>
+                <a href="#prod-ops" class="nav-link"><span class="nav-number">18</span>Operational Considerations</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Section 1: Big O Notation -->
+            <section id="big-o">
+                <h2><span class="section-number">01</span>Big O Notation</h2>
+                <p>Big O notation describes the <strong>worst-case</strong> time or space complexity of an algorithm as input size grows.</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">📊 Complexity Comparison</div>
+                    <div class="bigo-chart">
+                        <div class="bigo-bar">
+                            <div class="bigo-bar-fill" style="height: 20px; background: var(--accent-green);"></div>
+                            <div class="bigo-bar-label">O(1)</div>
+                            <div class="bigo-bar-name">Constant</div>
+                        </div>
+                        <div class="bigo-bar">
+                            <div class="bigo-bar-fill" style="height: 40px; background: var(--accent-green);"></div>
+                            <div class="bigo-bar-label">O(log n)</div>
+                            <div class="bigo-bar-name">Logarithmic</div>
+                        </div>
+                        <div class="bigo-bar">
+                            <div class="bigo-bar-fill" style="height: 60px; background: var(--accent-cyan);"></div>
+                            <div class="bigo-bar-label">O(n)</div>
+                            <div class="bigo-bar-name">Linear</div>
+                        </div>
+                        <div class="bigo-bar">
+                            <div class="bigo-bar-fill" style="height: 90px; background: var(--accent-yellow);"></div>
+                            <div class="bigo-bar-label">O(n log n)</div>
+                            <div class="bigo-bar-name">Linearithmic</div>
+                        </div>
+                        <div class="bigo-bar">
+                            <div class="bigo-bar-fill" style="height: 130px; background: var(--accent-orange);"></div>
+                            <div class="bigo-bar-label">O(n²)</div>
+                            <div class="bigo-bar-name">Quadratic</div>
+                        </div>
+                        <div class="bigo-bar">
+                            <div class="bigo-bar-fill" style="height: 180px; background: var(--accent-red);"></div>
+                            <div class="bigo-bar-label">O(2ⁿ)</div>
+                            <div class="bigo-bar-name">Exponential</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Complexity</th><th>Name</th><th>Example</th><th>n=1000</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code class="complexity-good">O(1)</code></td><td>Constant</td><td>Array access by index</td><td>1 op</td></tr>
+                            <tr><td><code class="complexity-good">O(log n)</code></td><td>Logarithmic</td><td>Binary search</td><td>~10 ops</td></tr>
+                            <tr><td><code class="complexity-ok">O(n)</code></td><td>Linear</td><td>Loop through array</td><td>1,000 ops</td></tr>
+                            <tr><td><code class="complexity-ok">O(n log n)</code></td><td>Linearithmic</td><td>Merge sort, Quick sort</td><td>~10,000 ops</td></tr>
+                            <tr><td><code class="complexity-bad">O(n²)</code></td><td>Quadratic</td><td>Nested loops, Bubble sort</td><td>1,000,000 ops</td></tr>
+                            <tr><td><code class="complexity-worst">O(2ⁿ)</code></td><td>Exponential</td><td>Recursive Fibonacci</td><td>🔥 Too many!</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">💡 Quick Rules</div>
+                    <ul>
+                        <li><strong>Drop constants:</strong> O(2n) → O(n)</li>
+                        <li><strong>Drop non-dominant terms:</strong> O(n² + n) → O(n²)</li>
+                        <li><strong>Different inputs = different variables:</strong> O(a + b), not O(n)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 2: Arrays -->
+            <section id="arrays">
+                <h2><span class="section-number">02</span>Arrays & Strings</h2>
+                <p>Arrays store elements in <strong>contiguous memory</strong>, allowing O(1) access by index.</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">📦 Array Structure</div>
+                    <div class="array-visual">
+                        <div class="array-item">5<span class="array-index">0</span></div>
+                        <div class="array-item">12<span class="array-index">1</span></div>
+                        <div class="array-item highlight">7<span class="array-index">2</span></div>
+                        <div class="array-item">3<span class="array-index">3</span></div>
+                        <div class="array-item">9<span class="array-index">4</span></div>
+                        <div class="array-item">1<span class="array-index">5</span></div>
+                        <div class="array-item">8<span class="array-index">6</span></div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Operation</th><th>Time</th><th>Space</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Access by index</td><td><code class="complexity-good">O(1)</code></td><td><code>O(1)</code></td></tr>
+                            <tr><td>Search (unsorted)</td><td><code class="complexity-ok">O(n)</code></td><td><code>O(1)</code></td></tr>
+                            <tr><td>Insert at end</td><td><code class="complexity-good">O(1)</code></td><td><code>O(1)</code></td></tr>
+                            <tr><td>Insert at beginning</td><td><code class="complexity-ok">O(n)</code></td><td><code>O(1)</code></td></tr>
+                            <tr><td>Delete</td><td><code class="complexity-ok">O(n)</code></td><td><code>O(1)</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Common Array Operations</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Two Pointer Technique</span>
+<span class="keyword">def</span> <span class="function">two_sum_sorted</span>(arr, target):
+    left, right = <span class="number">0</span>, len(arr) - <span class="number">1</span>
+    
+    <span class="keyword">while</span> left < right:
+        current_sum = arr[left] + arr[right]
+        
+        <span class="keyword">if</span> current_sum == target:
+            <span class="keyword">return</span> [left, right]
+        <span class="keyword">elif</span> current_sum < target:
+            left += <span class="number">1</span>
+        <span class="keyword">else</span>:
+            right -= <span class="number">1</span>
+    
+    <span class="keyword">return</span> []
+
+<span class="comment"># Sliding Window</span>
+<span class="keyword">def</span> <span class="function">max_sum_subarray</span>(arr, k):
+    window_sum = sum(arr[:k])
+    max_sum = window_sum
+    
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(k, len(arr)):
+        window_sum += arr[i] - arr[i - k]
+        max_sum = max(max_sum, window_sum)
+    
+    <span class="keyword">return</span> max_sum</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 3: Linked Lists -->
+            <section id="linked-lists">
+                <h2><span class="section-number">03</span>Linked Lists</h2>
+                <p>Linked lists store elements with <strong>pointers</strong> to the next node. No contiguous memory required.</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">🔗 Singly Linked List</div>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; padding: 1rem;">
+                        <div style="display: flex; align-items: center;">
+                            <div class="array-item" style="border-color: var(--accent-purple);">5</div>
+                            <div style="color: var(--accent-purple); font-size: 1.5rem; margin: 0 0.25rem;">→</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="array-item" style="border-color: var(--accent-purple);">12</div>
+                            <div style="color: var(--accent-purple); font-size: 1.5rem; margin: 0 0.25rem;">→</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="array-item highlight" style="border-color: var(--accent-green);">7</div>
+                            <div style="color: var(--accent-purple); font-size: 1.5rem; margin: 0 0.25rem;">→</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="array-item" style="border-color: var(--accent-purple);">3</div>
+                            <div style="color: var(--accent-purple); font-size: 1.5rem; margin: 0 0.25rem;">→</div>
+                        </div>
+                        <div style="color: var(--accent-red); font-weight: bold;">null</div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">class</span> <span class="function">ListNode</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, val=<span class="number">0</span>, next=<span class="keyword">None</span>):
+        self.val = val
+        self.next = next
+
+<span class="comment"># Reverse a Linked List</span>
+<span class="keyword">def</span> <span class="function">reverse_list</span>(head):
+    prev = <span class="keyword">None</span>
+    current = head
+    
+    <span class="keyword">while</span> current:
+        next_temp = current.next  <span class="comment"># Save next</span>
+        current.next = prev       <span class="comment"># Reverse pointer</span>
+        prev = current            <span class="comment"># Move prev forward</span>
+        current = next_temp       <span class="comment"># Move current forward</span>
+    
+    <span class="keyword">return</span> prev
+
+<span class="comment"># Detect Cycle (Floyd's Algorithm)</span>
+<span class="keyword">def</span> <span class="function">has_cycle</span>(head):
+    slow = fast = head
+    
+    <span class="keyword">while</span> fast <span class="keyword">and</span> fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        <span class="keyword">if</span> slow == fast:
+            <span class="keyword">return</span> <span class="keyword">True</span>
+    
+    <span class="keyword">return</span> <span class="keyword">False</span></code></pre>
+                </div>
+
+                <div class="compare-grid">
+                    <div class="compare-card good">
+                        <div class="compare-card-title">✅ Advantages</div>
+                        <ul style="color: var(--text-secondary); padding-left: 1.25rem;">
+                            <li>O(1) insert/delete at known position</li>
+                            <li>Dynamic size</li>
+                            <li>No wasted memory</li>
+                        </ul>
+                    </div>
+                    <div class="compare-card bad">
+                        <div class="compare-card-title">❌ Disadvantages</div>
+                        <ul style="color: var(--text-secondary); padding-left: 1.25rem;">
+                            <li>O(n) access by index</li>
+                            <li>Extra memory for pointers</li>
+                            <li>No cache locality</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Bubble Sort -->
+            <section id="bubble-sort">
+                <h2><span class="section-number">04</span>Bubble Sort</h2>
+                <p>Repeatedly swaps adjacent elements if they're in the wrong order. Simple but inefficient.</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">🫧 Bubble Sort Visualization</div>
+                    <div class="array-visual" id="bubbleSort">
+                        <div class="array-item comparing">5</div>
+                        <div class="array-item comparing">3</div>
+                        <div class="array-item">8</div>
+                        <div class="array-item">4</div>
+                        <div class="array-item">2</div>
+                        <div class="array-item sorted">1</div>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                        Yellow = Comparing | Green = Sorted
+                    </p>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">def</span> <span class="function">bubble_sort</span>(arr):
+    n = len(arr)
+    
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):
+        swapped = <span class="keyword">False</span>
+        
+        <span class="keyword">for</span> j <span class="keyword">in</span> range(n - i - <span class="number">1</span>):
+            <span class="keyword">if</span> arr[j] > arr[j + <span class="number">1</span>]:
+                <span class="comment"># Swap elements</span>
+                arr[j], arr[j + <span class="number">1</span>] = arr[j + <span class="number">1</span>], arr[j]
+                swapped = <span class="keyword">True</span>
+        
+        <span class="comment"># Optimization: stop if no swaps</span>
+        <span class="keyword">if not</span> swapped:
+            <span class="keyword">break</span>
+    
+    <span class="keyword">return</span> arr
+
+<span class="comment"># Time: O(n²) | Space: O(1)</span></code></pre>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ When to Use</div>
+                    <p>Bubble sort is rarely used in practice due to O(n²) complexity. Only useful for educational purposes or nearly-sorted small arrays.</p>
+                </div>
+            </section>
+
+            <!-- Section 5: Merge Sort -->
+            <section id="merge-sort">
+                <h2><span class="section-number">05</span>Merge Sort</h2>
+                <p><strong>Divide and Conquer:</strong> Split array in half, sort each half, then merge them back together.</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">🔀 Merge Sort Process</div>
+                    <div class="steps-container">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">Divide</div>
+                                <div class="step-desc">[38, 27, 43, 3] → [38, 27] + [43, 3]</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">Divide Again</div>
+                                <div class="step-desc">[38, 27] → [38] + [27] | [43, 3] → [43] + [3]</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">Merge & Sort</div>
+                                <div class="step-desc">[38] + [27] → [27, 38] | [43] + [3] → [3, 43]</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <div class="step-title">Final Merge</div>
+                                <div class="step-desc">[27, 38] + [3, 43] → [3, 27, 38, 43] ✓</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">def</span> <span class="function">merge_sort</span>(arr):
+    <span class="keyword">if</span> len(arr) <= <span class="number">1</span>:
+        <span class="keyword">return</span> arr
+    
+    <span class="comment"># Divide</span>
+    mid = len(arr) // <span class="number">2</span>
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    
+    <span class="comment"># Merge</span>
+    <span class="keyword">return</span> merge(left, right)
+
+<span class="keyword">def</span> <span class="function">merge</span>(left, right):
+    result = []
+    i = j = <span class="number">0</span>
+    
+    <span class="keyword">while</span> i < len(left) <span class="keyword">and</span> j < len(right):
+        <span class="keyword">if</span> left[i] <= right[j]:
+            result.append(left[i])
+            i += <span class="number">1</span>
+        <span class="keyword">else</span>:
+            result.append(right[j])
+            j += <span class="number">1</span>
+    
+    result.extend(left[i:])
+    result.extend(right[j:])
+    <span class="keyword">return</span> result
+
+<span class="comment"># Time: O(n log n) | Space: O(n)</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 6: Quick Sort -->
+            <section id="quick-sort">
+                <h2><span class="section-number">06</span>Quick Sort</h2>
+                <p>Pick a <strong>pivot</strong>, partition array so smaller elements are left, larger are right, then recurse.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">def</span> <span class="function">quick_sort</span>(arr):
+    <span class="keyword">if</span> len(arr) <= <span class="number">1</span>:
+        <span class="keyword">return</span> arr
+    
+    pivot = arr[len(arr) // <span class="number">2</span>]
+    left = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x < pivot]
+    middle = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x == pivot]
+    right = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x > pivot]
+    
+    <span class="keyword">return</span> quick_sort(left) + middle + quick_sort(right)
+
+<span class="comment"># In-place version</span>
+<span class="keyword">def</span> <span class="function">quick_sort_inplace</span>(arr, low, high):
+    <span class="keyword">if</span> low < high:
+        pivot_idx = partition(arr, low, high)
+        quick_sort_inplace(arr, low, pivot_idx - <span class="number">1</span>)
+        quick_sort_inplace(arr, pivot_idx + <span class="number">1</span>, high)
+
+<span class="keyword">def</span> <span class="function">partition</span>(arr, low, high):
+    pivot = arr[high]
+    i = low - <span class="number">1</span>
+    
+    <span class="keyword">for</span> j <span class="keyword">in</span> range(low, high):
+        <span class="keyword">if</span> arr[j] <= pivot:
+            i += <span class="number">1</span>
+            arr[i], arr[j] = arr[j], arr[i]
+    
+    arr[i + <span class="number">1</span>], arr[high] = arr[high], arr[i + <span class="number">1</span>]
+    <span class="keyword">return</span> i + <span class="number">1</span>
+
+<span class="comment"># Time: O(n log n) avg, O(n²) worst | Space: O(log n)</span></code></pre>
+                </div>
+
+                <h3>Sorting Algorithms Comparison</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable?</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Bubble Sort</td><td><code class="complexity-ok">O(n)</code></td><td><code class="complexity-bad">O(n²)</code></td><td><code class="complexity-bad">O(n²)</code></td><td><code>O(1)</code></td><td>✅</td></tr>
+                            <tr><td>Selection Sort</td><td><code class="complexity-bad">O(n²)</code></td><td><code class="complexity-bad">O(n²)</code></td><td><code class="complexity-bad">O(n²)</code></td><td><code>O(1)</code></td><td>❌</td></tr>
+                            <tr><td>Insertion Sort</td><td><code class="complexity-ok">O(n)</code></td><td><code class="complexity-bad">O(n²)</code></td><td><code class="complexity-bad">O(n²)</code></td><td><code>O(1)</code></td><td>✅</td></tr>
+                            <tr><td>Merge Sort</td><td><code class="complexity-ok">O(n log n)</code></td><td><code class="complexity-ok">O(n log n)</code></td><td><code class="complexity-ok">O(n log n)</code></td><td><code>O(n)</code></td><td>✅</td></tr>
+                            <tr><td>Quick Sort</td><td><code class="complexity-ok">O(n log n)</code></td><td><code class="complexity-ok">O(n log n)</code></td><td><code class="complexity-bad">O(n²)</code></td><td><code>O(log n)</code></td><td>❌</td></tr>
+                            <tr><td>Heap Sort</td><td><code class="complexity-ok">O(n log n)</code></td><td><code class="complexity-ok">O(n log n)</code></td><td><code class="complexity-ok">O(n log n)</code></td><td><code>O(1)</code></td><td>❌</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 7: Binary Search -->
+            <section id="binary-search">
+                <h2><span class="section-number">07</span>Binary Search</h2>
+                <p>Search a <strong>sorted</strong> array by repeatedly dividing the search interval in half. O(log n)!</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">🔍 Binary Search for 7</div>
+                    <div class="array-visual">
+                        <div class="array-item" style="opacity: 0.3;">1</div>
+                        <div class="array-item" style="opacity: 0.3;">3</div>
+                        <div class="array-item" style="opacity: 0.3;">4</div>
+                        <div class="array-item comparing">5</div>
+                        <div class="array-item highlight">7</div>
+                        <div class="array-item">9</div>
+                        <div class="array-item">12</div>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                        Yellow = Mid pointer | Green = Found!
+                    </p>
+                </div>
+
+                <div class="code-grid">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang python">Iterative</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">def</span> <span class="function">binary_search</span>(arr, target):
+    left, right = <span class="number">0</span>, len(arr) - <span class="number">1</span>
+    
+    <span class="keyword">while</span> left <= right:
+        mid = (left + right) // <span class="number">2</span>
+        
+        <span class="keyword">if</span> arr[mid] == target:
+            <span class="keyword">return</span> mid
+        <span class="keyword">elif</span> arr[mid] < target:
+            left = mid + <span class="number">1</span>
+        <span class="keyword">else</span>:
+            right = mid - <span class="number">1</span>
+    
+    <span class="keyword">return</span> -<span class="number">1</span></code></pre>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang python">Recursive</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">def</span> <span class="function">binary_search_rec</span>(arr, target, left, right):
+    <span class="keyword">if</span> left > right:
+        <span class="keyword">return</span> -<span class="number">1</span>
+    
+    mid = (left + right) // <span class="number">2</span>
+    
+    <span class="keyword">if</span> arr[mid] == target:
+        <span class="keyword">return</span> mid
+    <span class="keyword">elif</span> arr[mid] < target:
+        <span class="keyword">return</span> binary_search_rec(arr, target, mid + <span class="number">1</span>, right)
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> binary_search_rec(arr, target, left, mid - <span class="number">1</span>)</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: BFS & DFS -->
+            <section id="bfs-dfs">
+                <h2><span class="section-number">08</span>BFS & DFS</h2>
+                <p>Graph/Tree traversal algorithms. <strong>BFS</strong> explores level by level, <strong>DFS</strong> goes deep first.</p>
+
+                <div class="compare-grid">
+                    <div class="compare-card" style="border-top: 3px solid var(--accent-blue);">
+                        <div class="compare-card-title" style="color: var(--accent-blue);">🌊 BFS (Breadth-First)</div>
+                        <ul style="color: var(--text-secondary); padding-left: 1.25rem;">
+                            <li>Uses a <strong>Queue</strong> (FIFO)</li>
+                            <li>Explores neighbors first</li>
+                            <li>Shortest path in unweighted graphs</li>
+                            <li>Level-order traversal</li>
+                        </ul>
+                    </div>
+                    <div class="compare-card" style="border-top: 3px solid var(--accent-purple);">
+                        <div class="compare-card-title" style="color: var(--accent-purple);">🏊 DFS (Depth-First)</div>
+                        <ul style="color: var(--text-secondary); padding-left: 1.25rem;">
+                            <li>Uses a <strong>Stack</strong> (LIFO) or recursion</li>
+                            <li>Goes as deep as possible first</li>
+                            <li>Detecting cycles, topological sort</li>
+                            <li>Pre/In/Post-order traversal</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-grid">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang python">BFS</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">from</span> collections <span class="keyword">import</span> deque
+
+<span class="keyword">def</span> <span class="function">bfs</span>(graph, start):
+    visited = set([start])
+    queue = deque([start])
+    result = []
+    
+    <span class="keyword">while</span> queue:
+        node = queue.popleft()
+        result.append(node)
+        
+        <span class="keyword">for</span> neighbor <span class="keyword">in</span> graph[node]:
+            <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    
+    <span class="keyword">return</span> result</code></pre>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang python">DFS</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                        </div>
+                        <pre><code><span class="keyword">def</span> <span class="function">dfs</span>(graph, start, visited=<span class="keyword">None</span>):
+    <span class="keyword">if</span> visited <span class="keyword">is None</span>:
+        visited = set()
+    
+    visited.add(start)
+    result = [start]
+    
+    <span class="keyword">for</span> neighbor <span class="keyword">in</span> graph[start]:
+        <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+            result.extend(dfs(graph, neighbor, visited))
+    
+    <span class="keyword">return</span> result
+
+<span class="comment"># Iterative DFS with stack</span>
+<span class="keyword">def</span> <span class="function">dfs_iterative</span>(graph, start):
+    visited = set()
+    stack = [start]
+    result = []
+    
+    <span class="keyword">while</span> stack:
+        node = stack.pop()
+        <span class="keyword">if</span> node <span class="keyword">not in</span> visited:
+            visited.add(node)
+            result.append(node)
+            stack.extend(graph[node][::-<span class="number">1</span>])
+    
+    <span class="keyword">return</span> result</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 9: Stacks & Queues -->
+            <section id="stacks-queues">
+                <h2><span class="section-number">09</span>Stacks & Queues</h2>
+
+                <div class="compare-grid">
+                    <div class="compare-card" style="border-top: 3px solid var(--accent-orange);">
+                        <div class="compare-card-title" style="color: var(--accent-orange);">📚 Stack (LIFO)</div>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Last In, First Out - like a stack of plates</p>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                            <div class="array-item" style="width: 60px; border-color: var(--accent-orange);">Top</div>
+                            <div class="array-item" style="width: 60px; border-color: var(--accent-orange); opacity: 0.7;">...</div>
+                            <div class="array-item" style="width: 60px; border-color: var(--accent-orange); opacity: 0.5;">Bottom</div>
+                        </div>
+                    </div>
+                    <div class="compare-card" style="border-top: 3px solid var(--accent-cyan);">
+                        <div class="compare-card-title" style="color: var(--accent-cyan);">🚶 Queue (FIFO)</div>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">First In, First Out - like a line of people</p>
+                        <div style="display: flex; align-items: center; gap: 4px; justify-content: center;">
+                            <div style="color: var(--text-muted); font-size: 0.8rem;">Front →</div>
+                            <div class="array-item" style="border-color: var(--accent-cyan);">1</div>
+                            <div class="array-item" style="border-color: var(--accent-cyan);">2</div>
+                            <div class="array-item" style="border-color: var(--accent-cyan);">3</div>
+                            <div style="color: var(--text-muted); font-size: 0.8rem;">← Back</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Python</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Stack using list</span>
+stack = []
+stack.append(<span class="number">1</span>)   <span class="comment"># Push</span>
+stack.append(<span class="number">2</span>)
+top = stack.pop()  <span class="comment"># Pop -> 2</span>
+
+<span class="comment"># Queue using deque</span>
+<span class="keyword">from</span> collections <span class="keyword">import</span> deque
+queue = deque()
+queue.append(<span class="number">1</span>)      <span class="comment"># Enqueue</span>
+queue.append(<span class="number">2</span>)
+front = queue.popleft()  <span class="comment"># Dequeue -> 1</span>
+
+<span class="comment"># Valid Parentheses - Classic Stack Problem</span>
+<span class="keyword">def</span> <span class="function">is_valid</span>(s):
+    stack = []
+    mapping = {<span class="string">')'</span>: <span class="string">'('</span>, <span class="string">'}'</span>: <span class="string">'{'</span>, <span class="string">']'</span>: <span class="string">'['</span>}
+    
+    <span class="keyword">for</span> char <span class="keyword">in</span> s:
+        <span class="keyword">if</span> char <span class="keyword">in</span> mapping:
+            <span class="keyword">if not</span> stack <span class="keyword">or</span> stack.pop() != mapping[char]:
+                <span class="keyword">return</span> <span class="keyword">False</span>
+        <span class="keyword">else</span>:
+            stack.append(char)
+    
+    <span class="keyword">return</span> len(stack) == <span class="number">0</span></code></pre>
+                </div>
+            </section>
+
+            <!-- Section 10: Trees -->
+            <section id="trees">
+                <h2><span class="section-number">10</span>Trees</h2>
+                <p>Hierarchical data structure with a root node and children. Binary trees have at most 2 children per node.</p>
+
+                <div class="visual-box">
+                    <div class="visual-title">🌳 Binary Search Tree</div>
+                    <div class="tree-visual">
+                        <div class="tree-level">
+                            <div class="tree-node root">8</div>
+                        </div>
+                        <div class="tree-level">
+                            <div class="tree-node">3</div>
+                            <div class="tree-node">10</div>
+                        </div>
+                        <div class="tree-level">
+                            <div class="tree-node">1</div>
+                            <div class="tree-node">6</div>
+                            <div class="tree-node" style="visibility: hidden;"></div>
+                            <div class="tree-node">14</div>
+                        </div>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                        BST: Left < Parent < Right
+                    </p>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Tree Traversals</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">class</span> <span class="function">TreeNode</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, val=<span class="number">0</span>, left=<span class="keyword">None</span>, right=<span class="keyword">None</span>):
+        self.val = val
+        self.left = left
+        self.right = right
+
+<span class="comment"># Inorder: Left → Root → Right (sorted for BST)</span>
+<span class="keyword">def</span> <span class="function">inorder</span>(root):
+    <span class="keyword">if not</span> root:
+        <span class="keyword">return</span> []
+    <span class="keyword">return</span> inorder(root.left) + [root.val] + inorder(root.right)
+
+<span class="comment"># Preorder: Root → Left → Right</span>
+<span class="keyword">def</span> <span class="function">preorder</span>(root):
+    <span class="keyword">if not</span> root:
+        <span class="keyword">return</span> []
+    <span class="keyword">return</span> [root.val] + preorder(root.left) + preorder(root.right)
+
+<span class="comment"># Postorder: Left → Right → Root</span>
+<span class="keyword">def</span> <span class="function">postorder</span>(root):
+    <span class="keyword">if not</span> root:
+        <span class="keyword">return</span> []
+    <span class="keyword">return</span> postorder(root.left) + postorder(root.right) + [root.val]
+
+<span class="comment"># Level Order (BFS)</span>
+<span class="keyword">def</span> <span class="function">level_order</span>(root):
+    <span class="keyword">if not</span> root:
+        <span class="keyword">return</span> []
+    result, queue = [], deque([root])
+    <span class="keyword">while</span> queue:
+        node = queue.popleft()
+        result.append(node.val)
+        <span class="keyword">if</span> node.left: queue.append(node.left)
+        <span class="keyword">if</span> node.right: queue.append(node.right)
+    <span class="keyword">return</span> result</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 11: Hash Tables -->
+            <section id="hash-tables">
+                <h2><span class="section-number">11</span>Hash Tables</h2>
+                <p>Store key-value pairs with <strong>O(1) average</strong> lookup using a hash function.</p>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Operation</th><th>Average</th><th>Worst</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Insert</td><td><code class="complexity-good">O(1)</code></td><td><code class="complexity-ok">O(n)</code></td></tr>
+                            <tr><td>Delete</td><td><code class="complexity-good">O(1)</code></td><td><code class="complexity-ok">O(n)</code></td></tr>
+                            <tr><td>Search</td><td><code class="complexity-good">O(1)</code></td><td><code class="complexity-ok">O(n)</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Common Hash Table Patterns</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Two Sum - Classic Hash Map Problem</span>
+<span class="keyword">def</span> <span class="function">two_sum</span>(nums, target):
+    seen = {}  <span class="comment"># value -> index</span>
+    
+    <span class="keyword">for</span> i, num <span class="keyword">in</span> enumerate(nums):
+        complement = target - num
+        <span class="keyword">if</span> complement <span class="keyword">in</span> seen:
+            <span class="keyword">return</span> [seen[complement], i]
+        seen[num] = i
+    
+    <span class="keyword">return</span> []
+
+<span class="comment"># Frequency Counter</span>
+<span class="keyword">from</span> collections <span class="keyword">import</span> Counter
+
+<span class="keyword">def</span> <span class="function">top_k_frequent</span>(nums, k):
+    count = Counter(nums)
+    <span class="keyword">return</span> [x <span class="keyword">for</span> x, _ <span class="keyword">in</span> count.most_common(k)]
+
+<span class="comment"># Group Anagrams</span>
+<span class="keyword">def</span> <span class="function">group_anagrams</span>(strs):
+    groups = {}
+    <span class="keyword">for</span> s <span class="keyword">in</span> strs:
+        key = tuple(sorted(s))
+        groups.setdefault(key, []).append(s)
+    <span class="keyword">return</span> list(groups.values())</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 12: Graphs -->
+            <section id="graphs">
+                <h2><span class="section-number">12</span>Graphs</h2>
+                <p>Vertices (nodes) connected by edges. Can be directed/undirected, weighted/unweighted.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Graph Representations</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Adjacency List (most common)</span>
+graph = {
+    <span class="string">'A'</span>: [<span class="string">'B'</span>, <span class="string">'C'</span>],
+    <span class="string">'B'</span>: [<span class="string">'A'</span>, <span class="string">'D'</span>],
+    <span class="string">'C'</span>: [<span class="string">'A'</span>, <span class="string">'D'</span>],
+    <span class="string">'D'</span>: [<span class="string">'B'</span>, <span class="string">'C'</span>]
+}
+
+<span class="comment"># Adjacency Matrix</span>
+<span class="comment">#     A  B  C  D</span>
+matrix = [
+    [<span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>],  <span class="comment"># A</span>
+    [<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>],  <span class="comment"># B</span>
+    [<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>],  <span class="comment"># C</span>
+    [<span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>]   <span class="comment"># D</span>
+]
+
+<span class="comment"># Edge List</span>
+edges = [(<span class="string">'A'</span>, <span class="string">'B'</span>), (<span class="string">'A'</span>, <span class="string">'C'</span>), (<span class="string">'B'</span>, <span class="string">'D'</span>), (<span class="string">'C'</span>, <span class="string">'D'</span>)]</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 13: Recursion -->
+            <section id="recursion">
+                <h2><span class="section-number">13</span>Recursion</h2>
+                <p>A function that calls itself. Every recursion needs a <strong>base case</strong> to stop!</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Classic Recursion Examples</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Factorial: n! = n × (n-1)!</span>
+<span class="keyword">def</span> <span class="function">factorial</span>(n):
+    <span class="keyword">if</span> n <= <span class="number">1</span>:            <span class="comment"># Base case</span>
+        <span class="keyword">return</span> <span class="number">1</span>
+    <span class="keyword">return</span> n * factorial(n - <span class="number">1</span>)  <span class="comment"># Recursive case</span>
+
+<span class="comment"># Fibonacci (with memoization)</span>
+<span class="keyword">def</span> <span class="function">fib</span>(n, memo={}):
+    <span class="keyword">if</span> n <= <span class="number">1</span>:
+        <span class="keyword">return</span> n
+    <span class="keyword">if</span> n <span class="keyword">not in</span> memo:
+        memo[n] = fib(n - <span class="number">1</span>, memo) + fib(n - <span class="number">2</span>, memo)
+    <span class="keyword">return</span> memo[n]
+
+<span class="comment"># Power of number</span>
+<span class="keyword">def</span> <span class="function">power</span>(base, exp):
+    <span class="keyword">if</span> exp == <span class="number">0</span>:
+        <span class="keyword">return</span> <span class="number">1</span>
+    <span class="keyword">if</span> exp % <span class="number">2</span> == <span class="number">0</span>:
+        half = power(base, exp // <span class="number">2</span>)
+        <span class="keyword">return</span> half * half
+    <span class="keyword">return</span> base * power(base, exp - <span class="number">1</span>)</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 14: Dynamic Programming -->
+            <section id="dynamic-programming">
+                <h2><span class="section-number">14</span>Dynamic Programming</h2>
+                <p>Solve problems by breaking into <strong>overlapping subproblems</strong> and storing results to avoid recomputation.</p>
+
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Identify Subproblems</div>
+                            <div class="step-desc">Can the problem be broken into smaller, similar problems?</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Define Recurrence</div>
+                            <div class="step-desc">Express solution in terms of subproblem solutions</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">Memoize or Tabulate</div>
+                            <div class="step-desc">Store results in a cache (top-down) or table (bottom-up)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang python">Classic DP Problems</span>
+                        <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    </div>
+                    <pre><code><span class="comment"># Climbing Stairs (Fibonacci pattern)</span>
+<span class="keyword">def</span> <span class="function">climb_stairs</span>(n):
+    <span class="keyword">if</span> n <= <span class="number">2</span>:
+        <span class="keyword">return</span> n
+    dp = [<span class="number">0</span>] * (n + <span class="number">1</span>)
+    dp[<span class="number">1</span>], dp[<span class="number">2</span>] = <span class="number">1</span>, <span class="number">2</span>
+    
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>, n + <span class="number">1</span>):
+        dp[i] = dp[i-<span class="number">1</span>] + dp[i-<span class="number">2</span>]
+    
+    <span class="keyword">return</span> dp[n]
+
+<span class="comment"># 0/1 Knapsack</span>
+<span class="keyword">def</span> <span class="function">knapsack</span>(weights, values, capacity):
+    n = len(weights)
+    dp = [[<span class="number">0</span>] * (capacity + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> range(n + <span class="number">1</span>)]
+    
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, n + <span class="number">1</span>):
+        <span class="keyword">for</span> w <span class="keyword">in</span> range(capacity + <span class="number">1</span>):
+            <span class="keyword">if</span> weights[i-<span class="number">1</span>] <= w:
+                dp[i][w] = max(
+                    dp[i-<span class="number">1</span>][w],  <span class="comment"># Don't take</span>
+                    dp[i-<span class="number">1</span>][w - weights[i-<span class="number">1</span>]] + values[i-<span class="number">1</span>]  <span class="comment"># Take</span>
+                )
+            <span class="keyword">else</span>:
+                dp[i][w] = dp[i-<span class="number">1</span>][w]
+    
+    <span class="keyword">return</span> dp[n][capacity]
+
+<span class="comment"># Longest Common Subsequence</span>
+<span class="keyword">def</span> <span class="function">lcs</span>(s1, s2):
+    m, n = len(s1), len(s2)
+    dp = [[<span class="number">0</span>] * (n + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> range(m + <span class="number">1</span>)]
+    
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, m + <span class="number">1</span>):
+        <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>, n + <span class="number">1</span>):
+            <span class="keyword">if</span> s1[i-<span class="number">1</span>] == s2[j-<span class="number">1</span>]:
+                dp[i][j] = dp[i-<span class="number">1</span>][j-<span class="number">1</span>] + <span class="number">1</span>
+            <span class="keyword">else</span>:
+                dp[i][j] = max(dp[i-<span class="number">1</span>][j], dp[i][j-<span class="number">1</span>])
+    
+    <span class="keyword">return</span> dp[m][n]</code></pre>
+                </div>
+            </section>
+
+            <!-- Section 15: Common Patterns -->
+            <section id="patterns">
+                <h2><span class="section-number">15</span>Common Patterns</h2>
+
+                <div class="algo-grid">
+                    <div class="algo-card">
+                        <div class="algo-card-header">
+                            <div class="algo-card-title">🎯 Two Pointers</div>
+                            <div class="algo-card-complexity complexity-ok">O(n)</div>
+                        </div>
+                        <div class="algo-card-desc">Two indices moving toward or away from each other.</div>
+                        <div class="algo-card-tags">
+                            <span class="algo-tag">Sorted Arrays</span>
+                            <span class="algo-tag">Palindromes</span>
+                        </div>
+                    </div>
+                    <div class="algo-card">
+                        <div class="algo-card-header">
+                            <div class="algo-card-title">🪟 Sliding Window</div>
+                            <div class="algo-card-complexity complexity-ok">O(n)</div>
+                        </div>
+                        <div class="algo-card-desc">Fixed or variable size window moving through array.</div>
+                        <div class="algo-card-tags">
+                            <span class="algo-tag">Subarrays</span>
+                            <span class="algo-tag">Substrings</span>
+                        </div>
+                    </div>
+                    <div class="algo-card">
+                        <div class="algo-card-header">
+                            <div class="algo-card-title">🐢🐇 Fast & Slow</div>
+                            <div class="algo-card-complexity complexity-ok">O(n)</div>
+                        </div>
+                        <div class="algo-card-desc">Two pointers moving at different speeds.</div>
+                        <div class="algo-card-tags">
+                            <span class="algo-tag">Cycle Detection</span>
+                            <span class="algo-tag">Middle of List</span>
+                        </div>
+                    </div>
+                    <div class="algo-card">
+                        <div class="algo-card-header">
+                            <div class="algo-card-title">🔀 Merge Intervals</div>
+                            <div class="algo-card-complexity complexity-ok">O(n log n)</div>
+                        </div>
+                        <div class="algo-card-desc">Sort intervals, then merge overlapping ones.</div>
+                        <div class="algo-card-tags">
+                            <span class="algo-tag">Scheduling</span>
+                            <span class="algo-tag">Intervals</span>
+                        </div>
+                    </div>
+                    <div class="algo-card">
+                        <div class="algo-card-header">
+                            <div class="algo-card-title">📊 Top K Elements</div>
+                            <div class="algo-card-complexity complexity-ok">O(n log k)</div>
+                        </div>
+                        <div class="algo-card-desc">Use heap to find k largest/smallest elements.</div>
+                        <div class="algo-card-tags">
+                            <span class="algo-tag">Heap</span>
+                            <span class="algo-tag">Priority Queue</span>
+                        </div>
+                    </div>
+                    <div class="algo-card">
+                        <div class="algo-card-header">
+                            <div class="algo-card-title">🔙 Backtracking</div>
+                            <div class="algo-card-complexity complexity-bad">O(2ⁿ)</div>
+                        </div>
+                        <div class="algo-card-desc">Explore all possibilities, undo and try another.</div>
+                        <div class="algo-card-tags">
+                            <span class="algo-tag">Permutations</span>
+                            <span class="algo-tag">Combinations</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">🎯 Pattern Recognition Tips</div>
+                    <ul>
+                        <li><strong>Sorted array?</strong> → Binary Search or Two Pointers</li>
+                        <li><strong>All permutations/subsets?</strong> → Backtracking</li>
+                        <li><strong>Optimization problem?</strong> → Dynamic Programming</li>
+                        <li><strong>Tree/Graph?</strong> → BFS or DFS</li>
+                        <li><strong>O(1) lookup needed?</strong> → Hash Map</li>
+                        <li><strong>K largest/smallest?</strong> → Heap</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 16: Real-World Constraints -->
+            <section id="prod-constraints">
+                <h2><span class="section-number">16</span>Real-World Constraints</h2>
+                <p>Production environments add constraints that change which algorithm is best. Plan for data size, memory limits, and latency goals.</p>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Constraint</th><th>Impact</th><th>Typical Choice</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Large data sets</td><td>Memory pressure</td><td>Streaming, external sort</td></tr>
+                            <tr><td>Low latency</td><td>Tail performance</td><td>Precompute, caching, O(1)/O(log n)</td></tr>
+                            <tr><td>Skewed data</td><td>Hot paths</td><td>Adaptive structures, hashing</td></tr>
+                            <tr><td>Concurrency</td><td>Contention</td><td>Lock-free or sharded state</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 17: Testing & Verification -->
+            <section id="prod-testing">
+                <h2><span class="section-number">17</span>Testing & Verification</h2>
+                <div class="info-box tip">
+                    <div class="info-box-title">✅ Reliability Checklist</div>
+                    <ul>
+                        <li>Test edge cases (empty, one item, duplicates, extremes).</li>
+                        <li>Validate stability requirements for sorting.</li>
+                        <li>Use property tests for invariants (sorted order, no loss).</li>
+                        <li>Benchmark with realistic data distributions.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 18: Operational Considerations -->
+            <section id="prod-ops">
+                <h2><span class="section-number">18</span>Operational Considerations</h2>
+                <div class="info-box warning">
+                    <div class="info-box-title">⚠️ Performance Pitfalls</div>
+                    <ul>
+                        <li>Hidden allocations in tight loops.</li>
+                        <li>Unbounded recursion depth.</li>
+                        <li>Assuming data fits in memory.</li>
+                        <li>Ignoring worst-case input patterns.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        function updateProgressBar() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function revealOnScroll() {
+            const sections = document.querySelectorAll('section');
+            sections.forEach((section, index) => {
+                const sectionTop = section.getBoundingClientRect().top;
+                if (sectionTop < window.innerHeight - 150) {
+                    section.classList.add('visible');
+                    section.style.transitionDelay = `${index * 0.03}s`;
+                }
+            });
+        }
+
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function toggleBackToTop() {
+            const btn = document.getElementById('backToTop');
+            btn.classList.toggle('visible', window.scrollY > 500);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function moveParticles(e) {
+            const particles = document.querySelectorAll('.particle');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            particles.forEach((p, i) => {
+                const speed = (i + 1) * 0.3;
+                p.style.transform = `translate(${(x - 0.5) * speed * 30}px, ${(y - 0.5) * speed * 30}px)`;
+            });
+        }
+
+        window.addEventListener('scroll', () => {
+            updateProgressBar();
+            revealOnScroll();
+            updateActiveNav();
+            toggleBackToTop();
+        });
+
+        document.addEventListener('mousemove', moveParticles);
+        document.addEventListener('DOMContentLoaded', () => {
+            revealOnScroll();
+            updateActiveNav();
+        });
+    </script>
+</body>
+</html>
