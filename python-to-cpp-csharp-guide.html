@@ -1087,6 +1087,10 @@
                 <li class="nav-item"><a href="#prod-tooling" class="nav-link"><span class="nav-number">16</span>Production Tooling</a></li>
                 <li class="nav-item"><a href="#prod-interop" class="nav-link"><span class="nav-number">17</span>Interop & Safety</a></li>
                 <li class="nav-item"><a href="#prod-deploy" class="nav-link"><span class="nav-number">18</span>Deployment</a></li>
+                <li class="nav-item"><a href="#performance" class="nav-link"><span class="nav-number">19</span>Performance & Profiling</a></li>
+                <li class="nav-item"><a href="#networking" class="nav-link"><span class="nav-number">20</span>Networking & HTTP</a></li>
+                <li class="nav-item"><a href="#testing" class="nav-link"><span class="nav-number">21</span>Testing & Quality</a></li>
+                <li class="nav-item"><a href="#packaging" class="nav-link"><span class="nav-number">22</span>Packaging & Distribution</a></li>
             </ul>
         </nav>
 
@@ -1181,9 +1185,9 @@
 <span class="comment">#</span>
 <span class="comment"># Characteristics:</span>
 <span class="comment"># ✓ No separate compilation step needed</span>
-<span class="comment"># ✓ Platform independent (.pyc runs anywhere)</span>
+<span class="comment"># ✓ Portable source; bytecode is version/implementation-specific</span>
 <span class="comment"># ✓ Easy debugging - errors at runtime with line numbers</span>
-<span class="comment"># ✗ Slower than compiled languages (10-100x)</span>
+<span class="comment"># ✗ Often slower than compiled languages (varies by workload)</span>
 <span class="comment"># ✗ Type errors discovered only at runtime</span></code></pre>
                 </div>
 
@@ -1803,7 +1807,7 @@ Console.<span class="function">WriteLine</span>(p1.X);  <span class="comment">//
                                 <td><code>int</code></td>
                                 <td><code>int</code>, <code>long</code>, <code>long long</code></td>
                                 <td><code>int</code>, <code>long</code></td>
-                                <td>C++/C# have fixed sizes</td>
+                                <td>C# fixed sizes; C++ sizes are implementation-defined</td>
                             </tr>
                             <tr>
                                 <td><code>float</code></td>
@@ -2025,7 +2029,13 @@ PI = <span class="number">3.14159</span></code></pre>
 
 <span class="comment"># While loop</span>
 <span class="keyword">while</span> condition:
-    do_something()</code></pre>
+    do_something()
+
+<span class="comment"># Python has no do-while; emulate with while True</span>
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    do_something()
+    <span class="keyword">if</span> done:
+        <span class="keyword">break</span></code></pre>
                     </div>
                     
                     <div class="code-block">
@@ -2046,7 +2056,12 @@ PI = <span class="number">3.14159</span></code></pre>
 <span class="comment">// While loop</span>
 <span class="keyword">while</span> (condition) {
     doSomething();
-}</code></pre>
+}
+
+<span class="comment">// Do-while loop</span>
+<span class="keyword">do</span> {
+    doSomething();
+} <span class="keyword">while</span> (condition);</code></pre>
                     </div>
                     
                     <div class="code-block">
@@ -2067,7 +2082,12 @@ PI = <span class="number">3.14159</span></code></pre>
 <span class="comment">// While loop</span>
 <span class="keyword">while</span> (condition) {
     DoSomething();
-}</code></pre>
+}
+
+<span class="comment">// Do-while loop</span>
+<span class="keyword">do</span> {
+    DoSomething();
+} <span class="keyword">while</span> (condition);</code></pre>
                     </div>
                 </div>
 
@@ -2106,14 +2126,20 @@ PI = <span class="number">3.14159</span></code></pre>
                     
                     <div class="code-block">
                         <div class="code-header">
-                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C# 8+ Expression</span>
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C# Switch Statement</span>
                             <button class="copy-btn" onclick="copyCode(this)">📋</button>
                         </div>
-                        <pre><code><span class="keyword">var</span> message = status <span class="keyword">switch</span> {
-    <span class="number">200</span> => <span class="string">"OK"</span>,
-    <span class="number">404</span> => <span class="string">"Not Found"</span>,
-    _ => <span class="string">"Unknown"</span>
-};</code></pre>
+                        <pre><code><span class="keyword">switch</span> (status) {
+    <span class="keyword">case</span> <span class="number">200</span>:
+        Console.<span class="function">WriteLine</span>(<span class="string">"OK"</span>);
+        <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="number">404</span>:
+        Console.<span class="function">WriteLine</span>(<span class="string">"Not Found"</span>);
+        <span class="keyword">break</span>;
+    <span class="keyword">default</span>:
+        Console.<span class="function">WriteLine</span>(<span class="string">"Unknown"</span>);
+        <span class="keyword">break</span>;
+}</code></pre>
                     </div>
                 </div>
             </section>
@@ -2123,37 +2149,79 @@ PI = <span class="number">3.14159</span></code></pre>
                 <h2><span class="section-number">05</span>Functions & Methods</h2>
 
                 <div class="info-box note">
-                    <div class="info-box-title">What is a Function?</div>
-                    <p>A <strong>function</strong> is a reusable block of code that performs a specific task. Functions help organize code, avoid repetition (DRY - Don't Repeat Yourself), and make programs easier to understand and maintain.</p>
-                    <ul style="margin: 0.5rem 0 0 1.5rem;">
-                        <li><strong>Parameters</strong>: Input values the function receives</li>
-                        <li><strong>Return value</strong>: Output the function produces</li>
-                        <li><strong>Side effects</strong>: Changes the function makes outside itself (e.g., printing, modifying global variables)</li>
-                    </ul>
+                    <div class="info-box-title">Functions = Signatures + Behavior</div>
+                    <p>A function is defined by its <strong>name</strong>, <strong>parameters</strong>, <strong>return type</strong>, and <strong>side effects</strong>. If you can read the signature, you can predict how to use it safely.</p>
                 </div>
 
                 <div class="info-box tip">
                     <div class="info-box-title">Function vs Method</div>
-                    <p><strong>Function</strong>: A standalone block of code (e.g., <code>print()</code> in Python).<br>
-                    <strong>Method</strong>: A function that belongs to a class/object (e.g., <code>list.append()</code>). Methods have access to the object's data via <code>self</code> (Python), <code>this</code> (C++/C#).</p>
+                    <p><strong>Function</strong>: Standalone block of code (e.g., <code>print()</code> in Python).<br>
+                    <strong>Method</strong>: Function attached to a class/object (e.g., <code>list.append()</code>). Methods access object state via <code>self</code> (Python) or <code>this</code> (C++/C#).</p>
                 </div>
 
-                <h3>Basic Functions</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Python</th>
+                                <th>C++</th>
+                                <th>C#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Default parameters</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>Named arguments</td>
+                                <td>Yes</td>
+                                <td>No</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>Overloading</td>
+                                <td>No (use defaults/*args)</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>Expression-bodied</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>Pass by reference</td>
+                                <td>Objects by reference</td>
+                                <td><code>&</code> references</td>
+                                <td><code>ref</code>/<code>out</code></td>
+                            </tr>
+                            <tr>
+                                <td>Variadic args</td>
+                                <td><code>*args</code></td>
+                                <td><code>initializer_list</code> / templates</td>
+                                <td><code>params</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Basic Signatures</h3>
                 <div class="code-comparison">
                     <div class="code-block">
                         <div class="code-header">
                             <span class="code-lang"><span class="code-lang-dot python"></span>Python</span>
                             <button class="copy-btn" onclick="copyCode(this)">📋</button>
                         </div>
-                        <pre><code><span class="keyword">def</span> <span class="function">add</span>(a, b):
+                        <pre><code><span class="keyword">def</span> <span class="function">add</span>(a: <span class="type">int</span>, b: <span class="type">int</span>) -> <span class="type">int</span>:
     <span class="keyword">return</span> a + b
 
-<span class="keyword">def</span> <span class="function">greet</span>(name, greeting=<span class="string">"Hello"</span>):
-    <span class="keyword">return</span> <span class="string">f"</span>{greeting}, {name}!<span class="string">"</span>
-
-<span class="comment"># Type hints (optional)</span>
-<span class="keyword">def</span> <span class="function">add</span>(a: <span class="type">int</span>, b: <span class="type">int</span>) -> <span class="type">int</span>:
-    <span class="keyword">return</span> a + b</code></pre>
+<span class="keyword">def</span> <span class="function">print_greeting</span>(name: <span class="type">str</span>) -> <span class="keyword">None</span>:
+    <span class="function">print</span>(<span class="string">f"Hello, </span>{name}<span class="string">!"</span>)</code></pre>
                     </div>
                     
                     <div class="code-block">
@@ -2161,21 +2229,11 @@ PI = <span class="number">3.14159</span></code></pre>
                             <span class="code-lang"><span class="code-lang-dot cpp"></span>C++</span>
                             <button class="copy-btn" onclick="copyCode(this)">📋</button>
                         </div>
-                        <pre><code><span class="type">int</span> <span class="function">add</span>(<span class="type">int</span> a, <span class="type">int</span> b) {
-    <span class="keyword">return</span> a + b;
-}
+                        <pre><code><span class="type">int</span> <span class="function">add</span>(<span class="type">int</span> a, <span class="type">int</span> b) { <span class="keyword">return</span> a + b; }
 
-<span class="comment">// Default parameters</span>
-std::<span class="type">string</span> <span class="function">greet</span>(
-    <span class="keyword">const</span> std::<span class="type">string</span>& name,
-    <span class="keyword">const</span> std::<span class="type">string</span>& greeting = <span class="string">"Hello"</span>
-) {
-    <span class="keyword">return</span> greeting + <span class="string">", "</span> + name + <span class="string">"!"</span>;
-}
-
-<span class="comment">// Function overloading</span>
-<span class="type">int</span> <span class="function">add</span>(<span class="type">int</span> a, <span class="type">int</span> b) { <span class="keyword">return</span> a + b; }
-<span class="type">double</span> <span class="function">add</span>(<span class="type">double</span> a, <span class="type">double</span> b) { <span class="keyword">return</span> a + b; }</code></pre>
+<span class="keyword">void</span> <span class="function">printGreeting</span>(<span class="keyword">const</span> std::<span class="type">string</span>& name) {
+    std::cout << <span class="string">"Hello, "</span> << name << <span class="string">"!"</span>;
+}</code></pre>
                     </div>
                     
                     <div class="code-block">
@@ -2183,41 +2241,189 @@ std::<span class="type">string</span> <span class="function">greet</span>(
                             <span class="code-lang"><span class="code-lang-dot csharp"></span>C#</span>
                             <button class="copy-btn" onclick="copyCode(this)">📋</button>
                         </div>
-                        <pre><code><span class="type">int</span> <span class="function">Add</span>(<span class="type">int</span> a, <span class="type">int</span> b) {
-    <span class="keyword">return</span> a + b;
-}
+                        <pre><code><span class="type">int</span> <span class="function">Add</span>(<span class="type">int</span> a, <span class="type">int</span> b) => a + b;
 
-<span class="comment">// Default parameters</span>
-<span class="type">string</span> <span class="function">Greet</span>(<span class="type">string</span> name, <span class="type">string</span> greeting = <span class="string">"Hello"</span>) {
-    <span class="keyword">return</span> <span class="string">$"</span>{greeting}, {name}!<span class="string">"</span>;
-}
-
-<span class="comment">// Expression-bodied (C# 6+)</span>
-<span class="type">int</span> <span class="function">Add</span>(<span class="type">int</span> a, <span class="type">int</span> b) => a + b;</code></pre>
+<span class="keyword">void</span> <span class="function">PrintGreeting</span>(<span class="type">string</span> name) {
+    Console.<span class="function">WriteLine</span>(<span class="string">$"Hello, </span>{name}<span class="string">!"</span>);
+}</code></pre>
                     </div>
                 </div>
 
-                <h3>Lambda Functions (Anonymous Functions)</h3>
+                <h3>Parameters: Defaults, Named Args, Variadic</h3>
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot python"></span>Python</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">def</span> <span class="function">sum_all</span>(*values):
+    <span class="keyword">return</span> <span class="function">sum</span>(values)
 
-                <div class="info-box note">
-                    <div class="info-box-title">What is a Lambda Function?</div>
-                    <p>A <strong>lambda function</strong> (also called an <strong>anonymous function</strong>) is a small, unnamed function defined inline. Instead of using <code>def</code> or declaring a named function, you create a function "on the fly" exactly where you need it.</p>
-                    <p style="margin-top: 0.5rem;"><strong>Why use lambdas?</strong></p>
-                    <ul style="margin: 0.5rem 0 0 1.5rem;">
-                        <li>Short, one-time-use functions (no need to name them)</li>
-                        <li>Passing simple logic to higher-order functions (map, filter, sort)</li>
-                        <li>Callbacks and event handlers</li>
-                        <li>Cleaner code when the function body is trivial</li>
-                    </ul>
+<span class="keyword">def</span> <span class="function">connect</span>(host, port=<span class="number">5432</span>, *, timeout=<span class="number">5</span>):
+    <span class="keyword">return</span> <span class="string">f"</span>{host}:{port}<span class="string">"</span>
+
+<span class="function">connect</span>(<span class="string">"db.local"</span>, timeout=<span class="number">10</span>)</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot cpp"></span>C++</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="type">int</span> <span class="function">sum_all</span>(std::initializer_list<<span class="type">int</span>> values) {
+    <span class="type">int</span> total = <span class="number">0</span>;
+    <span class="keyword">for</span> (<span class="type">int</span> v : values) total += v;
+    <span class="keyword">return</span> total;
+}
+
+std::<span class="type">string</span> <span class="function">connect</span>(std::<span class="type">string</span> host, <span class="type">int</span> port = <span class="number">5432</span>) {
+    <span class="keyword">return</span> host + <span class="string">":"</span> + std::<span class="function">to_string</span>(port);
+}
+
+<span class="function">sum_all</span>({<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>});</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C#</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="type">int</span> <span class="function">SumAll</span>(<span class="keyword">params</span> <span class="type">int</span>[] values) {
+    <span class="type">int</span> total = <span class="number">0</span>;
+    <span class="keyword">foreach</span> (<span class="keyword">var</span> v <span class="keyword">in</span> values) total += v;
+    <span class="keyword">return</span> total;
+}
+
+<span class="type">string</span> <span class="function">Connect</span>(<span class="type">string</span> host, <span class="type">int</span> port = <span class="number">5432</span>, <span class="type">int</span> timeout = <span class="number">5</span>) {
+    <span class="keyword">return</span> <span class="string">$"</span>{host}:{port}<span class="string">"</span>;
+}
+
+<span class="keyword">var</span> url = <span class="function">Connect</span>(<span class="string">"db.local"</span>, timeout: <span class="number">10</span>);</code></pre>
+                    </div>
                 </div>
 
-                <div class="info-box warning">
-                    <div class="info-box-title">Lambda Syntax Comparison</div>
-                    <p>
-                        <strong>Python:</strong> <code>lambda x: x * 2</code> (expression only, no statements)<br>
-                        <strong>C++:</strong> <code>[captures](params) { body }</code> (can have multiple statements)<br>
-                        <strong>C#:</strong> <code>(params) => expression</code> or <code>(params) => { statements }</code>
-                    </p>
+                <h3>Passing by Value vs Reference</h3>
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot python"></span>Python</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">def</span> <span class="function">add_item</span>(items, value):
+    items.<span class="function">append</span>(value)  <span class="comment"># mutates list</span>
+
+<span class="keyword">def</span> <span class="function">rebind</span>(x):
+    x = <span class="number">10</span>  <span class="comment"># rebinds local name only</span></code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot cpp"></span>C++</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="type">void</span> <span class="function">increment</span>(<span class="type">int</span>& x) { x++; }
+<span class="type">void</span> <span class="function">print</span>(<span class="keyword">const</span> std::<span class="type">string</span>& s) { std::cout << s; }</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C#</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="type">void</span> <span class="function">Increment</span>(<span class="keyword">ref</span> <span class="type">int</span> x) { x++; }
+
+<span class="type">bool</span> <span class="function">TryParse</span>(<span class="type">string</span> s, <span class="keyword">out</span> <span class="type">int</span> value) {
+    <span class="keyword">return</span> <span class="type">int</span>.<span class="function">TryParse</span>(s, <span class="keyword">out</span> value);
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Multiple Return Values</h3>
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot python"></span>Python</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">def</span> <span class="function">min_max</span>(values):
+    <span class="keyword">return</span> <span class="function">min</span>(values), <span class="function">max</span>(values)
+
+lo, hi = <span class="function">min_max</span>([<span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>])</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot cpp"></span>C++</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="type">std::pair</span>&lt;<span class="type">int</span>, <span class="type">int</span>&gt; <span class="function">min_max</span>(<span class="keyword">const</span> std::vector<<span class="type">int</span>>& v) {
+    <span class="keyword">return</span> { *std::<span class="function">min_element</span>(v.<span class="function">begin</span>(), v.<span class="function">end</span>()),
+             *std::<span class="function">max_element</span>(v.<span class="function">begin</span>(), v.<span class="function">end</span>()) };
+}
+
+<span class="keyword">auto</span> [lo, hi] = <span class="function">min_max</span>(values);</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C#</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> System.Linq;
+
+(<span class="type">int</span> min, <span class="type">int</span> max) <span class="function">MinMax</span>(<span class="type">IEnumerable</span>&lt;<span class="type">int</span>&gt; values) {
+    <span class="keyword">return</span> (values.<span class="function">Min</span>(), values.<span class="function">Max</span>());
+}
+
+<span class="keyword">var</span> (lo, hi) = <span class="function">MinMax</span>(values);</code></pre>
+                    </div>
+                </div>
+
+                <h3>Overloading & Generics</h3>
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot python"></span>Python</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment"># No overloading; use defaults or *args</span>
+<span class="keyword">def</span> <span class="function">add</span>(a, b=0):
+    <span class="keyword">return</span> a + b</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot cpp"></span>C++</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">// Overload</span>
+<span class="type">int</span> <span class="function">add</span>(<span class="type">int</span> a, <span class="type">int</span> b) { <span class="keyword">return</span> a + b; }
+<span class="type">double</span> <span class="function">add</span>(<span class="type">double</span> a, <span class="type">double</span> b) { <span class="keyword">return</span> a + b; }
+
+<span class="comment">// Template (generic)</span>
+<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;
+T <span class="function">first</span>(<span class="keyword">const</span> std::vector&lt;T&gt;& items) { <span class="keyword">return</span> items[<span class="number">0</span>]; }</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C#</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">// Overload</span>
+<span class="type">int</span> <span class="function">Add</span>(<span class="type">int</span> a, <span class="type">int</span> b) => a + b;
+<span class="type">double</span> <span class="function">Add</span>(<span class="type">double</span> a, <span class="type">double</span> b) => a + b;
+
+<span class="comment">// Generic</span>
+T <span class="function">First</span>&lt;T&gt;(<span class="type">IList</span>&lt;T&gt; items) => items[<span class="number">0</span>];</code></pre>
+                    </div>
+                </div>
+
+                <h3>Lambdas & Callbacks</h3>
+
+                <div class="info-box note">
+                    <div class="info-box-title">Anonymous Functions</div>
+                    <p>Lambdas are compact functions you define inline. Great for transformations, filtering, and callbacks.</p>
                 </div>
 
                 <div class="code-comparison">
@@ -2261,13 +2467,106 @@ std::<span class="function">transform</span>(numbers.<span class="function">begi
 <span class="keyword">var</span> filtered = numbers.<span class="function">Where</span>(x => x > <span class="number">2</span>).<span class="function">ToList</span>();</code></pre>
                     </div>
                 </div>
+                <div class="info-box warning">
+                    <div class="info-box-title">C# Delegates Quick Tip</div>
+                    <p><strong>Func</strong> returns a value, <strong>Action</strong> returns void, and <strong>Predicate</strong> returns bool. They are the standard types for callbacks in C#.</p>
+                </div>
+
             </section>
 
             <!-- Section 6: OOP -->
             <section id="oop">
                 <h2><span class="section-number">06</span>Object-Oriented Programming</h2>
-                
-                <p>OOP is central to C++ and C#. Here's a comprehensive comparison of all OOP concepts.</p>
+
+                <p>OOP is central to C++ and C#. Python supports OOP but stays flexible and dynamic. This section maps the shared ideas and the important differences.</p>
+
+                <div class="info-box note">
+                    <div class="info-box-title">The Four Pillars of OOP — Explained</div>
+                    <p>Object-Oriented Programming is built on four fundamental concepts:</p>
+                    <div style="margin-top: 1rem;">
+                        <p><strong>1. Encapsulation</strong> — "Hiding the details"</p>
+                        <p style="margin-left: 1rem; color: var(--text-secondary);">Bundling data (fields) and methods that operate on that data within a class, and restricting direct access to some components. Like a car: you use the steering wheel (public interface), but the engine internals (private) are hidden.</p>
+
+                        <p style="margin-top: 1rem;"><strong>2. Abstraction</strong> — "Showing only what's necessary"</p>
+                        <p style="margin-left: 1rem; color: var(--text-secondary);">Hiding complex implementation details and showing only the essential features. Like a TV remote: you press "Volume Up" without knowing the electronics inside.</p>
+
+                        <p style="margin-top: 1rem;"><strong>3. Inheritance</strong> — "Building on existing code"</p>
+                        <p style="margin-left: 1rem; color: var(--text-secondary);">Creating new classes based on existing ones, inheriting their properties and methods. A <code>Dog</code> class inherits from <code>Animal</code> and gets <code>eat()</code> and <code>sleep()</code> for free.</p>
+
+                        <p style="margin-top: 1rem;"><strong>4. Polymorphism</strong> — "One interface, many forms"</p>
+                        <p style="margin-left: 1rem; color: var(--text-secondary);">The ability to treat objects of different classes through the same interface. A <code>draw()</code> method works on any <code>Shape</code>, whether it's a Circle, Rectangle, or Triangle.</p>
+                    </div>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">Polymorphism Types</div>
+                    <p><strong>Compile-time (Static)</strong>: Method overloading — same name, different parameters</p>
+                    <pre style="background: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0;"><code>void Print(int x)    { }
+void Print(string s) { }  // Same name, different types</code></pre>
+                    <p style="margin-top: 0.5rem;"><strong>Runtime (Dynamic)</strong>: Method overriding — subclass provides its own implementation</p>
+                    <pre style="background: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0;"><code>class Animal { virtual void Speak() { } }
+class Dog : Animal { override void Speak() { Console.WriteLine("Woof!"); } }</code></pre>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>OOP Feature</th>
+                                <th>Python</th>
+                                <th>C++</th>
+                                <th>C#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Multiple inheritance</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>No (interfaces only)</td>
+                            </tr>
+                            <tr>
+                                <td>Abstract classes</td>
+                                <td><code>abc.ABC</code></td>
+                                <td>Pure virtual</td>
+                                <td><code>abstract</code></td>
+                            </tr>
+                            <tr>
+                                <td>Interfaces</td>
+                                <td>Protocols / duck typing</td>
+                                <td>Pure virtual classes</td>
+                                <td><code>interface</code></td>
+                            </tr>
+                            <tr>
+                                <td>Virtual by default</td>
+                                <td>Yes</td>
+                                <td>No</td>
+                                <td>No</td>
+                            </tr>
+                            <tr>
+                                <td>Final / sealed</td>
+                                <td><code>typing.final</code></td>
+                                <td><code>final</code></td>
+                                <td><code>sealed</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">Prefer Composition Over Inheritance</div>
+                    <p>Use inheritance for true "is-a" relationships. For shared behavior, prefer composition (has-a) to avoid fragile base classes and diamond problems.</p>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">Common OOP Pitfalls</div>
+                    <ul style="margin: 0; padding-left: 1.5rem;">
+                        <li>Forgetting <code>virtual</code> in C++/C# causes static dispatch.</li>
+                        <li>Exposing fields instead of properties breaks encapsulation.</li>
+                        <li>Deep inheritance trees are hard to maintain and test.</li>
+                        <li>Missing virtual destructors in C++ base classes leaks resources.</li>
+                    </ul>
+                </div>
 
                 <!-- 6.1 Access Modifiers -->
                 <h3>6.1 Access Modifiers (Encapsulation)</h3>
@@ -2706,6 +3005,18 @@ List<<span class="type">Shape</span>> shapes = <span class="keyword">new</span>(
 
                 <!-- 6.6 Abstract Classes -->
                 <h3>6.6 Abstract Classes</h3>
+
+                <div class="info-box note">
+                    <div class="info-box-title">What is an Abstract Class?</div>
+                    <p>An <strong>abstract class</strong> is a class that cannot be instantiated directly — it serves as a blueprint for other classes. It can contain:</p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem;">
+                        <li><strong>Abstract methods</strong>: Methods with no implementation (subclasses MUST implement them)</li>
+                        <li><strong>Concrete methods</strong>: Regular methods with implementation (inherited by subclasses)</li>
+                        <li><strong>Fields/Properties</strong>: Data that subclasses inherit</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem;"><strong>Use abstract classes when:</strong> You want to share code among related classes AND define a common interface.</p>
+                </div>
+
                 <div class="code-comparison">
                     <div class="code-block">
                         <div class="code-header">
@@ -2806,6 +3117,37 @@ List<<span class="type">Shape</span>> shapes = <span class="keyword">new</span>(
 
                 <!-- 6.7 Interfaces -->
                 <h3>6.7 Interfaces</h3>
+
+                <div class="info-box note">
+                    <div class="info-box-title">What is an Interface?</div>
+                    <p>An <strong>interface</strong> is a contract that defines what a class must do, but not how. It contains only method signatures (no implementation). Any class implementing an interface promises to provide those methods.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Key benefits:</strong></p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem;">
+                        <li><strong>Multiple inheritance</strong>: A class can implement many interfaces (but only extend one class)</li>
+                        <li><strong>Loose coupling</strong>: Code depends on interfaces, not concrete classes</li>
+                        <li><strong>Testability</strong>: Easy to mock interfaces for unit testing</li>
+                    </ul>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">Abstract Class vs Interface — When to Use Which?</div>
+                    <div class="table-wrapper" style="margin-top: 0.5rem;">
+                        <table style="font-size: 13px;">
+                            <thead>
+                                <tr><th>Feature</th><th>Abstract Class</th><th>Interface</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Can have implementation</td><td>Yes (concrete methods)</td><td>No (C# 8+ allows defaults)</td></tr>
+                                <tr><td>Can have fields</td><td>Yes</td><td>No (only properties in C#)</td></tr>
+                                <tr><td>Multiple inheritance</td><td>No (one base class only)</td><td>Yes (many interfaces)</td></tr>
+                                <tr><td>Constructor</td><td>Yes</td><td>No</td></tr>
+                                <tr><td>When to use</td><td>"Is-a" relationship with shared code</td><td>"Can-do" capability contract</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="margin-top: 0.5rem;"><strong>Rule of thumb:</strong> Use interfaces for capabilities (IDisposable, IComparable), use abstract classes for base types (Animal, Shape).</p>
+                </div>
+
                 <div class="code-comparison">
                     <div class="code-block">
                         <div class="code-header">
@@ -3163,6 +3505,30 @@ Console.<span class="function">WriteLine</span>(p1);        <span class="comment
 
                 <!-- 6.11 Generics / Templates -->
                 <h3>6.11 Generics / Templates</h3>
+
+                <div class="info-box note">
+                    <div class="info-box-title">What are Generics (Templates)?</div>
+                    <p><strong>Generics</strong> allow you to write code that works with any type, decided later when you use it. Instead of writing separate classes for <code>IntList</code>, <code>StringList</code>, <code>PersonList</code>, you write one <code>List&lt;T&gt;</code> that works with any type T.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Benefits:</strong></p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem;">
+                        <li><strong>Type safety</strong>: Compiler catches type errors (can't put a string in <code>List&lt;int&gt;</code>)</li>
+                        <li><strong>Code reuse</strong>: Write once, use with any type</li>
+                        <li><strong>Performance</strong>: No boxing/unboxing, no runtime type checks</li>
+                    </ul>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">Generic Constraints</div>
+                    <p>You can restrict what types are allowed with constraints:</p>
+                    <pre style="background: var(--bg-tertiary); padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0;"><code>// C# constraints
+class Repository&lt;T&gt; where T : class, IEntity, new() { }
+// T must be: a reference type, implement IEntity, have parameterless constructor
+
+// C++ concepts (C++20)
+template&lt;typename T&gt; requires std::integral&lt;T&gt;
+T add(T a, T b) { return a + b; }</code></pre>
+                </div>
+
                 <div class="code-comparison">
                     <div class="code-block">
                         <div class="code-header">
@@ -8235,7 +8601,43 @@ std::<span class="type">string</span> name = <span class="string">"Mohamed"</spa
             <!-- Section 13: Async -->
             <section id="async">
                 <h2><span class="section-number">13</span>Async & Threading</h2>
-                
+
+                <div class="info-box note">
+                    <div class="info-box-title">What is Asynchronous Programming?</div>
+                    <p><strong>Asynchronous programming</strong> allows your program to start a potentially long-running operation and continue doing other work instead of waiting for it to complete. When the operation finishes, your code is notified and can process the result.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Key concepts:</strong></p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem;">
+                        <li><strong>async</strong>: Marks a function as asynchronous (can contain await)</li>
+                        <li><strong>await</strong>: Pauses execution until the awaited operation completes</li>
+                        <li><strong>Task/Future/Promise</strong>: Represents a value that will be available later</li>
+                    </ul>
+                </div>
+
+                <div class="info-box warning">
+                    <div class="info-box-title">Concurrency vs Parallelism</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <p><strong>Concurrency</strong></p>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Dealing with multiple tasks at once (interleaving). One chef cooking multiple dishes by switching between them.</p>
+                            <p style="margin-top: 0.3rem; font-size: 0.85rem; color: var(--accent-python);">async/await, event loops</p>
+                        </div>
+                        <div>
+                            <p><strong>Parallelism</strong></p>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Doing multiple tasks simultaneously. Multiple chefs cooking different dishes at the same time.</p>
+                            <p style="margin-top: 0.3rem; font-size: 0.85rem; color: var(--accent-cpp);">threads, multiprocessing</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">When to Use Async vs Threads</div>
+                    <ul style="margin: 0.5rem 0 0 1.5rem;">
+                        <li><strong>Use async/await for I/O-bound work</strong>: HTTP requests, database queries, file operations</li>
+                        <li><strong>Use threads/parallelism for CPU-bound work</strong>: Heavy computations, image processing</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">Async is more efficient for I/O because it doesn't block threads while waiting.</p>
+                </div>
+
                 <div class="code-comparison">
                     <div class="code-block">
                         <div class="code-header">
@@ -8311,7 +8713,7 @@ std::<span class="type">string</span> <span class="function">fetchData</span>() 
                         <tbody>
                             <tr>
                                 <td>Build Tool</td>
-                                <td>Not needed (interpreted)</td>
+                                <td>No build step for scripts, but packaging/build tools are common</td>
                                 <td>CMake, MSBuild, Meson</td>
                                 <td>MSBuild, dotnet CLI</td>
                             </tr>
@@ -8344,12 +8746,12 @@ std::<span class="type">string</span> <span class="function">fetchData</span>() 
                 
                 <div class="info-box warning">
                     <div class="info-box-title">🔴 Don't Forget the Semicolons!</div>
-                    <p>Every statement in C++ and C# must end with <code>;</code></p>
+                    <p>Most statements in C++ and C# end with <code>;</code>; control blocks like <code>if</code>/<code>for</code> do not.</p>
                 </div>
 
                 <div class="info-box warning">
                     <div class="info-box-title">🔴 Declare Types Explicitly</div>
-                    <p>You can't just write <code>x = 5</code> — you need <code>int x = 5;</code> (or <code>var</code> in C#)</p>
+                    <p>You can't just write <code>x = 5</code> — you need <code>int x = 5;</code> or type inference (<code>auto</code> in C++, <code>var</code> in C#).</p>
                 </div>
 
                 <div class="info-box warning">
@@ -8411,6 +8813,321 @@ std::<span class="type">string</span> <span class="function">fetchData</span>() 
                 <div class="info-box tip">
                     <div class="info-box-title">🚀 Release Planning</div>
                     <p>Decide on packaging (MSIX vs installer), runtime bundling (.NET runtime or self-contained), and update strategy before your first release.</p>
+                </div>
+            </section>
+
+            <!-- Section 19: Performance -->
+            <section id="performance">
+                <h2><span class="section-number">19</span>Performance & Profiling</h2>
+
+                <div class="info-box note">
+                    <div class="info-box-title">Measure First, Then Optimize</div>
+                    <p>Performance work starts with profiling. Guessing is expensive; measurements tell you where time and memory actually go.</p>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Area</th>
+                                <th>Python</th>
+                                <th>C++</th>
+                                <th>C#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Common bottleneck</td>
+                                <td>Algorithmic complexity, object overhead</td>
+                                <td>Cache misses, allocations, copies</td>
+                                <td>Allocations, boxing, LINQ churn</td>
+                            </tr>
+                            <tr>
+                                <td>Typical fix</td>
+                                <td>Use built-ins, vectorize, C extensions</td>
+                                <td>Reduce allocations, use move/refs</td>
+                                <td>Reduce allocations, reuse buffers</td>
+                            </tr>
+                            <tr>
+                                <td>Profiling</td>
+                                <td>cProfile, py-spy</td>
+                                <td>Perf, VTune, WPA</td>
+                                <td>dotnet-trace, PerfView</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot python"></span>Python timeit</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">import</span> timeit
+
+<span class="keyword">def</span> <span class="function">work</span>():
+    data = [i * i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">10000</span>)]
+    <span class="keyword">return</span> <span class="function">sum</span>(data)
+
+elapsed = timeit.<span class="function">timeit</span>(work, <span class="keyword">number</span>=<span class="number">100</span>)
+<span class="function">print</span>(elapsed)</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot cpp"></span>C++ chrono</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">#include</span> <span class="string">&lt;chrono&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;vector&gt;</span>
+
+<span class="keyword">auto</span> start = std::<span class="type">chrono</span>::<span class="type">high_resolution_clock</span>::<span class="function">now</span>();
+<span class="keyword">for</span> (<span class="type">int</span> r = <span class="number">0</span>; r < <span class="number">100</span>; ++r) {
+    std::vector<<span class="type">int</span>> data;
+    data.<span class="function">reserve</span>(<span class="number">10000</span>);
+    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i < <span class="number">10000</span>; ++i) data.<span class="function">push_back</span>(i * i);
+}
+<span class="keyword">auto</span> end = std::<span class="type">chrono</span>::<span class="type">high_resolution_clock</span>::<span class="function">now</span>();
+<span class="keyword">auto</span> ms = std::<span class="type">chrono</span>::<span class="function">duration_cast</span><std::<span class="type">chrono</span>::<span class="type">milliseconds</span>>(end - start);
+std::cout << ms.<span class="function">count</span>() << <span class="string">"ms"</span>;</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C# Stopwatch</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> System.Diagnostics;
+
+<span class="keyword">var</span> sw = <span class="type">Stopwatch</span>.<span class="function">StartNew</span>();
+<span class="keyword">for</span> (<span class="keyword">var</span> r = <span class="number">0</span>; r < <span class="number">100</span>; r++) {
+    <span class="keyword">var</span> data = <span class="keyword">new</span> List<<span class="type">int</span>>(<span class="number">10000</span>);
+    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i < <span class="number">10000</span>; i++) data.<span class="function">Add</span>(i * i);
+}
+sw.<span class="function">Stop</span>();
+Console.<span class="function">WriteLine</span>(sw.<span class="function">ElapsedMilliseconds</span> + <span class="string">"ms"</span>);</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 20: Networking -->
+            <section id="networking">
+                <h2><span class="section-number">20</span>Networking & HTTP</h2>
+
+                <div class="info-box note">
+                    <div class="info-box-title">HTTP Clients</div>
+                    <p>Python and C# ship with batteries included; C++ typically uses a library (libcurl, Boost.Beast, or cpp-httplib).</p>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Need</th>
+                                <th>Python</th>
+                                <th>C++</th>
+                                <th>C#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>HTTP client</td>
+                                <td><code>requests</code> (3rd-party)</td>
+                                <td>libcurl / Boost.Beast / cpp-httplib</td>
+                                <td><code>HttpClient</code> (built-in)</td>
+                            </tr>
+                            <tr>
+                                <td>Async I/O</td>
+                                <td><code>asyncio</code> + aiohttp</td>
+                                <td>Boost.Asio</td>
+                                <td><code>async/await</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot python"></span>Python requests</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment"># pip install requests</span>
+<span class="keyword">import</span> requests
+
+resp = requests.<span class="function">get</span>(<span class="string">"https://api.example.com/items"</span>, timeout=<span class="number">5</span>)
+resp.<span class="function">raise_for_status</span>()
+data = resp.<span class="function">json</span>()</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot cpp"></span>C++ cpp-httplib</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">// Single-header library: https://github.com/yhirose/cpp-httplib</span>
+<span class="keyword">#include</span> <span class="string">"httplib.h"</span>
+
+httplib::Client cli(<span class="string">"https://api.example.com"</span>);
+<span class="keyword">auto</span> res = cli.<span class="function">Get</span>(<span class="string">"/items"</span>);
+<span class="keyword">if</span> (res && res->status == <span class="number">200</span>) {
+    std::cout << res->body;
+}</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C# HttpClient</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> System.Net.Http;
+
+<span class="keyword">using</span> <span class="keyword">var</span> client = <span class="keyword">new</span> <span class="type">HttpClient</span>();
+<span class="keyword">var</span> resp = <span class="keyword">await</span> client.<span class="function">GetAsync</span>(<span class="string">"https://api.example.com/items"</span>);
+resp.<span class="function">EnsureSuccessStatusCode</span>();
+<span class="keyword">var</span> json = <span class="keyword">await</span> resp.Content.<span class="function">ReadAsStringAsync</span>();</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 21: Testing -->
+            <section id="testing">
+                <h2><span class="section-number">21</span>Testing & Quality</h2>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">Test Pyramid</div>
+                    <p>Keep most tests fast and small (unit tests), add fewer integration tests, and only a handful of end-to-end tests.</p>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Type</th>
+                                <th>Purpose</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Unit</td>
+                                <td>Verify a single function or class</td>
+                                <td>Pure business logic</td>
+                            </tr>
+                            <tr>
+                                <td>Integration</td>
+                                <td>Verify collaboration between components</td>
+                                <td>DB + service layer</td>
+                            </tr>
+                            <tr>
+                                <td>End-to-end</td>
+                                <td>Verify the full system behavior</td>
+                                <td>UI workflow or API journey</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-comparison">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot python"></span>Python pytest</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment"># pip install pytest</span>
+<span class="keyword">def</span> <span class="function">add</span>(a, b):
+    <span class="keyword">return</span> a + b
+
+<span class="keyword">def</span> <span class="function">test_add</span>():
+    <span class="keyword">assert</span> add(<span class="number">2</span>, <span class="number">3</span>) == <span class="number">5</span></code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot cpp"></span>C++ Catch2</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="comment">// Catch2 single-header test example</span>
+<span class="keyword">#define</span> CATCH_CONFIG_MAIN
+<span class="keyword">#include</span> <span class="string">"catch.hpp"</span>
+
+<span class="type">int</span> <span class="function">add</span>(<span class="type">int</span> a, <span class="type">int</span> b) { <span class="keyword">return</span> a + b; }
+
+<span class="function">TEST_CASE</span>(<span class="string">"add works"</span>) {
+    <span class="function">REQUIRE</span>(add(<span class="number">2</span>, <span class="number">3</span>) == <span class="number">5</span>);
+}</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang"><span class="code-lang-dot csharp"></span>C# xUnit</span>
+                            <button class="copy-btn" onclick="copyCode(this)">📋</button>
+                        </div>
+                        <pre><code><span class="keyword">using</span> Xunit;
+
+<span class="keyword">public</span> <span class="keyword">class</span> <span class="type">MathTests</span> {
+    <span class="keyword">int</span> <span class="function">Add</span>(<span class="keyword">int</span> a, <span class="keyword">int</span> b) => a + b;
+
+    [<span class="type">Fact</span>]
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="function">Add_Works</span>() {
+        Assert.<span class="function">Equal</span>(<span class="number">5</span>, Add(<span class="number">2</span>, <span class="number">3</span>));
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 22: Packaging -->
+            <section id="packaging">
+                <h2><span class="section-number">22</span>Packaging & Distribution</h2>
+
+                <div class="info-box note">
+                    <div class="info-box-title">Versioning & Updates</div>
+                    <p>Pick a versioning scheme early (SemVer is common). Automate build numbers and keep release notes for every version.</p>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Goal</th>
+                                <th>Python</th>
+                                <th>C++</th>
+                                <th>C#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Library distribution</td>
+                                <td>PyPI wheels</td>
+                                <td>vcpkg/conan packages</td>
+                                <td>NuGet packages</td>
+                            </tr>
+                            <tr>
+                                <td>Desktop app</td>
+                                <td>PyInstaller, cx_Freeze</td>
+                                <td>MSIX / MSI installer</td>
+                                <td>MSIX, ClickOnce, single-file</td>
+                            </tr>
+                            <tr>
+                                <td>Runtime bundling</td>
+                                <td>Embed Python or ship venv</td>
+                                <td>Static or dynamic CRT choice</td>
+                                <td>Framework-dependent or self-contained</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-title">Release Checklist</div>
+                    <ul style="margin: 0; padding-left: 1.5rem;">
+                        <li>Pin dependencies and lock versions</li>
+                        <li>Sign binaries and validate hashes</li>
+                        <li>Document install, upgrade, and rollback</li>
+                        <li>Smoke-test the installer on a clean machine</li>
+                    </ul>
                 </div>
             </section>
         </main>
